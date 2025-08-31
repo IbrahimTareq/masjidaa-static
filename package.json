@@ -12,10 +12,22 @@
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
 	},
 	"dependencies": {
+		"@fullcalendar/daygrid": "^6.1.19",
+		"@fullcalendar/react": "^6.1.19",
 		"@opennextjs/cloudflare": "^1.6.5",
+		"@supabase/ssr": "^0.7.0",
+		"@supabase/supabase-js": "^2.56.0",
+		"lucide-react": "^0.542.0",
 		"next": "15.4.6",
+		"qr-code-styling": "^1.9.2",
 		"react": "19.1.0",
-		"react-dom": "19.1.0"
+		"react-circular-progressbar": "^2.2.0",
+		"react-dom": "19.1.0",
+		"react-fast-marquee": "^1.6.5",
+		"react-social-icons": "^6.24.0",
+		"rrule": "^2.8.1",
+		"swiper": "^11.2.10",
+		"swr": "^2.3.6"
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4",
