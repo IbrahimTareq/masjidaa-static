@@ -1,32 +1,16 @@
 "use client";
 
-import { useMasjidContext } from "@/context/masjidContext";
-import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
-import { usePrayerData } from "@/hooks/usePrayerData";
-import type { PrayerData } from "@/lib/prayer";
-import Link from "next/link";
 import Theme5Widget from "@/app/masjid/[id]/embed/prayer-times/[type]/theme5/theme5";
+import { useMasjidContext } from "@/context/masjidContext";
+import { FormattedData } from "@/lib/server/services/prayer";
+import Link from "next/link";
 
 interface HomeClientProps {
-  initialPrayerData: PrayerData;
+  prayerData: FormattedData;
 }
 
-export default function HomeClient({ initialPrayerData }: HomeClientProps) {
-  // Get masjid data from context (provided by layout)
+export default function HomeClient({ prayerData }: HomeClientProps) {
   const masjid = useMasjidContext();
-
-  // Get date/time formatting utilities
-  const { hijriDate, gregorianDate, timeAgo } = useDateTimeFormat();
-
-  // Get prayer data with real-time updates
-  const {
-    prayerTimes,
-    jummahTimes,
-    prayerInfo,
-    lastUpdated,
-    isLoading,
-    error,
-  } = usePrayerData(masjid.id, initialPrayerData);
 
   if (!masjid) {
     return <div>Masjid not found</div>;
@@ -83,9 +67,7 @@ export default function HomeClient({ initialPrayerData }: HomeClientProps) {
 
       {/* Prayer Times Section */}
       <section>
-        {prayerTimes && (
-          <Theme5Widget masjidId={masjid.id} initialData={initialPrayerData} />
-        )}
+        {prayerData && <Theme5Widget formattedData={prayerData} />}
       </section>
 
       {/* Events Section */}

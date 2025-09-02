@@ -5,6 +5,7 @@ import CustomSlide from "@/components/client/interactive/CustomSlide";
 import DonationSlide from "@/components/client/interactive/DonationSlide";
 import EventSlide from "@/components/client/interactive/EventSlide";
 import PrayerScreenSlide from "@/components/client/interactive/PrayerScreenSlide";
+import StaticScreenSlide from "@/components/client/interactive/StaticScreenSlide";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useSlidesRealtime } from "@/hooks/useSlidesRealtime";
 import { useEffect, useState } from "react";
@@ -57,12 +58,20 @@ interface PrayerScreenSlide extends SlideBase {
   };
 }
 
+interface StaticSlide extends SlideBase {
+  slide_type: "static";
+  props: {
+    type: string;
+  };
+}
+
 export type Slide =
   | EventSlide
   | AnnouncementSlide
   | PrayerScreenSlide
   | DonationSlide
   | CustomSlide
+  | StaticSlide
   | SlideBase;
 
 // Component mapping
@@ -73,6 +82,9 @@ const slideComponents: Record<string, React.ComponentType<any>> = {
   custom: CustomSlide,
   "prayer-screen": (props: { theme: number; type?: string }) => (
     <PrayerScreenSlide theme={props.theme} type={props.type} />
+  ),
+  static: (props: { type: string }) => (
+    <StaticScreenSlide type={props.type} />
   ),
 };
 

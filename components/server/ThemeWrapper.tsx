@@ -1,5 +1,5 @@
 import { getServerTheme } from "@/lib/server/services/theme";
-import ThemeScript from "@/components/ThemeScript";
+import ThemeScript from "@/components/client/ui/ThemeScript";
 
 interface ThemeWrapperProps {
   id: string;

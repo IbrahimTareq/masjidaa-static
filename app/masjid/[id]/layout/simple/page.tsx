@@ -111,6 +111,17 @@ export default async function SimpleLayoutPage({
           },
         };
       }
+      
+      // For static slides, we need to pass the component name
+      if (slide.slide_type === "static") {
+        return {
+          id: slide.id,
+          slide_type: slide.slide_type,
+          props: {
+            type: (slideProps as { type?: string }).type || "Parking", // Default to Parking if not specified
+          },
+        };
+      }
 
       // Return other slide types as is
       return {

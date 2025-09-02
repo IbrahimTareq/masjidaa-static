@@ -1,18 +1,18 @@
 import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
 
-export async function getPrayerSettingsByMasjidId(
-  masjidId: string
-): Promise<Tables<"masjid_prayer_settings"> | null> {
+export async function getShortLinkById(
+  shortLinkId: string
+): Promise<Tables<"short_links"> | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("masjid_prayer_settings")
+    .from("short_links")
     .select("*")
-    .eq("masjid_id", masjidId)
+    .eq("id", shortLinkId)
     .single();
 
   if (error) {
-    console.error("Error fetching prayer settings", error);
+    console.error("Error fetching short link", error);
     return null;
   }
   return data;
