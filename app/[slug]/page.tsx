@@ -1,5 +1,6 @@
 import HomeClient from "@/app/[slug]/home";
 import { getMasjidBySlug } from "@/lib/server/data/masjid";
+import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
 import { getServerPrayerData } from "@/lib/server/services/prayer";
 
 export default async function Page({
@@ -9,7 +10,6 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  // Get masjid data
   const masjid = await getMasjidBySlug(slug);
   
   if (!masjid) {
@@ -17,7 +17,7 @@ export default async function Page({
   }
 
   const prayerData = await getServerPrayerData(masjid.id);
+  const events = await getMasjidEventsByMasjidId(masjid.id);
 
-  // Pass data to client component
-  return <HomeClient prayerData={prayerData} />;
+  return <HomeClient prayerData={prayerData} events={events ?? []} />;
 }

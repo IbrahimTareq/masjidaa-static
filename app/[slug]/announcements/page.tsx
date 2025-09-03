@@ -1,9 +1,24 @@
-export default async function Announcements() {
+import { getMasjidBySlug } from "@/lib/server/data/masjid";
+import { getMasjidAnnouncementsByMasjidId } from "@/lib/server/data/masjidAnnouncements";
+import AnnouncementsClient from "./announcements";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const masjid = await getMasjidBySlug(slug);
+
+  if (!masjid) {
+    return <div>Masjid not found</div>;
+  }
+
+  const announcements = await getMasjidAnnouncementsByMasjidId(masjid.id);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        Announcements page
-      </main>
+    <div className="min-h-screen bg-white">
+      <AnnouncementsClient announcements={announcements ?? []} masjid={masjid} />
     </div>
   );
 }

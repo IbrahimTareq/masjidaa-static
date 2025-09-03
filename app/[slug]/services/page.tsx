@@ -1,9 +1,15 @@
-export default async function Services() {
+import { getMasjidBySlug } from "@/lib/server/data/masjid";
+import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/data/masjidSiteSettings";
+import ServicesClient from "./services";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        Services page
-      </main>
-    </div>
+      <ServicesClient />
   );
 }

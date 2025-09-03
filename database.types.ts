@@ -850,8 +850,7 @@ export type Database = {
           masjid_id: string
           primary_description: string | null
           primary_title: string | null
-          secondary_description: string | null
-          secondary_title: string | null
+          services: Json | null
           tiktok_url: string | null
           twitter_url: string | null
           updated_at: string | null
@@ -866,8 +865,7 @@ export type Database = {
           masjid_id: string
           primary_description?: string | null
           primary_title?: string | null
-          secondary_description?: string | null
-          secondary_title?: string | null
+          services?: Json | null
           tiktok_url?: string | null
           twitter_url?: string | null
           updated_at?: string | null
@@ -882,8 +880,7 @@ export type Database = {
           masjid_id?: string
           primary_description?: string | null
           primary_title?: string | null
-          secondary_description?: string | null
-          secondary_title?: string | null
+          services?: Json | null
           tiktok_url?: string | null
           twitter_url?: string | null
           updated_at?: string | null

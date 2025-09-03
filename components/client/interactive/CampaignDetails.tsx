@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Tables } from "@/database.types";
-import { Calendar } from "lucide-react";
+import { Calendar, Heart } from "lucide-react";
 
 interface CampaignDetailsProps {
   campaign: Tables<"donation_campaigns">;
@@ -13,7 +13,6 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   campaign,
   onImageClick,
 }) => {
-  
   return (
     <div className="flex-1 mb-8 lg:mb-0">
       {/* Title */}
@@ -33,8 +32,8 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
             className="w-full h-full object-contain p-4"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Calendar className="w-16 h-16 sm:w-32 sm:h-32 text-gray-300" />
+          <div className="w-full h-full bg-theme-gradient/10 flex items-center justify-center">
+            <Heart className="w-16 h-16 sm:w-32 sm:h-32 text-theme opacity-70" />
           </div>
         )}
       </div>

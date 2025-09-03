@@ -1,4 +1,3 @@
-// app/[id]/layout.tsx
 import ThemeWrapper from "@/components/server/ThemeWrapper";
 import { DateTimeProvider } from "@/context/dateTimeContext";
 import { MasjidProvider } from "@/context/masjidContext";

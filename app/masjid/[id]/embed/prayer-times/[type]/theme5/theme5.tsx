@@ -213,7 +213,7 @@ export default function Theme5({
                     jummahTimes.map((session, index) => (
                       <div
                         key={index}
-                        className={`grid grid-cols-12 gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 transition-all bg-transparent hover:bg-teal-800 hover:bg-opacity-10`}
+                        className={`grid grid-cols-12 gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 transition-all bg-transparent`}
                       >
                         {/* Prayer Icon */}
                         <div className="col-span-1 flex justify-center">

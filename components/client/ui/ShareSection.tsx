@@ -114,9 +114,9 @@ export default function ShareSection({
         />
         <button
           onClick={() => handleCopy(shareUrl)}
-          className={`px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 ${
+          className={`px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 cursor-pointer ${
             copied 
-              ? "bg-green-500 text-white" 
+              ? "bg-theme-gradient text-white" 
               : "bg-theme text-white hover:bg-theme-gradient"
           }`}
         >

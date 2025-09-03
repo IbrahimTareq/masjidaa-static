@@ -151,7 +151,7 @@ export default function PrayerClient({
                         className={`grid grid-cols-12 gap-2 items-center px-6 py-4 transition-all ${
                           prayer.isActive
                             ? "bg-theme text-white"
-                            : "hover:bg-gray-50"
+                            : ""
                         }`}
                       >
                         {/* Prayer Icon */}
@@ -199,12 +199,12 @@ export default function PrayerClient({
                             <div className="col-span-5"></div>
                             <div className="col-span-3 text-center">
                               <div className="text-sm sm:text-base font-bold tracking-wider uppercase text-gray-600">
-                                KHUTBAH
+                                Starts
                               </div>
                             </div>
                             <div className="col-span-3 text-center">
                               <div className="text-sm sm:text-base font-bold tracking-wider uppercase text-gray-600">
-                                IQAMAH
+                                Khutbah
                               </div>
                             </div>
                           </div>
@@ -214,7 +214,7 @@ export default function PrayerClient({
                         {jummahTimes.map((session, index) => (
                           <div
                             key={index}
-                            className="grid grid-cols-12 gap-2 items-center px-6 py-4 hover:bg-gray-50"
+                            className="grid grid-cols-12 gap-2 items-center px-6 py-4"
                           >
                             <div className="col-span-1 flex justify-center">
                               <div className="w-8 h-8 sm:w-9 sm:h-9">

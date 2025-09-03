@@ -3,7 +3,7 @@
 import React from "react";
 import { Tables } from "@/database.types";
 import { formatCurrency } from "@/utils/currency";
-import { TrendingUp } from "lucide-react";
+import { Target, TrendingUp, Users } from "lucide-react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useDonation } from "@/donation/src/context/DonationContext";
@@ -48,15 +48,15 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
             {formatCurrency({
               amount: Number(campaign.amount_raised),
               currency: masjid.local_currency,
-            })}{" "}
-            donated
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            {formatCurrency({
-              amount: Number(campaign.target_amount),
-              currency: masjid.local_currency,
             })}
-            &nbsp;target | {totalDonorCount} donations
+            &nbsp;donated
+          </h2>
+          <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+            <Target className="w-3 h-3 text-gray-500" />
+            <span>{formatCurrency({ amount: Number(campaign.target_amount), currency: masjid.local_currency })} target</span>
+            <span className="mx-1">|</span>
+            <Users className="w-3 h-3 text-gray-500" />
+            <span>{totalDonorCount} donations</span>
           </p>
         </div>
         <div className="flex items-center gap-2">

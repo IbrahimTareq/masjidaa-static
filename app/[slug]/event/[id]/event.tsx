@@ -3,9 +3,11 @@
 import { WavyBackground } from "@/components/client/ui/WavyBackground";
 import { Tables } from "@/database.types";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { AddToCalendarButton } from "add-to-calendar-button-react";
 import { Calendar, MapPin, Share, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function EventClient({ event }: { event: Tables<"events"> }) {
   const { formatTime, formatDate } = useDateTimeFormat();
@@ -13,6 +15,11 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
   const [showCalendarOptions, setShowCalendarOptions] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement>(null);
+
+  const searchParams = useSearchParams()
+  const eventDateParam = searchParams.get('eventDate')
+
+  const eventDate = eventDateParam || event.date;
   
   // Handle click outside to close calendar options
   useEffect(() => {
@@ -46,63 +53,13 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
     setIsImagePreviewOpen(false);
   };
 
-  const [themeColors, setThemeColors] = useState({
-    baseColor: "",
-    accentColor: "",
-    gradientColor: "",
-  });
-
-  useEffect(() => {
-    // Function to get current theme colors
-    const getThemeColors = () => {
-      const baseColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--theme-color")
-        .trim();
-      const accentColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--theme-color-accent")
-        .trim();
-      const gradientColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--theme-color-gradient")
-        .trim();
-
-      return { baseColor, accentColor, gradientColor };
-    };
-
-    // Initial set
-    setThemeColors(getThemeColors());
-
-    // Set up observer for theme changes
-    const observer = new MutationObserver(() => {
-      setThemeColors(getThemeColors());
-    });
-
-    // Watch for changes to document root's style attribute
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Generate theme colors with variations using CSS variables
-  const themeColorsVariations = useMemo(() => {
-    return [
-      themeColors.baseColor,
-      themeColors.accentColor,
-      themeColors.gradientColor,
-    ];
-  }, [
-    themeColors.baseColor,
-    themeColors.accentColor,
-    themeColors.gradientColor,
-  ]);
+  const { colorVariations } = useThemeColors();
 
   return (
     <div className="bg-white/80 relative overflow-hidden my-10">
       {/* Wavy Background */}
       <WavyBackground
-        colors={themeColorsVariations}
+        colors={colorVariations}
         waveWidth={60}
         blur={0}
         speed="slow"
@@ -132,7 +89,7 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
                         Date & Time
                       </h3>
                       <p className="text-lg text-gray-800">
-                        {formatDate(event.date)}
+                        {formatDate(eventDate)}
                       </p>
                       <p className="text-gray-600">
                         {event.start_time && formatTime(event.start_time)}
@@ -189,8 +146,9 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
                         name={event.title}
                         description={event.description || ""}
                         location={event.location || ""}
-                        startDate={event.date}
+                        startDate={eventDate}
                         startTime={event.start_time || ""}
+                        endTime={event.start_time || ""}
                         options={[
                           "Apple",
                           "Google",
@@ -254,8 +212,9 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
                       name={event.title}
                       description={event.description || ""}
                       location={event.location || ""}
-                      startDate={event.date}
+                      startDate={eventDate}
                       startTime={event.start_time || ""}
+                      endTime={event.start_time || ""}
                       options={[
                         "Apple",
                         "Google",

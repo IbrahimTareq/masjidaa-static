@@ -38,7 +38,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-6 border-b">
+        <div className="flex justify-between items-center p-6 bg-gray-100">
           <h2 className="text-xl font-bold">Reach more donors by sharing</h2>
           <button
             onClick={() => toggleShareModal(false)}

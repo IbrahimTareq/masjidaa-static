@@ -19,6 +19,16 @@ export function useDateTimeFormat() {
     });
   };
 
+  const formatEventDate = (dateString: string) => {
+    const date = new Date(dateString);
+    // Use fixed month abbreviations to avoid hydration errors
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    return {
+      day: date.getDate(),
+      month: months[date.getMonth()],
+    };
+  };
+
   const formatCurrentTime = () =>
     new Date().toLocaleTimeString(DATE_FORMAT, {
       timeZone: config.timeZone,
@@ -156,6 +166,7 @@ export function useDateTimeFormat() {
 
   return {
     formatTime,
+    formatEventDate,
     formatCurrentTime,
     formatDate,
     formatDateTime,

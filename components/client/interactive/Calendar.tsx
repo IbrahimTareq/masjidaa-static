@@ -57,14 +57,19 @@ const createTooltipContent = (event: EventApi): string => {
   const date = event.start?.toLocaleDateString() || "N/A";
 
   // Check if event is all-day or has no specific time
-  const isAllDay = event.allDay || !event.start || event.start.getHours() === 0 && event.start.getMinutes() === 0;
-  
-  const timeSection = !isAllDay 
+  const isAllDay =
+    event.allDay ||
+    !event.start ||
+    (event.start.getHours() === 0 && event.start.getMinutes() === 0);
+
+  const timeSection = !isAllDay
     ? `<p class="text-xs text-gray-300 mb-1">
-        <span class="font-medium">Time:</span> ${event.start?.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }) || "N/A"}
+        <span class="font-medium">Time:</span> ${
+          event.start?.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }) || "N/A"
+        }
       </p>`
     : "";
 
@@ -139,7 +144,16 @@ const Calendar: React.FC<CalendarProps> = ({
     const eventLinkId = clickInfo.event.extendedProps.linkId;
     const eventTitle = clickInfo.event.title;
 
-    const eventUrl = `/${masjid?.slug}/event/${eventLinkId}`;
+    // Build the event URL
+    let eventUrl = `/${masjid?.slug}/event/${eventLinkId}`;
+    
+    // Add eventDate parameter only if we have a start date
+    if (clickInfo.event.start) {
+      const date = clickInfo.event.start;
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      eventUrl += `?eventDate=${formattedDate}`;
+    }
+    
     window.open(eventUrl, "_blank");
 
     // Call provided callback if exists
