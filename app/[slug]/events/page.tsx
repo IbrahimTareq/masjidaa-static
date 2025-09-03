@@ -1,9 +1,30 @@
-export default async function Events() {
+import { Tables } from "@/database.types";
+import { convertEventsToCalendarEvents } from "@/lib/convertEventsToCalendarEvents";
+import { getMasjidBySlug } from "@/lib/server/data/masjid";
+import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
+import EventsClient from "./events";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const masjid = await getMasjidBySlug(slug);
+
+  if (!masjid) {
+    return <div>Masjid not found</div>;
+  }
+
+  const events = await getMasjidEventsByMasjidId(masjid.id);
+
+  const calendarEvents = convertEventsToCalendarEvents(
+    events as Tables<"events">[]
+  );
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        Events page
-      </main>
+    <div className="min-h-screen bg-white">
+      <EventsClient calendarEvents={calendarEvents} masjid={masjid} />
     </div>
   );
 }

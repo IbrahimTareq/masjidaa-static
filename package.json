@@ -19,6 +19,7 @@
 		"@stripe/stripe-js": "^7.9.0",
 		"@supabase/ssr": "^0.7.0",
 		"@supabase/supabase-js": "^2.56.0",
+		"add-to-calendar-button-react": "^2.9.1",
 		"easy-currencies": "^1.8.3",
 		"lucide-react": "^0.542.0",
 		"next": "15.4.6",
