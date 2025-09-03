@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
 import { Tables } from "@/database.types";
+import { useDonation } from "@/donation/src/context/DonationContext";
 import { formatCurrency } from "@/utils/currency";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Target, TrendingUp, Users } from "lucide-react";
+import React from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useDonation } from "@/donation/src/context/DonationContext";
 import { useRandomHadith } from "../hooks/useRandomHadith";
 
 const formatAmountToShortFormat = ({ amount }: { amount: number }) => {
@@ -53,7 +54,13 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
           </h2>
           <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
             <Target className="w-3 h-3 text-gray-500" />
-            <span>{formatCurrency({ amount: Number(campaign.target_amount), currency: masjid.local_currency })} target</span>
+            <span>
+              {formatCurrency({
+                amount: Number(campaign.target_amount),
+                currency: masjid.local_currency,
+              })}{" "}
+              target
+            </span>
             <span className="mx-1">|</span>
             <Users className="w-3 h-3 text-gray-500" />
             <span>{totalDonorCount} donations</span>
@@ -120,7 +127,7 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
       {/* Powered By */}
       <div className="text-center pt-4">
         <a
-          href={`${process.env.NEXT_PUBLIC_DOMAIN_NAME}`}
+          href={`${DOMAIN_NAME}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-gray-500 hover:text-gray-700 transition-colors"

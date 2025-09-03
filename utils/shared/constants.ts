@@ -1,0 +1,1 @@
+export const DOMAIN_NAME = "https://masjidaa.com";

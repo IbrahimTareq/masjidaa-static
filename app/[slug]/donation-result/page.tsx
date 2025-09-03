@@ -8,11 +8,11 @@ import ShareSection from "@/components/client/ui/ShareSection";
 import { formatCurrency } from "@/utils/currency";
 import { AlertCircle, Check } from "lucide-react";
 
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-import { DonationMeta, usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { useMasjidContext } from "@/context/masjidContext";
+import { DonationMeta, usePaymentStatus } from "@/hooks/usePaymentStatus";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 // Success message component
 const SuccessMessage: React.FC<{
@@ -89,7 +89,7 @@ const FailedMessage: React.FC<{
   errorMessage?: string;
 }> = ({ masjidName, masjidLogo, errorMessage }) => {
   const router = useRouter();
-  
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-8 text-center mb-6">
       <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden">
@@ -144,8 +144,8 @@ export default function DonationResult() {
   const shortLink = donationMeta?.short_link || "";
 
   const shareUrl = shortLink
-  ? `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/r/${shortLink}`
-  : window.location.origin;
+    ? `${DOMAIN_NAME}/r/${shortLink}`
+    : window.location.origin;
 
   // Format amount for display
   const amount = donationMeta?.amount_cents

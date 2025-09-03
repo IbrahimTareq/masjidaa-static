@@ -2,6 +2,7 @@
 
 import { PaymentMode, RecurringMeta } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 import {
   Elements,
   PaymentElement,
@@ -155,7 +156,7 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
   const FormFooter = () => (
     <div className="text-center pb-4">
       <a
-        href={`${process.env.NEXT_PUBLIC_DOMAIN_NAME}`}
+        href={`${DOMAIN_NAME}`}
         target="_blank"
         rel="noopener noreferrer"
         className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -213,11 +214,12 @@ export default function DonationForm({
 
   // Get theme color directly from document if available
   const [themeColor, setThemeColor] = useState("#0c8c4d");
-  
+
   useEffect(() => {
     // Get the computed style of the root element to access CSS variables
     const computedStyle = getComputedStyle(document.documentElement);
-    const currentThemeColor = computedStyle.getPropertyValue('--theme-color').trim() || "#0c8c4d";
+    const currentThemeColor =
+      computedStyle.getPropertyValue("--theme-color").trim() || "#0c8c4d";
     setThemeColor(currentThemeColor);
   }, []);
 

@@ -9,6 +9,7 @@ import { DonationStepManager } from "@/donation/src/components/DonationStepManag
 import { CampaignDetails } from "@/components/client/interactive/CampaignDetails";
 import { ImagePreviewModal } from "@/components/client/ui/ImagePreviewModal";
 import { ShareModal } from "@/components/client/ui/ShareModal";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 interface DonationDisplayProps {
   campaign: Tables<"donation_campaigns">;
@@ -39,7 +40,7 @@ export default function DonationDisplay({
   if (!bankAccount) return <div>Bank account not found</div>;
 
   const shareUrl = shortLink
-    ? `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/r/${shortLink.short_code}`
+    ? `${DOMAIN_NAME}/r/${shortLink.short_code}`
     : typeof window !== "undefined"
     ? window.location.href
     : "";

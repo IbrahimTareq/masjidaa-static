@@ -3,6 +3,7 @@
 import { useMasjidContext } from "@/context/masjidContext";
 import { DonorInfo, PaymentFrequency } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
 import React, { useEffect, useState } from "react";
 
@@ -511,7 +512,7 @@ export default function DonationAmountSelector({
       </form>
       <div className="text-center pt-4">
         <a
-          href={`${process.env.NEXT_PUBLIC_DOMAIN_NAME}`}
+          href={`${DOMAIN_NAME}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
