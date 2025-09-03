@@ -8,14 +8,10 @@ import DonationDisplay from "@/app/[slug]/donation/[id]/donation";
 import { getDonationCount } from "@/lib/server/data/donationCount";
 import { getDonationCountMonthly } from "@/lib/server/data/donationCountMonthly";
 
-interface PageParams {
-  id: string;
-}
-
 export default async function DonationCampaignPage({
   params,
 }: {
-  params: PageParams;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 

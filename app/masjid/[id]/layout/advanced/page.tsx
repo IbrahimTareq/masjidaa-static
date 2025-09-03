@@ -2,14 +2,12 @@ import AdvancedSlideshow from "@/app/masjid/[id]/layout/advanced/AdvancedSlidesh
 import { getMasjidSlidesById } from "@/lib/server/data/masjidSlides";
 import { getServerPrayerData } from "@/lib/server/services/prayer";
 
-interface AdvancedLayoutPageProps {
-  params: { id: string };
-}
-
 export default async function AdvancedLayoutPage({
   params,
-}: AdvancedLayoutPageProps) {
-  const { id } = params;
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
   const prayerData = await getServerPrayerData(id);
   const slidesData = await getMasjidSlidesById(id, "advanced");

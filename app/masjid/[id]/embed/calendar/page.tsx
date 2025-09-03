@@ -3,11 +3,11 @@ import { Tables } from "@/database.types";
 import { convertEventsToCalendarEvents } from "@/lib/convertEventsToCalendarEvents";
 import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
 
-interface CalendarPageProps {
-  params: { id: string };
-}
-
-export default async function CalendarPage({ params }: CalendarPageProps) {
+export default async function CalendarPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   const events = await getMasjidEventsByMasjidId(id);

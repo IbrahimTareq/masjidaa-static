@@ -184,41 +184,47 @@ export default function SiteWrapper({
             </div>
 
             {/* Social Links */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
-              <div className="flex gap-4">
-                {siteSettings?.facebook_url && (
-                  <SocialLink
-                    href={siteSettings?.facebook_url || ""}
-                    icon="facebook"
-                  />
-                )}
-                {siteSettings?.twitter_url && (
-                  <SocialLink
-                    href={siteSettings?.twitter_url || ""}
-                    icon="twitter"
-                  />
-                )}
-                {siteSettings?.instagram_url && (
-                  <SocialLink
-                    href={siteSettings?.instagram_url || ""}
-                    icon="instagram"
-                  />
-                )}
-                {siteSettings?.youtube_url && (
-                  <SocialLink
-                    href={siteSettings?.youtube_url || ""}
-                    icon="youtube"
-                  />
-                )}
-                {siteSettings?.tiktok_url && (
-                  <SocialLink
-                    href={siteSettings?.tiktok_url || ""}
-                    icon="tiktok"
-                  />
-                )}
-              </div>
-            </div>
+            {siteSettings?.facebook_url ||
+              siteSettings?.twitter_url ||
+              siteSettings?.instagram_url ||
+              siteSettings?.youtube_url ||
+              (siteSettings?.tiktok_url && (
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
+                  <div className="flex gap-4">
+                    {siteSettings?.facebook_url && (
+                      <SocialLink
+                        href={siteSettings?.facebook_url || ""}
+                        icon="facebook"
+                      />
+                    )}
+                    {siteSettings?.twitter_url && (
+                      <SocialLink
+                        href={siteSettings?.twitter_url || ""}
+                        icon="twitter"
+                      />
+                    )}
+                    {siteSettings?.instagram_url && (
+                      <SocialLink
+                        href={siteSettings?.instagram_url || ""}
+                        icon="instagram"
+                      />
+                    )}
+                    {siteSettings?.youtube_url && (
+                      <SocialLink
+                        href={siteSettings?.youtube_url || ""}
+                        icon="youtube"
+                      />
+                    )}
+                    {siteSettings?.tiktok_url && (
+                      <SocialLink
+                        href={siteSettings?.tiktok_url || ""}
+                        icon="tiktok"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
           </div>
 
           {/* Bottom Bar */}

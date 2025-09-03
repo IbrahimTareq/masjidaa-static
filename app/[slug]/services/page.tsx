@@ -9,7 +9,5 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  return (
-      <ServicesClient />
-  );
+  return <ServicesClient />;
 }

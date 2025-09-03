@@ -2,14 +2,12 @@ import Slideshow from "@/components/client/interactive/Slideshow";
 import { Ticker } from "@/components/client/interactive/Ticker";
 import { getMasjidSlidesById } from "@/lib/server/data/masjidSlides";
 
-interface SimpleLayoutPageProps {
-  params: { id: string };
-}
-
 export default async function SimpleLayoutPage({
   params,
-}: SimpleLayoutPageProps) {
-  const { id } = params;
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
   // Fetch slides for this masjid with layout type "simple"
   const slidesData = await getMasjidSlidesById(id, "simple");
@@ -79,23 +77,31 @@ export default async function SimpleLayoutPage({
       }
 
       // For donation slides, we need to fetch the donation data
-      if (slide.slide_type === "donation" && (slideProps as { donationCampaignId?: string }).donationCampaignId) {
+      if (
+        slide.slide_type === "donation" &&
+        (slideProps as { donationCampaignId?: string }).donationCampaignId
+      ) {
         return {
           id: slide.id,
           slide_type: slide.slide_type,
           props: {
-            donationCampaignId: (slideProps as { donationCampaignId: string }).donationCampaignId,
+            donationCampaignId: (slideProps as { donationCampaignId: string })
+              .donationCampaignId,
           },
         };
       }
 
       // For custom slides, we need to fetch the custom slide data
-      if (slide.slide_type === "custom" && (slideProps as { customSlideId?: string }).customSlideId) {
+      if (
+        slide.slide_type === "custom" &&
+        (slideProps as { customSlideId?: string }).customSlideId
+      ) {
         return {
           id: slide.id,
           slide_type: slide.slide_type,
           props: {
-            customSlideId: (slideProps as { customSlideId: string }).customSlideId,
+            customSlideId: (slideProps as { customSlideId: string })
+              .customSlideId,
           },
         };
       }
@@ -111,7 +117,7 @@ export default async function SimpleLayoutPage({
           },
         };
       }
-      
+
       // For static slides, we need to pass the component name
       if (slide.slide_type === "static") {
         return {

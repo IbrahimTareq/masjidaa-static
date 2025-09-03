@@ -75,7 +75,8 @@ export default function Donations({
             </div>
           ) : (
             <div className="text-center text-gray-600">
-              No active donation campaigns at the moment.
+              There are currently no donation campaigns listed. Please check back
+              later for updates.
             </div>
           )}
         </div>

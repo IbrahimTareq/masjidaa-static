@@ -16,10 +16,10 @@ interface Service {
   cta?: ServiceCTA;
 }
 
-
 export default function ServicesClient() {
   const { siteSettings } = useMasjidSiteSettings();
-  const services: Service[] = (siteSettings?.services as unknown as Service[]) || [];
+  const services: Service[] =
+    (siteSettings?.services as unknown as Service[]) || [];
 
   return (
     <div className="bg-white text-black">
@@ -46,41 +46,50 @@ export default function ServicesClient() {
       {/* Services Grid */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-0">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 flex flex-col"
-              >
+          {services && services.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {services.map((service, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 flex flex-col"
+                >
                   <div className="text-theme-gradient mb-4">
                     <Info className="w-10 h-10" />
                   </div>
-                <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-                <p className="text-gray-600 mb-6">{service.description}</p>
-                {service.cta && (
-                  <a
-                    href={service.cta.link}
-                    className="mt-auto inline-flex items-center px-4 py-2 text-theme-gradient border border-theme-gradient/20 rounded-md font-medium hover:bg-theme-gradient hover:text-white transition-all duration-200 group whitespace-nowrap"
-                  >
-                    {service.cta.text}
-                    <svg
-                      className="w-4 h-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
+                  <p className="text-gray-600 mb-6">{service.description}</p>
+                  {service.cta && (
+                    <a
+                      href={service.cta.link}
+                      className="mt-auto inline-flex items-center px-4 py-2 text-theme-gradient border border-theme-gradient/20 rounded-md font-medium hover:bg-theme-gradient hover:text-white transition-all duration-200 group whitespace-nowrap"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
+                      {service.cta.text}
+                      <svg
+                        className="w-4 h-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-gray-500 max-w-md mx-auto">
+                There are currently no services listed. Please check back later
+                for updates.
+              </p>
+            </div>
+          )}
         </div>
       </section>
     </div>
