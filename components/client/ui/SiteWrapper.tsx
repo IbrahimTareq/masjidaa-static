@@ -184,11 +184,11 @@ export default function SiteWrapper({
             </div>
 
             {/* Social Links */}
-            {siteSettings?.facebook_url ||
+            {(siteSettings?.facebook_url ||
               siteSettings?.twitter_url ||
               siteSettings?.instagram_url ||
               siteSettings?.youtube_url ||
-              (siteSettings?.tiktok_url && (
+              siteSettings?.tiktok_url) && (
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
                   <div className="flex gap-4">
@@ -224,7 +224,7 @@ export default function SiteWrapper({
                     )}
                   </div>
                 </div>
-              ))}
+              )}
           </div>
 
           {/* Bottom Bar */}
