@@ -3,14 +3,9 @@
 import { useMasjidContext } from "@/context/masjidContext";
 import { DonorInfo, PaymentFrequency } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { DOMAIN_NAME, STRIPE_DONATION_FEE_PERCENTAGE } from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
 import React, { useEffect, useState } from "react";
-
-const DONATION_FEE_PERCENTAGE = Number(
-  process.env.NEXT_PUBLIC_STRIPE_DONATION_FEE_PERCENTAGE
-);
-
 interface DonationAmountSelectorProps {
   onAmountSelected: (
     amount: number,
@@ -75,7 +70,7 @@ export default function DonationAmountSelector({
           const amount =
             originalAmounts[selectedPresetAmount] || selectedPresetAmount;
           const newAmount = coverFee
-            ? (amount * (1 + DONATION_FEE_PERCENTAGE)).toFixed(2)
+            ? (amount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2)
             : amount.toString();
           setCustomAmount(newAmount);
         }
@@ -105,7 +100,7 @@ export default function DonationAmountSelector({
         if (selectedPresetAmount !== null) {
           const convertedAmount = newAmounts[selectedPresetAmount];
           const newAmount = coverFee
-            ? (convertedAmount * (1 + DONATION_FEE_PERCENTAGE)).toFixed(2)
+            ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2)
             : convertedAmount.toString();
           setCustomAmount(newAmount);
         }
@@ -132,7 +127,7 @@ export default function DonationAmountSelector({
   ]);
 
   const calculateProcessingFee = (amount: number) => {
-    return Math.round(amount * DONATION_FEE_PERCENTAGE * 100) / 100; // Round to 2 decimal places
+    return Math.round(amount * STRIPE_DONATION_FEE_PERCENTAGE * 100) / 100; // Round to 2 decimal places
   };
 
   const handleInputChange = (
@@ -149,7 +144,7 @@ export default function DonationAmountSelector({
         parseFloat(newAmount) ===
           (coverFee
             ? convertedAmounts[selectedPresetAmount] *
-              (1 + DONATION_FEE_PERCENTAGE)
+              (1 + STRIPE_DONATION_FEE_PERCENTAGE)
             : convertedAmounts[selectedPresetAmount]);
 
       if (!matchesPreset) {
@@ -169,7 +164,7 @@ export default function DonationAmountSelector({
 
     const convertedAmount = convertedAmounts[amount];
     const newAmount = coverFee
-      ? (convertedAmount * (1 + DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee if checkbox is checked
+      ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee if checkbox is checked
       : convertedAmount.toString();
     setCustomAmount(newAmount);
     setErrors((prev) => ({ ...prev, amount: undefined }));
@@ -182,7 +177,7 @@ export default function DonationAmountSelector({
     if (selectedPresetAmount !== null) {
       const convertedAmount = convertedAmounts[selectedPresetAmount];
       const newAmount = checked
-        ? (convertedAmount * (1 + DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
+        ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
         : convertedAmount.toString(); // Original amount without fee
 
       setCustomAmount(newAmount);
@@ -195,8 +190,8 @@ export default function DonationAmountSelector({
     if (isNaN(baseAmount)) return;
 
     const newAmount = checked
-      ? (baseAmount * (1 + DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
-      : (baseAmount / (1 + DONATION_FEE_PERCENTAGE)).toFixed(2); // Remove fee if it was included
+      ? (baseAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
+      : (baseAmount / (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2); // Remove fee if it was included
 
     setCustomAmount(newAmount);
   };
@@ -256,7 +251,7 @@ export default function DonationAmountSelector({
   const getBaseAmount = () => {
     const amount = parseFloat(customAmount);
     if (isNaN(amount)) return 0;
-    return coverFee ? amount / (1 + DONATION_FEE_PERCENTAGE) : amount; // Get base amount by removing fee if it's included
+    return coverFee ? amount / (1 + STRIPE_DONATION_FEE_PERCENTAGE) : amount; // Get base amount by removing fee if it's included
   };
 
   if (!masjid) return null;
