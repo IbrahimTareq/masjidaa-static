@@ -110,9 +110,9 @@ export default function AnnouncementSlide({ announcementId }: AnnouncementSlideP
               {/* Right Column - Announcement Image */}
               <div className="lg:w-[480px] flex flex-col gap-6">
                 <div className="aspect-[5/6] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100">
-                  {announcement.image_url ? (
+                  {announcement.image ? (
                     <img
-                      src={announcement.image_url}
+                      src={announcement.image}
                       alt={announcement.title}
                       className="w-full h-full object-contain p-4"
                     />
