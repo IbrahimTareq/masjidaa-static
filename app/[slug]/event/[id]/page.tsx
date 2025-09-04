@@ -13,5 +13,29 @@ export default async function Page({
     return <div>Event not found</div>;
   }
 
-  return <EventClient event={event} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    startDate: event.date,
+    endDate: event.date,
+    location: {
+      "@type": "Place",
+      name: event.location,
+    },
+    image: event.image,
+    description: event.description,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <EventClient event={event} />
+    </>
+  );
 }
