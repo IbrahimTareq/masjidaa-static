@@ -2,19 +2,15 @@
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { FormattedData } from "@/lib/server/services/prayer";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default function Theme3({
   formattedData,
 }: {
   formattedData: FormattedData;
 }) {
-  const {
-    prayerTimes,
-    jummahTimes,
-    lastUpdated,
-    hijriDate,
-    gregorianDate,
-  } = formattedData;
+  const { prayerTimes, jummahTimes, lastUpdated, hijriDate, gregorianDate } =
+    formattedData;
 
   return (
     <div className="bg-white text-gray-800 min-h-screen">
@@ -157,7 +153,14 @@ export default function Theme3({
           <div className="flex items-center justify-between text-xs text-gray-600">
             <div className="flex items-center">
               <span>Powered by </span>
-              <span className="font-bold ml-1 text-theme">Masjidaa</span>
+              <a
+                href={`${DOMAIN_NAME}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold ml-1 text-theme"
+              >
+                {BRAND_NAME}
+              </a>
             </div>
             {lastUpdated && (
               <span className="text-gray-400">{lastUpdated}</span>

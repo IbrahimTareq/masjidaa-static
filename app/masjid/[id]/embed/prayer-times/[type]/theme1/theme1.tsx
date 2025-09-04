@@ -4,6 +4,7 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
 import { FormattedData } from "@/lib/server/services/prayer";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { useEffect, useState } from "react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
@@ -218,7 +219,14 @@ export default function Theme1({
           <div className="flex items-center justify-between text-xs text-white/70">
             <div className="flex items-center">
               <span>Powered by </span>
-              <span className="font-bold ml-1 text-white">Masjidaa</span>
+              <a
+                href={`${DOMAIN_NAME}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold ml-1 text-white"
+              >
+                {BRAND_NAME}
+              </a>
             </div>
             {lastUpdated && (
               <span className="text-white/50">{lastUpdated}</span>

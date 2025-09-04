@@ -3,10 +3,9 @@
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useMasjidContext } from "@/context/masjidContext";
 import { FormattedData } from "@/lib/server/services/prayer";
-import {
-  calculateCountdown,
-  getTimeUntilNextInSeconds
-} from "@/utils/prayer";
+import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME } from "@/utils/shared/constants";
 import { useEffect, useState } from "react";
 
 export default function Theme5({
@@ -25,7 +24,7 @@ export default function Theme5({
     gregorianDate,
     timeUntilNext,
   } = formattedData;
-  const masjid = useMasjidContext();  
+  const masjid = useMasjidContext();
 
   const [secondsLeft, setSecondsLeft] = useState(() =>
     getTimeUntilNextInSeconds(timeUntilNext)
@@ -263,11 +262,16 @@ export default function Theme5({
         <div className="flex items-center justify-between text-xs text-gray-100">
           <div className="flex items-center">
             <span>Powered by </span>
-            <span className="font-bold ml-1 text-white">Masjidaa</span>
+            <a
+              href={`${DOMAIN_NAME}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold ml-1 text-white"
+            >
+              {BRAND_NAME}
+            </a>
           </div>
-          {lastUpdated && (
-            <span className="text-white">{lastUpdated}</span>
-          )}
+          {lastUpdated && <span className="text-white">{lastUpdated}</span>}
         </div>
       </div>
     </div>

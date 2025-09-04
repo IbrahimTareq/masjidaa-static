@@ -3,7 +3,11 @@
 import { useMasjidContext } from "@/context/masjidContext";
 import { DonorInfo, PaymentFrequency } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
-import { DOMAIN_NAME, STRIPE_DONATION_FEE_PERCENTAGE } from "@/utils/shared/constants";
+import {
+  BRAND_NAME,
+  DOMAIN_NAME,
+  STRIPE_DONATION_FEE_PERCENTAGE,
+} from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
 import React, { useEffect, useState } from "react";
 interface DonationAmountSelectorProps {
@@ -100,7 +104,9 @@ export default function DonationAmountSelector({
         if (selectedPresetAmount !== null) {
           const convertedAmount = newAmounts[selectedPresetAmount];
           const newAmount = coverFee
-            ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2)
+            ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(
+                2
+              )
             : convertedAmount.toString();
           setCustomAmount(newAmount);
         }
@@ -237,7 +243,7 @@ export default function DonationAmountSelector({
     const donorInfoWithCurrencyAndShortLink = {
       ...donorInfo,
       currency: selectedCurrency,
-      shortLink
+      shortLink,
     };
 
     // Convert to cents/pence for Stripe
@@ -506,13 +512,14 @@ export default function DonationAmountSelector({
         </button>
       </form>
       <div className="text-center pt-4">
+        <span className="text-xs text-gray-500">Powered by </span>
         <a
           href={`${DOMAIN_NAME}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+          className="text-xs text-gray-500 hover:text-black transition-colors"
         >
-          Powered by Masjidaa
+          {BRAND_NAME}
         </a>
       </div>
     </div>

@@ -938,6 +938,53 @@ export type Database = {
           },
         ]
       }
+      masjid_subscriptions: {
+        Row: {
+          canceled_at: string | null
+          created_at: string | null
+          current_period_end: string
+          current_period_start: string
+          id: string
+          masjid_id: string
+          status: string
+          stripe_customer_id: string
+          tier: Database["public"]["Enums"]["subscription_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          canceled_at?: string | null
+          created_at?: string | null
+          current_period_end: string
+          current_period_start: string
+          id?: string
+          masjid_id: string
+          status: string
+          stripe_customer_id: string
+          tier: Database["public"]["Enums"]["subscription_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          canceled_at?: string | null
+          created_at?: string | null
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          masjid_id?: string
+          status?: string
+          stripe_customer_id?: string
+          tier?: Database["public"]["Enums"]["subscription_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_subscriptions_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masjid_tickers: {
         Row: {
           created_at: string | null
@@ -998,11 +1045,7 @@ export type Database = {
           slug: string
           state: string | null
           street: string | null
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          subscription_current_period_end: string | null
-          subscription_status: string | null
-          subscription_tier: Database["public"]["Enums"]["subscription_type"]
+          subscription_id: string | null
           suburb: string | null
           theme_color_id: string | null
           updated_at: string | null
@@ -1033,11 +1076,7 @@ export type Database = {
           slug: string
           state?: string | null
           street?: string | null
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          subscription_current_period_end?: string | null
-          subscription_status?: string | null
-          subscription_tier?: Database["public"]["Enums"]["subscription_type"]
+          subscription_id?: string | null
           suburb?: string | null
           theme_color_id?: string | null
           updated_at?: string | null
@@ -1068,11 +1107,7 @@ export type Database = {
           slug?: string
           state?: string | null
           street?: string | null
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          subscription_current_period_end?: string | null
-          subscription_status?: string | null
-          subscription_tier?: Database["public"]["Enums"]["subscription_type"]
+          subscription_id?: string | null
           suburb?: string | null
           theme_color_id?: string | null
           updated_at?: string | null
@@ -1085,6 +1120,13 @@ export type Database = {
             columns: ["short_link_id"]
             isOneToOne: false
             referencedRelation: "short_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masjids_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "masjid_subscriptions"
             referencedColumns: ["id"]
           },
           {

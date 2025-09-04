@@ -3,7 +3,7 @@
 import { Tables } from "@/database.types";
 import { useDonation } from "@/donation/src/context/DonationContext";
 import { formatCurrency } from "@/utils/currency";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { Target, TrendingUp, Users } from "lucide-react";
 import React from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -126,13 +126,14 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
 
       {/* Powered By */}
       <div className="text-center pt-4">
+        <span className="text-xs text-gray-500">Powered by </span>
         <a
           href={`${DOMAIN_NAME}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+          className="text-xs text-gray-500 hover:text-black transition-colors"
         >
-          Powered by Masjidaa
+          {BRAND_NAME}
         </a>
       </div>
     </div>

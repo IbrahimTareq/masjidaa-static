@@ -2,7 +2,7 @@
 
 import { PaymentMode, RecurringMeta } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import {
   Elements,
   PaymentElement,
@@ -155,13 +155,14 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
    */
   const FormFooter = () => (
     <div className="text-center pb-4">
+      <span className="text-xs text-gray-500">Powered by </span>
       <a
         href={`${DOMAIN_NAME}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+        className="text-xs text-gray-500 hover:text-black transition-colors"
       >
-        Powered by Masjidaa
+        {BRAND_NAME}
       </a>
     </div>
   );

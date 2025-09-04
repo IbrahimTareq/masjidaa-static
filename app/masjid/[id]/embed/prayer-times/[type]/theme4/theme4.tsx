@@ -1,6 +1,7 @@
 "use client";
 
 import { FormattedData } from "@/lib/server/services/prayer";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,13 +11,8 @@ export default function Theme4({
 }: {
   formattedData: FormattedData;
 }) {
-  const {
-    prayerTimes,
-    jummahTimes,
-    lastUpdated,
-    hijriDate,
-    gregorianDate,
-  } = formattedData;
+  const { prayerTimes, jummahTimes, lastUpdated, hijriDate, gregorianDate } =
+    formattedData;
 
   return (
     <div className="bg-white min-h-screen font-sans">
@@ -140,16 +136,19 @@ export default function Theme4({
         </div>
 
         {/* Footer */}
-        <div className="py-3">
-          <div className="flex items-center justify-between text-xs text-gray-600">
-            <div className="flex items-center">
-              <span>Powered by </span>
-              <span className="font-bold ml-1 text-theme">Masjidaa</span>
-            </div>
-            {lastUpdated && (
-              <span className="text-gray-400">{lastUpdated}</span>
-            )}
+        <div className="flex items-center justify-between text-xs text-gray-600">
+          <div className="flex items-center">
+            <span>Powered by </span>
+            <a
+              href={`${DOMAIN_NAME}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold ml-1 text-theme"
+            >
+              {BRAND_NAME}
+            </a>
           </div>
+          {lastUpdated && <span className="text-gray-400">{lastUpdated}</span>}
         </div>
       </div>
     </div>
