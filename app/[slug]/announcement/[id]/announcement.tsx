@@ -14,7 +14,7 @@ export default function AnnouncementClient({
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
   const openImagePreview = () => {
-    if (announcement?.image_url) {
+    if (announcement?.image) {
       setIsImagePreviewOpen(true);
     }
   };
@@ -65,9 +65,9 @@ export default function AnnouncementClient({
                 className="aspect-[4/3] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 cursor-pointer transition-transform hover:scale-[1.02]"
                 onClick={openImagePreview}
               >
-                {announcement.image_url ? (
+                {announcement.image ? (
                   <img
-                    src={announcement.image_url}
+                    src={announcement.image}
                     alt={announcement.title}
                     className="w-full h-full object-contain p-4"
                   />
@@ -83,7 +83,7 @@ export default function AnnouncementClient({
       </div>
 
       {/* Image Preview Modal */}
-      {isImagePreviewOpen && announcement.image_url && (
+      {isImagePreviewOpen && announcement.image && (
         <div
           className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
           onClick={closeImagePreview}
@@ -95,7 +95,7 @@ export default function AnnouncementClient({
             <X className="w-6 h-6 text-white" />
           </button>
           <img
-            src={announcement.image_url}
+            src={announcement.image}
             alt={announcement.title}
             className="max-w-full max-h-[90vh] object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}

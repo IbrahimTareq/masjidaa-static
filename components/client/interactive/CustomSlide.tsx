@@ -45,7 +45,7 @@ export default function CustomSlide({ customSlideId }: CustomSlideProps) {
       className="h-full w-full flex items-center justify-center bg-white overflow-hidden"
     >
       <img
-        src={customSlide?.image_url}
+        src={customSlide?.image}
         alt={customSlide?.title}
         className="w-full h-full object-contain"
       />

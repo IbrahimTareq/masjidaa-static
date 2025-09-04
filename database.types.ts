@@ -19,7 +19,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          image_url: string | null
+          image: string | null
           masjid_id: string
           pinned: boolean
           push_notification: boolean | null
@@ -31,7 +31,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image_url?: string | null
+          image?: string | null
           masjid_id: string
           pinned?: boolean
           push_notification?: boolean | null
@@ -43,7 +43,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image_url?: string | null
+          image?: string | null
           masjid_id?: string
           pinned?: boolean
           push_notification?: boolean | null
@@ -493,7 +493,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          image_url: string
+          image: string
           masjid_id: string
           title: string
           updated_at: string | null
@@ -502,7 +502,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image_url: string
+          image: string
           masjid_id: string
           title: string
           updated_at?: string | null
@@ -511,7 +511,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image_url?: string
+          image?: string
           masjid_id?: string
           title?: string
           updated_at?: string | null

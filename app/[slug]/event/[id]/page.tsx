@@ -3,10 +3,13 @@ import EventClient from "./event";
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
+  const eventDate = (await searchParams).eventDate;
   const event = await getEvent(id);
 
   if (!event) {
@@ -17,8 +20,8 @@ export default async function Page({
     "@context": "https://schema.org",
     "@type": "Event",
     name: event.title,
-    startDate: event.date,
-    endDate: event.date,
+    startDate: eventDate || event.date,
+    endDate: eventDate || event.date,
     location: {
       "@type": "Place",
       name: event.location,

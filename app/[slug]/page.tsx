@@ -4,6 +4,7 @@ import { getMasjidDonationCampaignById } from "@/lib/server/data/masjidDonationC
 import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/data/masjidSiteSettings";
 import { getServerPrayerData } from "@/lib/server/services/prayer";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default async function Page({
   params,
@@ -13,7 +14,7 @@ export default async function Page({
   const { slug } = await params;
 
   const masjid = await getMasjidBySlug(slug);
-  
+
   if (!masjid) {
     return <div>Masjid not found</div>;
   }
@@ -23,10 +24,56 @@ export default async function Page({
 
   const siteSettings = await getMasjidSiteSettingsByMasjidId(masjid.id);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    url: masjid.website,
+    sameAs: `${DOMAIN_NAME}/${slug}`,
+    logo: masjid.logo,
+    name: masjid.name,
+    description: masjid.description,
+    email: masjid.email,
+    telephone: masjid.contact_number,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: masjid.street,
+      addressLocality: masjid.city,
+      addressCountry: masjid.country,
+      addressRegion: masjid.region,
+      postalCode: masjid.postcode,
+    },
+  };
+
   if (siteSettings?.featured_campaign_id) {
-    const campaign = await getMasjidDonationCampaignById(siteSettings.featured_campaign_id);
-    return <HomeClient prayerData={prayerData} events={events ?? []} campaign={campaign ?? null} />;
+    const campaign = await getMasjidDonationCampaignById(
+      siteSettings.featured_campaign_id
+    );
+    return (
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <HomeClient
+          prayerData={prayerData}
+          events={events ?? []}
+          campaign={campaign ?? null}
+        />
+      </>
+    );
   }
 
-  return <HomeClient prayerData={prayerData} events={events ?? []} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <HomeClient prayerData={prayerData} events={events ?? []} />
+    </>
+  );
 }

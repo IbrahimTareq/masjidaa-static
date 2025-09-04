@@ -124,7 +124,6 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
         </button>
       </div>
 
-      {/* Powered By */}
       <div className="text-center pt-4">
         <span className="text-xs text-gray-500">Powered by </span>
         <a

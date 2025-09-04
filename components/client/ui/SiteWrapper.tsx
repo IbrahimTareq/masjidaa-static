@@ -2,6 +2,7 @@
 
 import { useMasjidContext } from "@/context/masjidContext";
 import { Tables } from "@/database.types";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 import React, { useState } from "react";
 import { SocialIcon } from "react-social-icons";
 
@@ -189,42 +190,42 @@ export default function SiteWrapper({
               siteSettings?.instagram_url ||
               siteSettings?.youtube_url ||
               siteSettings?.tiktok_url) && (
-                <div>
-                  <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
-                  <div className="flex gap-4">
-                    {siteSettings?.facebook_url && (
-                      <SocialLink
-                        href={siteSettings?.facebook_url || ""}
-                        icon="facebook"
-                      />
-                    )}
-                    {siteSettings?.twitter_url && (
-                      <SocialLink
-                        href={siteSettings?.twitter_url || ""}
-                        icon="twitter"
-                      />
-                    )}
-                    {siteSettings?.instagram_url && (
-                      <SocialLink
-                        href={siteSettings?.instagram_url || ""}
-                        icon="instagram"
-                      />
-                    )}
-                    {siteSettings?.youtube_url && (
-                      <SocialLink
-                        href={siteSettings?.youtube_url || ""}
-                        icon="youtube"
-                      />
-                    )}
-                    {siteSettings?.tiktok_url && (
-                      <SocialLink
-                        href={siteSettings?.tiktok_url || ""}
-                        icon="tiktok"
-                      />
-                    )}
-                  </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
+                <div className="flex gap-4">
+                  {siteSettings?.facebook_url && (
+                    <SocialLink
+                      href={siteSettings?.facebook_url || ""}
+                      icon="facebook"
+                    />
+                  )}
+                  {siteSettings?.twitter_url && (
+                    <SocialLink
+                      href={siteSettings?.twitter_url || ""}
+                      icon="twitter"
+                    />
+                  )}
+                  {siteSettings?.instagram_url && (
+                    <SocialLink
+                      href={siteSettings?.instagram_url || ""}
+                      icon="instagram"
+                    />
+                  )}
+                  {siteSettings?.youtube_url && (
+                    <SocialLink
+                      href={siteSettings?.youtube_url || ""}
+                      icon="youtube"
+                    />
+                  )}
+                  {siteSettings?.tiktok_url && (
+                    <SocialLink
+                      href={siteSettings?.tiktok_url || ""}
+                      icon="tiktok"
+                    />
+                  )}
                 </div>
-              )}
+              </div>
+            )}
           </div>
 
           {/* Bottom Bar */}
@@ -233,7 +234,15 @@ export default function SiteWrapper({
               <p className="text-gray-600">
                 © {new Date().getFullYear()} {masjid.name}. All rights reserved.
               </p>
-              <p className="text-gray-600">Powered by Masjidaa</p>
+              <p className="text-gray-600">
+                <span>Powered by </span>
+                <a
+                  href={`${DOMAIN_NAME}`}
+                  className="text-black hover:text-gray-600 transition-colors"
+                >
+                  Masjidaa
+                </a>
+              </p>
             </div>
           </div>
         </div>
