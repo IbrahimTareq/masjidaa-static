@@ -4,7 +4,7 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
 import { FormattedData } from "@/lib/server/services/prayer";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
-import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import { useEffect, useState } from "react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
@@ -178,15 +178,7 @@ export default function Theme1({
               )}
 
               <Swiper
-                spaceBetween={30}
-                centeredSlides={true}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
-                navigation={false}
-                modules={[Autoplay]}
-                className="mySwiper"
+                {...SWIPER_SETTINGS}
               >
                 {jummahTimes.map((session, index) => (
                   <SwiperSlide key={index}>

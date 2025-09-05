@@ -58,6 +58,26 @@ export function useSlidesRealtime(masjidId: string) {
         },
         handleChange
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "masjid_tickers",
+          filter: `masjid_id=eq.${masjidId}`,
+        },
+        handleChange
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "donation_campaigns",
+          filter: `masjid_id=eq.${masjidId}`,
+        },
+        handleChange
+      )
       .subscribe(() => {
         console.log(`Subscribed to real-time updates for masjid ${masjidId}`);
       });

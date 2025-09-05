@@ -1,12 +1,15 @@
 "use client";
 
-import { Calendar, MapPin } from "lucide-react";
-import QRCodeStyling from "qr-code-styling";
-import { useEffect, useRef, useState } from "react";
 import PrayerLayout from "@/components/LayoutWithHeader";
-import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
+import { useMasjidContext } from "@/context/masjidContext";
 import type { Tables } from "@/database.types";
+import { useQRCode } from "@/hooks/useQRCode";
+import { useRandomHadith } from "@/hooks/useRandomHadith";
 import { getDonationCampaign } from "@/lib/server/actions/donationCampaignActions";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
+import getSymbolFromCurrency from "currency-symbol-map";
+import { Calendar } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface DonationSlideProps {
   donationCampaignId: string;
@@ -19,8 +22,11 @@ export default function DonationSlide({
     useState<Tables<"donation_campaigns"> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const { formatTime, formatDate } = useDateTimeFormat();
   const qrRef = useRef<HTMLDivElement>(null);
+
+  const masjid = useMasjidContext();
+  const { hadith } = useRandomHadith();
+  const currencySymbol = getSymbolFromCurrency(masjid?.local_currency || "AUD");
 
   // Fetch event data
   useEffect(() => {
@@ -43,44 +49,14 @@ export default function DonationSlide({
     fetchDonationCampaign();
   }, [donationCampaignId]);
 
-  // Generate QR code when event is loaded
-  useEffect(() => {
-    if (donationCampaign && donationCampaignId && qrRef.current) {
-      // Clear previous QR code
-      qrRef.current.innerHTML = "";
-
-      // Get current URL and construct event page URL
-      const currentUrl = window.location.origin;
-      const pathParts = window.location.pathname.split("/");
-      const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
-      const donationCampaignUrl = `${currentUrl}/${masjidSlug}/donation-campaign/${donationCampaignId}`;
-
-      // Create QR code with styling
-      const qrCode = new QRCodeStyling({
-        width: 300,
-        height: 300,
-        type: "svg",
-        data: donationCampaignUrl,
-        dotsOptions: {
-          color: "#374151", // gray-700
-          type: "rounded",
-        },
-        backgroundOptions: {
-          color: "#ffffff",
-        },
-        cornersSquareOptions: {
-          color: "#374151",
-          type: "rounded",
-        },
-        cornersDotOptions: {
-          color: "#374151",
-          type: "rounded",
-        },
-      });
-
-      qrCode.append(qrRef.current);
-    }
-  }, [donationCampaign, donationCampaignId]);
+  useQRCode(
+    {
+      data: `${DOMAIN_NAME}/${masjid?.slug}/donation/${donationCampaignId}`,
+      width: 300,
+      height: 300,
+    },
+    qrRef
+  );
 
   // Loading state
   if (loading) {
@@ -128,10 +104,10 @@ export default function DonationSlide({
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 mb-8">
                   <div>
                     <div
-                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden"
+                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden truncate"
                       style={{
                         display: "-webkit-box",
-                        WebkitLineClamp: 9,
+                        WebkitLineClamp: 7,
                         WebkitBoxOrient: "vertical",
                       }}
                     >
@@ -143,38 +119,47 @@ export default function DonationSlide({
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 mb-8">
                   <div>
                     <div
-                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden"
+                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden italic"
                       style={{
                         display: "-webkit-box",
                         WebkitLineClamp: 9,
                         WebkitBoxOrient: "vertical",
                       }}
                     >
-                      <p className="font-light">
-                        Allah سبحانه وتعالى says in the Quran:
-                      </p>
-                      <p className="font-bold mt-2 text-2xl">
-                        مَّثَلُ ٱلَّذِينَ يُنفِقُونَ أَمْوَٰلَهُمْ فِى سَبِيلِ
-                        ٱللَّهِ كَمَثَلِ حَبَّةٍ أَنۢبَتَتْ سَبْعَ سَنَابِلَ فِى
-                        كُلِّ سُنۢبُلَةٍۢ مِّا۟ئَةُ حَبَّةٍۢ ۗ وَٱللَّهُ
-                        يُضَـٰعِفُ لِمَن يَشَآءُ ۗ
-                      </p>
-                      <p className="font-semibold mt-2">
-                        "The example of those who spend their wealth in the
-                        cause of Allah is that of a grain that sprouts into
-                        seven ears, each bearing one hundred grains. And Allah
-                        multiplies the reward even more to whoever He wills. For
-                        Allah is All-Bountiful, All-Knowing."
-                      </p>
-                      <p className="font-light mt-2">[Surah Baqarah 2:261]</p>
+                      <p className="mt-2">{hadith.text}</p>
+                      <p className="font-light mt-2">- {hadith.source}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Column - Event Image */}
-              <div className="lg:w-[480px] flex flex-col">
-                <div className="rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 p-6 flex flex-col items-center justify-center">
+              <div className="lg:w-[480px] flex flex-col mt-18">
+                <div className="justify-center items-center py-2 mb-4">
+                  <div className="mt-auto">
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                      <div
+                        className="bg-theme h-2 rounded-full"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            (donationCampaign.amount_raised /
+                              donationCampaign.target_amount) *
+                              100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+
+                    <p className="font-medium text-lg truncate">
+                      {currencySymbol}
+                      {donationCampaign.amount_raised} donated of&nbsp;
+                      {currencySymbol}
+                      {donationCampaign.target_amount}
+                    </p>
+                  </div>
+                </div>
+                <div className="rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
                   <h3 className="font-semibold text-gray-900 text-2xl text-center mb-4">
                     Scan to donate
                   </h3>

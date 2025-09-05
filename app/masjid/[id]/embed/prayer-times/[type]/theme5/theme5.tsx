@@ -49,7 +49,7 @@ export default function Theme5({
   const countdown = calculateCountdown(secondsLeft);
 
   return (
-    <div className="bg-gradient-to-br from-theme via-theme-gradient to-theme text-white p-4 sm:p-6 lg:p-8">
+    <div className="bg-gradient-to-br from-theme via-theme-gradient to-theme text-white p-4 sm:p-6 lg:p-8 font-montserrat">
       {/* Two Column Layout */}
       <div className="grid grid-cols-12 gap-6 lg:gap-12 h-full">
         {/* Left Side - Countdown */}

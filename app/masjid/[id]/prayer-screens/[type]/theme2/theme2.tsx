@@ -6,6 +6,7 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/services/prayer";
 
+import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -29,7 +30,7 @@ export default function PrayerClient({
   const countdown = useCountdown(timeUntilNext);
 
   return (
-    <div className="font-sans h-screen">
+    <div className="font-montserrat h-screen">
       <div className="max-w-7xl 2xl:max-w-full mx-auto h-full w-full">
         {/* Mobile Layout */}
         <div className="lg:hidden bg-white rounded-2xl sm:rounded-3xl h-full flex flex-col overflow-hidden shadow-2xl">
@@ -305,7 +306,7 @@ export default function PrayerClient({
                   <div className="flex justify-center items-center gap-3 xl:gap-4 2xl:gap-6">
                     <div className="text-center">
                       <div className="bg-white rounded-2xl shadow-lg px-4 py-4 xl:px-6 xl:py-6 2xl:px-8 2xl:py-8 min-w-[100px] xl:min-w-[120px] 2xl:min-w-[140px] border border-gray-200">
-                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-light text-gray-900 tabular-nums">
+                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-semibold text-gray-900 tabular-nums">
                           {countdown.hours}
                         </div>
                       </div>
@@ -320,7 +321,7 @@ export default function PrayerClient({
 
                     <div className="text-center">
                       <div className="bg-white rounded-2xl shadow-lg px-4 py-4 xl:px-6 xl:py-6 2xl:px-8 2xl:py-8 min-w-[100px] xl:min-w-[120px] 2xl:min-w-[140px] border border-gray-200">
-                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-light text-gray-900 tabular-nums">
+                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-semibold text-gray-900 tabular-nums">
                           {countdown.minutes}
                         </div>
                       </div>
@@ -335,7 +336,7 @@ export default function PrayerClient({
 
                     <div className="text-center">
                       <div className="bg-white rounded-2xl shadow-lg px-4 py-4 xl:px-6 xl:py-6 2xl:px-8 2xl:py-8 min-w-[100px] xl:min-w-[120px] 2xl:min-w-[140px] border border-gray-200">
-                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-light text-gray-900 tabular-nums">
+                        <div className="text-3xl xl:text-5xl 2xl:text-6xl font-semibold text-gray-900 tabular-nums">
                           {countdown.seconds}
                         </div>
                       </div>
@@ -386,7 +387,7 @@ export default function PrayerClient({
                           <div className="text-xs xl:text-sm font-medium mb-1 xl:mb-2 uppercase">
                             Starts
                           </div>
-                          <div className="text-2xl xl:text-3xl 2xl:text-4xl font-semibold tabular-nums">
+                          <div className="text-2xl xl:text-3xl font-bold tabular-nums">
                             {prayer.starts}
                           </div>
                         </div>
@@ -394,7 +395,7 @@ export default function PrayerClient({
                           <div className="text-xs xl:text-sm font-medium mb-1 xl:mb-2 uppercase">
                             Iqamah
                           </div>
-                          <div className="text-2xl xl:text-3xl 2xl:text-4xl font-semibold tabular-nums">
+                          <div className="text-2xl xl:text-3xl font-bold tabular-nums">
                             {prayer.iqamah}
                           </div>
                         </div>
@@ -405,18 +406,7 @@ export default function PrayerClient({
 
                 {/* Jummah Card - Now part of the grid */}
                 <div className="bg-gray-100 rounded-2xl p-4 xl:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                  <Swiper
-                    spaceBetween={30}
-                    centeredSlides={true}
-                    autoplay={{
-                      delay: 5000,
-                      disableOnInteraction: false,
-                    }}
-                    navigation={false}
-                    modules={[Autoplay]}
-                    className="mySwiper"
-                  >
-                    {" "}
+                  <Swiper {...SWIPER_SETTINGS}>
                     {jummahTimes?.map((session, index) => (
                       <SwiperSlide key={index}>
                         {/* Prayer Name */}
@@ -434,7 +424,7 @@ export default function PrayerClient({
                             <div className="text-xs xl:text-sm text-gray-500 font-medium mb-1 xl:mb-2 uppercase">
                               Starts
                             </div>
-                            <div className="text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-700 tabular-nums">
+                            <div className="text-2xl xl:text-3xl font-bold text-gray-700 tabular-nums">
                               {session.starts}
                             </div>
                           </div>
@@ -442,7 +432,7 @@ export default function PrayerClient({
                             <div className="text-xs xl:text-sm text-gray-500 font-medium mb-1 xl:mb-2 uppercase">
                               Khutbah
                             </div>
-                            <div className="text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-900 tabular-nums">
+                            <div className="text-2xl xl:text-3xl font-bold text-gray-900 tabular-nums">
                               {session.khutbah}
                             </div>
                           </div>

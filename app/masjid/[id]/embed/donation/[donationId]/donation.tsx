@@ -13,7 +13,7 @@ export default function Donation({
 
   return (
     <div className="bg-white text-black max-w-sm mx-auto font-montserrat">
-      <DonationComponent campaign={campaign} slug={masjid?.slug || ""} /> 
+      <DonationComponent campaign={campaign} masjid={masjid} /> 
     </div>
   );
 }

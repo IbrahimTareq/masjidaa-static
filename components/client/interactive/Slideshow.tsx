@@ -117,7 +117,7 @@ export default function Slideshow({ slides }: SlideshowProps) {
   useEffect(() => {
     if (hasUpdates) {
       const timer = setTimeout(() => {
-        console.log("Auto-refreshing due to prayer data updates");
+        console.log("Auto-refreshing due to slides data updates");
         window.location.reload();
       }, 1000);
 

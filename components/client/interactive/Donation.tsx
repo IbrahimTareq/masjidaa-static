@@ -5,13 +5,17 @@ import { Tables } from "@/database.types";
 import { Heart } from "lucide-react";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import Link from "next/link";
+import getSymbolFromCurrency from "currency-symbol-map";
+import { Masjid } from "@/context/masjidContext";
 
 interface DonationProps {
   campaign: Tables<"donation_campaigns">;
-  slug: string;
+  masjid: Masjid;
 }
 
-export const Donation: React.FC<DonationProps> = ({ campaign, slug }) => {
+export const Donation: React.FC<DonationProps> = ({ campaign, masjid }) => {
+  const currencySymbol = getSymbolFromCurrency(masjid?.local_currency || "AUD");
+
   return (
     <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 block">
       <div className="relative h-48 overflow-hidden">
@@ -29,9 +33,7 @@ export const Donation: React.FC<DonationProps> = ({ campaign, slug }) => {
       </div>
 
       <div className="p-6 flex flex-col h-[180px]">
-        <h3 className="text-xl font-semibold mb-3 line-clamp-2">
-          {campaign.name}
-        </h3>
+        <h3 className="text-xl font-bold mb-3 line-clamp-2">{campaign.name}</h3>
 
         <div className="mt-auto">
           <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
@@ -46,19 +48,19 @@ export const Donation: React.FC<DonationProps> = ({ campaign, slug }) => {
             ></div>
           </div>
 
-          <p className="font-semibold text-lg truncate">
-            ${campaign.amount_raised.toLocaleString()} donated of $
-            {campaign.target_amount.toLocaleString()}
+          <p className="font-medium text-lg truncate">
+            {currencySymbol}{campaign.amount_raised} donated of&nbsp;
+            {currencySymbol}{campaign.target_amount}
           </p>
         </div>
       </div>
 
       <div className="px-6">
         <Link
-          href={`/${slug}/donation/${campaign.id}`}
+          href={`/${masjid?.slug}/donation/${campaign.id}`}
           className="block w-full"
         >
-          <button className="w-full bg-theme-gradient text-white text-xl font-semibold py-3 px-4 rounded-xl cursor-pointer">
+          <button className="w-full bg-theme-gradient text-white text-xl font-bold py-3 px-4 rounded-xl cursor-pointer">
             Donate
           </button>
         </Link>

@@ -6,8 +6,8 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/services/prayer";
 
+import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
-import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 interface DateSectionProps {
@@ -100,13 +100,8 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const {
-    prayerTimes,
-    jummahTimes,
-    timeUntilNext,
-    hijriDate,
-    gregorianDate,
-  } = formattedData;
+  const { prayerTimes, jummahTimes, timeUntilNext, hijriDate, gregorianDate } =
+    formattedData;
   const masjid = useMasjidContext();
 
   return (
@@ -116,7 +111,10 @@ export default function PrayerClient({
           {/* Mobile Sidebar Content - Shows first on mobile */}
           <div className="lg:hidden mb-6 space-y-4">
             {/* Dates */}
-            <DateSection hijriDate={hijriDate || ""} gregorianDate={gregorianDate || ""} />
+            <DateSection
+              hijriDate={hijriDate || ""}
+              gregorianDate={gregorianDate || ""}
+            />
 
             {/* Current Time */}
             <TimeSection timeUntilNext={timeUntilNext} isMobile />
@@ -207,15 +205,7 @@ export default function PrayerClient({
               {/* Jumu'ah */}
               <div className="text-center">
                 <Swiper
-                  spaceBetween={30}
-                  centeredSlides={true}
-                  autoplay={{
-                    delay: 5000,
-                    disableOnInteraction: false,
-                  }}
-                  navigation={false}
-                  modules={[Autoplay]}
-                  className="mySwiper"
+                  {...SWIPER_SETTINGS}
                 >
                   {jummahTimes &&
                     jummahTimes.map((session, index) => (
@@ -269,17 +259,7 @@ export default function PrayerClient({
 
             {/* Mobile Jumu'ah - Shows after prayer table on mobile */}
             <div className="lg:hidden bg-gray-50 rounded-lg p-4">
-              <Swiper
-                spaceBetween={30}
-                centeredSlides={true}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
-                navigation={false}
-                modules={[Autoplay]}
-                className="mySwiper"
-              >
+              <Swiper {...SWIPER_SETTINGS}>
                 {jummahTimes &&
                   jummahTimes.map((session, index) => (
                     <SwiperSlide key={index} className="h-full">

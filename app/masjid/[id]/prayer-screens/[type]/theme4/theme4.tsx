@@ -1,13 +1,12 @@
 "use client";
 
 import LayoutWithHeader from "@/components/LayoutWithHeader";
-import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useCountdown } from "@/hooks/useCountdown";
 import { FormattedData } from "@/lib/server/services/prayer";
 
+import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
-import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function PrayerClient({
@@ -15,12 +14,7 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const {
-    prayerTimes,
-    jummahTimes,
-    timeUntilNext,
-    nextPrayer,
-  } = formattedData;
+  const { prayerTimes, jummahTimes, timeUntilNext, nextPrayer } = formattedData;
   const masjid = useMasjidContext();
 
   const countdown = useCountdown(timeUntilNext);
@@ -142,17 +136,7 @@ export default function PrayerClient({
 
             {/* Jummah Card */}
             <div className="text-center p-2 sm:p-3 lg:p-4 rounded-lg transition-all bg-gray-50 border border-gray-200 text-gray-900 shadow-sm hover:shadow-md h-full">
-              <Swiper
-                spaceBetween={30}
-                centeredSlides={true}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
-                navigation={false}
-                modules={[Autoplay]}
-                className="mySwiper"
-              >
+              <Swiper {...SWIPER_SETTINGS}>
                 {jummahTimes?.map((session, index) => (
                   <SwiperSlide key={index} className="h-full">
                     <div className="h-full flex flex-col">

@@ -6,7 +6,6 @@ import { EventsCarousel } from "@/components/client/interactive/EventsCarousel";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useMasjidSiteSettings } from "@/context/masjidSiteSettingsContext";
 import { Tables } from "@/database.types";
-import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { FormattedData } from "@/lib/server/services/prayer";
 import Link from "next/link";
 
@@ -38,8 +37,6 @@ export default function HomeClient({
   if (!masjid) {
     return <div>Masjid not found</div>;
   }
-
-  const { formatTime, formatEventDate } = useDateTimeFormat();
 
   const { siteSettings } = useMasjidSiteSettings();
 
@@ -73,7 +70,7 @@ export default function HomeClient({
             {campaign ? (
               <div className="lg:pl-30">
                 <div className="lg:max-w-sm">
-                  <Donation campaign={campaign} slug={masjid.slug} />
+                  <Donation campaign={campaign} masjid={masjid} />
                 </div>
               </div>
             ) : (

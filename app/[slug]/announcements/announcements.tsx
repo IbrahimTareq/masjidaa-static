@@ -11,7 +11,7 @@ export default function AnnouncementsClient({
   masjid: Tables<"masjids">;
 }) {
   return (
-    <div className="bg-white text-black min-h-screen">
+    <div className="bg-white text-black">
       {/* Hero Section */}
       <section className="relative py-20 lg:py-20 overflow-hidden">
         <div
@@ -32,7 +32,7 @@ export default function AnnouncementsClient({
       </section>
 
       {/* Announcements Timeline */}
-      <section className="py-20 bg-gray-50">
+      <section className="bg-gray-50 text-black p-10">
         <div className="max-w-4xl mx-auto px-4 lg:px-0">
           <Announcements announcements={announcements} slug={masjid.slug} />
         </div>

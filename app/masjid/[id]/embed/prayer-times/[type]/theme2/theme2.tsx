@@ -14,7 +14,7 @@ export default function Theme2({
     formattedData;
 
   return (
-    <div className="max-w-[360px] mx-auto bg-white rounded-xl border border-gray-200 font-sans text-sm overflow-hidden">
+    <div className="max-w-[360px] mx-auto bg-white rounded-xl border border-gray-200 font-montserrat text-sm overflow-hidden">
       {/* Header */}
       <div className="bg-theme text-white text-center py-4">
         <h2 className="text-lg font-bold tracking-wider">PRAYER TIMINGS</h2>

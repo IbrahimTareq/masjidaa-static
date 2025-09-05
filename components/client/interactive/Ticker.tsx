@@ -37,11 +37,11 @@ export const Ticker: React.FC = () => {
 
   if (masjidTicker === null) {
     return null;
-  };
+  }
 
   return (
     <div
-      className={`bg-white rounded-b-xl py-3 overflow-hidden text-xl flex-shrink-0 text-black`}
+      className={`font-source-sans-3 bg-white rounded-b-xl py-3 overflow-hidden text-xl flex-shrink-0 text-black`}
     >
       <Marquee>{tickerText}</Marquee>
     </div>

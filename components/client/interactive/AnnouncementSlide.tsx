@@ -10,8 +10,11 @@ interface AnnouncementSlideProps {
   announcementId: string;
 }
 
-export default function AnnouncementSlide({ announcementId }: AnnouncementSlideProps) {
-  const [announcement, setAnnouncement] = useState<Tables<"announcements"> | null>(null);
+export default function AnnouncementSlide({
+  announcementId,
+}: AnnouncementSlideProps) {
+  const [announcement, setAnnouncement] =
+    useState<Tables<"announcements"> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,20 +52,7 @@ export default function AnnouncementSlide({ announcementId }: AnnouncementSlideP
     );
   }
 
-  if (error) {
-    return (
-      <PrayerLayout headerTitle="Announcement">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <Bell className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <p className="text-red-600">Error: {error}</p>
-          </div>
-        </div>
-      </PrayerLayout>
-    );
-  }
-
-  if (!announcement) {
+  if (error || !announcement) {
     return (
       <PrayerLayout headerTitle="Announcement">
         <div className="h-full bg-white flex items-center justify-center">
@@ -94,12 +84,12 @@ export default function AnnouncementSlide({ announcementId }: AnnouncementSlideP
                   <h3 className="font-semibold text-gray-900 mb-4">
                     About this Announcement
                   </h3>
-                  <div 
+                  <div
                     className="text-gray-700 leading-relaxed whitespace-pre-line overflow-hidden"
                     style={{
-                      display: '-webkit-box',
+                      display: "-webkit-box",
                       WebkitLineClamp: 15,
-                      WebkitBoxOrient: 'vertical'
+                      WebkitBoxOrient: "vertical",
                     }}
                   >
                     {announcement.description}

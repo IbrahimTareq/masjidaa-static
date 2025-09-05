@@ -15,7 +15,7 @@ interface EventSlideProps {
 export default function EventSlide({ eventId }: EventSlideProps) {
   const [event, setEvent] = useState<Tables<"events"> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { formatTime, formatDate } = useDateTimeFormat();
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +31,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
         setEvent(data);
       } catch (err) {
         console.error("Error fetching event:", err);
-        setError(true);
+        setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
         setLoading(false);
       }
@@ -44,11 +44,11 @@ export default function EventSlide({ eventId }: EventSlideProps) {
   useEffect(() => {
     if (event && eventId && qrRef.current) {
       // Clear previous QR code
-      qrRef.current.innerHTML = '';
+      qrRef.current.innerHTML = "";
 
       // Get current URL and construct event page URL
       const currentUrl = window.location.origin;
-      const pathParts = window.location.pathname.split('/');
+      const pathParts = window.location.pathname.split("/");
       const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
       const eventUrl = `${currentUrl}/${masjidSlug}/event/${eventId}`;
 
@@ -60,19 +60,19 @@ export default function EventSlide({ eventId }: EventSlideProps) {
         data: eventUrl,
         dotsOptions: {
           color: "#374151", // gray-700
-          type: "rounded"
+          type: "rounded",
         },
         backgroundOptions: {
           color: "#ffffff",
         },
         cornersSquareOptions: {
           color: "#374151",
-          type: "rounded"
+          type: "rounded",
         },
         cornersDotOptions: {
           color: "#374151",
-          type: "rounded"
-        }
+          type: "rounded",
+        },
       });
 
       qrCode.append(qrRef.current);
@@ -150,7 +150,9 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                         <h3 className="font-semibold text-gray-900 mb-1">
                           Location
                         </h3>
-                        <p className="text-lg text-gray-800">{event.location}</p>
+                        <p className="text-lg text-gray-800">
+                          {event.location}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -164,12 +166,12 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                       <h3 className="font-semibold text-gray-900 mb-3">
                         About this Event
                       </h3>
-                      <div 
+                      <div
                         className="text-gray-700 leading-relaxed whitespace-pre-line overflow-hidden"
                         style={{
-                          display: '-webkit-box',
+                          display: "-webkit-box",
                           WebkitLineClamp: 9,
-                          WebkitBoxOrient: 'vertical'
+                          WebkitBoxOrient: "vertical",
                         }}
                       >
                         {event.description}

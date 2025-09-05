@@ -1,9 +1,8 @@
 "use client";
 
 import { FormattedData } from "@/lib/server/services/prayer";
-import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
-import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function Theme4({
@@ -99,15 +98,7 @@ export default function Theme4({
             )}
 
             <Swiper
-              spaceBetween={30}
-              centeredSlides={true}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
-              navigation={false}
-              modules={[Autoplay]}
-              className="mySwiper"
+              {...SWIPER_SETTINGS}
             >
               {jummahTimes &&
                 jummahTimes.map((session, index) => (

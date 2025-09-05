@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
 import { Tables } from "@/database.types";
 import { Heart } from "lucide-react";
+import React from "react";
 
 interface DonationsProps {
   campaigns: Tables<"donation_campaigns">[];
   slug: string;
 }
 
-export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {
+export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {  
   return (
     <>
       {campaigns.length > 0 ? (
@@ -35,7 +35,7 @@ export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {
               </div>
 
               <div className="p-6 flex flex-col h-[180px]">
-                <h3 className="text-xl font-semibold mb-3 line-clamp-2">
+                <h3 className="text-xl font-bold mb-3 line-clamp-2">
                   {campaign.name}
                 </h3>
 
@@ -53,9 +53,9 @@ export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {
                     ></div>
                   </div>
 
-                  <p className="font-semibold text-lg truncate">
-                    ${campaign.amount_raised.toLocaleString()} donated of $
-                    {campaign.target_amount.toLocaleString()}
+                  <p className="font-medium text-lg truncate">
+                    ${campaign.amount_raised} donated of $
+                    {campaign.target_amount}
                   </p>
                 </div>
               </div>

@@ -17,8 +17,6 @@ export default async function Page({
   const announcements = await getMasjidAnnouncementsByMasjidId(masjid.id);
 
   return (
-    <div className="min-h-screen bg-white">
-      <AnnouncementsClient announcements={announcements ?? []} masjid={masjid} />
-    </div>
+    <AnnouncementsClient announcements={announcements ?? []} masjid={masjid} />
   );
 }

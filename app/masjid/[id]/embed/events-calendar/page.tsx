@@ -17,7 +17,7 @@ export default async function CalendarPage({
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-montserrat">
       <Calendar events={calendarEvents} />
     </div>
   );

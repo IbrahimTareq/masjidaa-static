@@ -17,6 +17,7 @@ module.exports = {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
         montserrat: ["var(--font-montserrat)"],
+        "source-sans-3": ["var(--font-source-sans-3)"],
       },
     },
   },
