@@ -215,7 +215,7 @@ export default function PrayerClient({
                               Starts
                             </div>
                             <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-700 tabular-nums">
-                              {session.starts}
+                              {session.start}
                             </div>
                           </div>
                           <div>
@@ -425,7 +425,7 @@ export default function PrayerClient({
                               Starts
                             </div>
                             <div className="text-2xl xl:text-3xl font-bold text-gray-700 tabular-nums">
-                              {session.starts}
+                              {session.start}
                             </div>
                           </div>
                           <div>

@@ -152,7 +152,7 @@ export default function PrayerClient({
                         {/* Starts Time */}
                         <div className="text-left">
                           <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold leading-none">
-                            {session.starts}
+                            {session.start}
                           </div>
                           <div className="text-sm sm:text-base lg:text-lg font-medium mt-2 uppercase text-gray-600">
                             Starts

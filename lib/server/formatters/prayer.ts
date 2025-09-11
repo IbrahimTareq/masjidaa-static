@@ -1,20 +1,17 @@
-import { Tables } from "@/database.types";
-import { PrayerData } from "@/lib/prayer";
-import { formatTime } from "@/lib/server/formatters/dateTime";
 import { getPrayerArabicName, PrayerName } from "@/utils/prayer";
 
 export const formatPrayerTimes = ({
   data,
-  settings,
   sunrise,
+  currentPrayer,
 }: {
-  data: PrayerData;
-  settings: Tables<"masjid_prayer_settings">;
+  data: any;
   sunrise?: boolean;
+  currentPrayer?: string;
 }) => {
-  if (!data.prayerTimes || !data.iqamah) return null;
+  if (!data) return null;
 
-  const currentPrayer = data.prayerInfo?.current.name || null;
+  const isCurrentPrayer = currentPrayer || data.prayerInfo?.current.name || null;
 
   const prayerOrder = sunrise
     ? ["sunrise", "fajr", "dhuhr", "asr", "maghrib", "isha"]
@@ -44,23 +41,23 @@ export const formatPrayerTimes = ({
     let iqamahTime = "";
 
     if (prayer === "sunrise") {
-      startsTime = data.prayerTimes?.sunrise || "";
-      iqamahTime = data.prayerTimes?.duha || "";
+      startsTime = data?.sunrise || "";
+      iqamahTime = data?.duha || "";
     } else if (prayer === "fajr") {
-      startsTime = data.prayerTimes?.fajr || "";
-      iqamahTime = data.iqamah?.fajr || "";
+      startsTime = data?.fajr.start || "";
+      iqamahTime = data?.fajr.iqamah || "";
     } else if (prayer === "dhuhr") {
-      startsTime = data.prayerTimes?.dhuhr || "";
-      iqamahTime = data.iqamah?.dhuhr || "";
+      startsTime = data?.dhuhr.start || "";
+      iqamahTime = data?.dhuhr.iqamah || "";
     } else if (prayer === "asr") {
-      startsTime = data.prayerTimes?.asr || "";
-      iqamahTime = data.iqamah?.asr || "";
+      startsTime = data?.asr.start || "";
+      iqamahTime = data?.asr.iqamah || "";
     } else if (prayer === "maghrib") {
-      startsTime = data.prayerTimes?.maghrib || "";
-      iqamahTime = data.iqamah?.maghrib || "";
+      startsTime = data?.maghrib.start || "";
+      iqamahTime = data?.maghrib.iqamah || "";
     } else if (prayer === "isha") {
-      startsTime = data.prayerTimes?.isha || "";
-      iqamahTime = data.iqamah?.isha || "";
+      startsTime = data?.isha.start || "";
+      iqamahTime = data?.isha.iqamah || "";
     }
 
     return {
@@ -68,16 +65,8 @@ export const formatPrayerTimes = ({
       icon: prayerIcons[prayer],
       arabic: getPrayerArabicName(prayer as PrayerName),
       starts: startsTime,
-      iqamah: iqamahTime
-        ? formatTime({
-            timeString: iqamahTime,
-            config: {
-              timeZone: settings.timezone,
-              is12Hour: settings.time_format === "12",
-            },
-          })
-        : null,
-      isActive: currentPrayer === prayer,
+      iqamah: iqamahTime,
+      isActive: isCurrentPrayer === prayer,
     };
   });
 };

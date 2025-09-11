@@ -1,13 +1,9 @@
-import { getPrayerData } from "@/lib/prayer";
-import { getPrayerSettingsByMasjidId } from "@/lib/server/data/masjidPrayerSettings";
 import {
   formatGregorianDate,
   formatHijriDate,
-  formatTime,
-  formatTimeAgo,
 } from "@/lib/server/formatters/dateTime";
-import { createClient } from "@/utils/supabase/server";
 import { getMasjidById } from "../data/masjid";
+import { getMasjidPrayers } from "../data/masjidPrayers";
 import { formatPrayerTimes } from "../formatters/prayer";
 
 export type PrayerTime = {
@@ -21,10 +17,10 @@ export type PrayerTime = {
 
 export type FormattedData = {
   prayerTimes: PrayerTime[] | null;
-  prayerTimesWithSunrise: PrayerTime[] | null;
+  prayerTimesSunrise: any;
   jummahTimes:
     | {
-        starts: string;
+        start: string;
         khutbah: string;
       }[]
     | undefined;
@@ -44,17 +40,11 @@ export type FormattedData = {
 export async function getServerPrayerData(
   masjidId: string
 ): Promise<FormattedData> {
-  const supabase = await createClient();
-  const prayerData = await getPrayerData(supabase, masjidId);
+  const prayerData = await getMasjidPrayers(masjidId);
 
   const masjid = await getMasjidById(masjidId);
   if (!masjid) {
     throw new Error("Masjid not found");
-  }
-
-  const settings = await getPrayerSettingsByMasjidId(masjidId);
-  if (!settings) {
-    throw new Error("Prayer settings not found");
   }
 
   const now = new Date();
@@ -66,54 +56,23 @@ export async function getServerPrayerData(
     ? formatHijriDate({ isoDateString: now.toISOString(), masjid })
     : null;
 
-  const prayerTimes = prayerData.prayerTimes
-    ? formatPrayerTimes({ data: prayerData, settings })
+  const prayerTimes = prayerData.dailyPrayers
+    ? formatPrayerTimes({
+        data: prayerData.dailyPrayers,
+        currentPrayer: prayerData.prayerInfo.current.name,
+      })
     : null;
-
-  const prayerTimesWithSunrise = prayerData.prayerTimes
-    ? formatPrayerTimes({ data: prayerData, settings, sunrise: true })
-    : null;
-
-  const jummahTimes = prayerData.jummah?.map((j) => ({
-    starts: formatTime({
-      timeString: j.starts,
-      config: {
-        timeZone: settings.timezone,
-        is12Hour: settings.time_format === "12",
-      },
-    }),
-    khutbah: formatTime({
-      timeString: j.khutbah,
-      config: {
-        timeZone: settings.timezone,
-        is12Hour: settings.time_format === "12",
-      },
-    }),
-  }));
-
-  const lastUpdated = prayerData.iqamah?.updated_at
-    ? formatTimeAgo(prayerData.iqamah.updated_at)
-    : null;
-
-  const currentPrayer = prayerData.prayerInfo?.current.name || null;
-  const nextPrayer = prayerData.prayerInfo?.next.name || null;
-  const nextPrayerTime = prayerData.prayerInfo?.next.time || null;
-  const timeUntilNext = prayerData.prayerInfo?.timeUntilNext || {
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  };
 
   return {
     prayerTimes,
-    prayerTimesWithSunrise,
-    jummahTimes,
+    prayerTimesSunrise: prayerData.shurq,
+    jummahTimes: prayerData.jummah,
     hijriDate,
     gregorianDate,
-    lastUpdated,
-    currentPrayer,
-    nextPrayer,
-    nextPrayerTime,
-    timeUntilNext,
+    lastUpdated: prayerData.lastUpdated,
+    currentPrayer: prayerData.prayerInfo.current.name,
+    nextPrayer: prayerData.prayerInfo.next.name,
+    nextPrayerTime: prayerData.prayerInfo.next.time,
+    timeUntilNext: prayerData.prayerInfo.timeUntilNext,
   };
 }

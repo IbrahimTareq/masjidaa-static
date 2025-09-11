@@ -17,22 +17,26 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, prayerTimesWithSunrise, jummahTimes, timeUntilNext } =
+  const { prayerTimes, prayerTimesSunrise, jummahTimes, timeUntilNext } =
     formattedData;
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
   // Use the countdown hook with auto-refresh when it reaches zero
   const countdown = useCountdown(timeUntilNext);
-  
+
   // Auto-refresh when countdown reaches zero
   useEffect(() => {
-    if (countdown.hours === "00" && countdown.minutes === "00" && countdown.seconds === "00") {
+    if (
+      countdown.hours === "00" &&
+      countdown.minutes === "00" &&
+      countdown.seconds === "00"
+    ) {
       console.log("Countdown reached zero, refreshing page");
       const timer = setTimeout(() => {
         window.location.reload();
       }, 1000); // Wait 1 second before refreshing
-      
+
       return () => clearTimeout(timer);
     }
   }, [countdown]);
@@ -122,7 +126,7 @@ export default function PrayerClient({
                                 Starts
                               </div>
                               <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
-                                {session.starts}
+                                {session.start}
                               </div>
                             </div>
                             <div>
@@ -159,9 +163,7 @@ export default function PrayerClient({
                             Sunrise
                           </div>
                           <div className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-semibold">
-                            {prayerTimesWithSunrise?.find(
-                              (p) => p.name === "Sunrise"
-                            )?.starts || "--:--"}
+                            {prayerTimesSunrise?.sunrise || "--:--"}
                           </div>
                         </div>
 
@@ -171,9 +173,7 @@ export default function PrayerClient({
                             Duha
                           </div>
                           <div className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-semibold">
-                            {prayerTimesWithSunrise?.find(
-                              (p) => p.name === "Sunrise"
-                            )?.iqamah || "--:--"}
+                            {prayerTimesSunrise?.duha || "--:--"}
                           </div>
                         </div>
                       </div>

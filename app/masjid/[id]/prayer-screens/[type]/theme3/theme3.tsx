@@ -224,7 +224,7 @@ export default function PrayerClient({
                                 Starts
                               </div>
                               <div className="text-xl xl:text-4xl font-light text-gray-800">
-                                {session.starts}
+                                {session.start}
                               </div>
                             </div>
                             <div>
@@ -285,7 +285,7 @@ export default function PrayerClient({
                               Khutbah
                             </div>
                             <div className="text-lg font-light text-gray-800">
-                              {session.starts}
+                              {session.start}
                             </div>
                           </div>
                         </div>

@@ -235,7 +235,7 @@ export default function PrayerClient({
 
                             <div className="col-span-3 text-center">
                               <div className="text-lg sm:text-2xl lg:text-3xl font-light">
-                                {session.starts}
+                                {session.start}
                               </div>
                             </div>
 
