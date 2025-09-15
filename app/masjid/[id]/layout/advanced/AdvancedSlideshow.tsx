@@ -19,12 +19,11 @@ export default function AdvancedSlideshow({
   slides: Slide[];
 }) {
   const {
-    prayerTimes,
-    jummahTimes,
-    nextPrayer,
+    dailyPrayerTimes,
+    jummahPrayerTimes,
     hijriDate,
     gregorianDate,
-    timeUntilNext,
+    prayerInfo,
   } = formattedData;
 
   const qrRef = useRef<HTMLDivElement>(null);
@@ -51,8 +50,8 @@ export default function AdvancedSlideshow({
         <div className="text-center">
           <div className="text-lg font-light">{time}</div>
           <div className="text-xs opacity-90">
-            Next prayer begins in {timeUntilNext?.hours}hr{" "}
-            {timeUntilNext?.minutes}min
+            Next prayer begins in {prayerInfo?.timeUntilNext?.hours}hr{" "}
+            {prayerInfo?.timeUntilNext?.minutes}min
           </div>
         </div>
         <div className="text-center">
@@ -78,7 +77,7 @@ export default function AdvancedSlideshow({
         {/* Bottom Prayer Times Bar */}
         <div className="h-16 sm:h-32 bg-white border-t border-gray-200 flex-shrink-0 shadow-lg">
           <div className="h-full flex">
-            {prayerTimes?.map((prayer, index) => (
+            {dailyPrayerTimes?.map((prayer, index) => (
               <div
                 key={prayer.name}
                 className={`flex-1 flex flex-col justify-center items-center px-1 sm:px-2 relative ${
@@ -86,9 +85,9 @@ export default function AdvancedSlideshow({
                     ? "bg-theme-accent font-bold text-theme-gradient border-t-4 border-theme"
                     : "bg-white text-gray-800 hover:bg-gray-50 transition-colors duration-200"
                 } ${
-                  index !== prayerTimes?.length - 1 &&
+                  index !== dailyPrayerTimes?.length - 1 &&
                   !prayer.isActive &&
-                  !prayerTimes?.[index + 1]?.isActive
+                  !dailyPrayerTimes?.[index + 1]?.isActive
                     ? "border-r border-gray-100"
                     : ""
                 }`}
@@ -106,7 +105,7 @@ export default function AdvancedSlideshow({
                   <div className="text-center">
                     <div className="opacity-60 text-sm font-medium">Starts</div>
                     <div className="font-semibold text-xl sm:text-2xl">
-                      {prayer.starts}
+                      {prayer.start}
                     </div>
                   </div>
                   <div className="w-px bg-gray-200 opacity-60 self-stretch"></div>
@@ -143,10 +142,10 @@ export default function AdvancedSlideshow({
               {time}
             </div>
             <div className="text-base xl:text-lg opacity-90 font-medium">
-              <span className="font-bold uppercase">{nextPrayer}</span> begins
+              <span className="font-bold uppercase">{prayerInfo?.next?.name}</span> begins
               in&nbsp;
               <span className="font-bold uppercase">
-                {timeUntilNext?.hours}hr {timeUntilNext?.minutes}min
+                {prayerInfo?.timeUntilNext?.hours}hr {prayerInfo?.timeUntilNext?.minutes}min
               </span>
             </div>
           </div>
@@ -164,11 +163,11 @@ export default function AdvancedSlideshow({
           {/* Jummah Times Section */}
           <div className="p-6 xl:p-8 border-b border-white/20">
             <Swiper {...SWIPER_SETTINGS}>
-              {jummahTimes?.map((session, index) => (
+              {jummahPrayerTimes?.map((session, index) => (
                 <SwiperSlide key={index}>
                   <div className="bg-white/5 bg-opacity-5 rounded-xl p-6 xl:p-6 backdrop-blur-sm shadow-lg">
                     <div className="text-center font-semibold mb-4 xl:mb-6 text-lg xl:text-2xl uppercase">
-                      {jummahTimes.length === 1
+                      {jummahPrayerTimes.length === 1
                         ? "Jumaah"
                         : `Jumaah ${index + 1}`}
                     </div>
@@ -178,7 +177,7 @@ export default function AdvancedSlideshow({
                           Starts
                         </div>
                         <div className="text-3xl xl:text-4xl font-semibold">
-                          {session.starts}
+                          {session.start}
                         </div>
                       </div>
                       <div className="w-px bg-white opacity-20 h-16 xl:h-20"></div>
@@ -221,18 +220,18 @@ export default function AdvancedSlideshow({
         </div>
 
         {/* Mobile Jummah Times - Only visible on mobile if there are sessions */}
-        {jummahTimes?.length && jummahTimes?.length > 0 && (
+        {jummahPrayerTimes?.length && jummahPrayerTimes?.length > 0 && (
           <div className="lg:hidden bg-theme text-white p-3 flex-shrink-0">
             <h3 className="text-sm font-bold text-center mb-2">JUMU'AH</h3>
             <div className="flex gap-2 justify-center">
-              {jummahTimes.map((session, index) => (
+              {jummahPrayerTimes.map((session, index) => (
                 <div
                   key={index}
                   className="bg-theme rounded p-2 text-center flex-1"
                 >
-                  {jummahTimes.length > 1 && (
+                  {jummahPrayerTimes.length > 1 && (
                     <div className="text-xs font-semibold mb-1">
-                      {jummahTimes.length === 1
+                      {jummahPrayerTimes.length === 1
                         ? "Jumaah"
                         : `Jumaah ${index + 1}`}
                     </div>
@@ -241,7 +240,7 @@ export default function AdvancedSlideshow({
                     <div>
                       <div className="text-xs opacity-80">Starts</div>
                       <div className="text-sm font-semibold">
-                        {session.starts}
+                        {session.start}
                       </div>
                     </div>
                     <div>

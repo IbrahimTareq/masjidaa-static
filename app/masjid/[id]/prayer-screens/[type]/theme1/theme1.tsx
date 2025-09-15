@@ -3,10 +3,10 @@
 import LayoutWithHeader from "@/components/LayoutWithHeader";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useEffect } from "react";
 import { useCountdown } from "@/hooks/useCountdown";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/services/prayer";
+import { useEffect } from "react";
 
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
@@ -17,13 +17,13 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, prayerTimesSunrise, jummahTimes, timeUntilNext } =
+  const { dailyPrayerTimes, shurq, jummahPrayerTimes, prayerInfo } =
     formattedData;
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
   // Use the countdown hook with auto-refresh when it reaches zero
-  const countdown = useCountdown(timeUntilNext);
+  const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   // Auto-refresh when countdown reaches zero
   useEffect(() => {
@@ -110,12 +110,12 @@ export default function PrayerClient({
                     modules={[Autoplay]}
                     className="mySwiper"
                   >
-                    {jummahTimes?.map((session, index) => (
+                    {jummahPrayerTimes?.map((session, index) => (
                       <SwiperSlide key={index}>
                         <div className="flex flex-col justify-between space-y-10">
                           <div className="text-center">
                             <h2 className="text-sm sm:text-base lg:text-lg xl:text-2xl font-bold">
-                              {jummahTimes.length > 1
+                              {jummahPrayerTimes.length > 1
                                 ? `Jumaah Session ${index + 1} `
                                 : "Jumaah جمعة"}
                             </h2>
@@ -163,7 +163,7 @@ export default function PrayerClient({
                             Sunrise
                           </div>
                           <div className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-semibold">
-                            {prayerTimesSunrise?.sunrise || "--:--"}
+                            {shurq?.sunrise || "--:--"}
                           </div>
                         </div>
 
@@ -173,7 +173,7 @@ export default function PrayerClient({
                             Duha
                           </div>
                           <div className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-semibold">
-                            {prayerTimesSunrise?.duha || "--:--"}
+                            {shurq?.duha || "--:--"}
                           </div>
                         </div>
                       </div>
@@ -185,13 +185,13 @@ export default function PrayerClient({
 
             {/* Prayer Cards Grid */}
             <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mt-auto">
-              {prayerTimes?.map((prayer, index) => (
+              {dailyPrayerTimes?.map((prayer, index) => (
                 <div
                   key={index}
                   className={`
                     rounded-xl p-3 sm:p-4 lg:p-4 xl:p-3 text-center space-y-2 sm:space-y-3 transition-all duration-200
                     ${
-                      prayer.isActive
+                      prayer?.isActive
                         ? "bg-theme text-white"
                         : "bg-gray-200 text-gray-800"
                     }
@@ -207,7 +207,7 @@ export default function PrayerClient({
                         Starts
                       </div>
                       <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
-                        {prayer.starts}
+                        {prayer.start}
                       </div>
                     </div>
                     <div>

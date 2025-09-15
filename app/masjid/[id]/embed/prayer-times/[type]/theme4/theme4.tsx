@@ -1,7 +1,11 @@
 "use client";
 
 import { FormattedData } from "@/lib/server/services/prayer";
-import { BRAND_NAME, DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
+import {
+  BRAND_NAME,
+  DOMAIN_NAME,
+  SWIPER_SETTINGS,
+} from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -10,8 +14,13 @@ export default function Theme4({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, jummahTimes, lastUpdated, hijriDate, gregorianDate } =
-    formattedData;
+  const {
+    dailyPrayerTimes,
+    jummahPrayerTimes,
+    lastUpdated,
+    hijriDate,
+    gregorianDate,
+  } = formattedData;
 
   return (
     <div className="bg-white min-h-screen font-sans">
@@ -28,7 +37,7 @@ export default function Theme4({
 
         {/* Prayer Times Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {prayerTimes?.map((prayer) => (
+          {dailyPrayerTimes?.map((prayer) => (
             <div
               key={prayer.name}
               className={`text-center p-6 rounded-lg transition-all ${
@@ -52,7 +61,7 @@ export default function Theme4({
                     prayer.isActive ? "text-white" : "text-theme"
                   }`}
                 >
-                  {prayer.starts}
+                  {prayer.start}
                 </span>
               </div>
               {prayer.iqamah && (
@@ -70,7 +79,7 @@ export default function Theme4({
           {/* Jummah Slider Card */}
           <div className="bg-gray-100 text-gray-700 shadow-sm p-6 rounded-lg transition-all relative">
             {/* Left Arrow - only show if more than 1 session */}
-            {jummahTimes && jummahTimes.length > 1 && (
+            {jummahPrayerTimes && jummahPrayerTimes.length > 1 && (
               <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <svg
                   width="16"
@@ -84,7 +93,7 @@ export default function Theme4({
             )}
 
             {/* Right Arrow - only show if more than 1 session */}
-            {jummahTimes && jummahTimes.length > 1 && (
+            {jummahPrayerTimes && jummahPrayerTimes.length > 1 && (
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <svg
                   width="16"
@@ -97,23 +106,21 @@ export default function Theme4({
               </div>
             )}
 
-            <Swiper
-              {...SWIPER_SETTINGS}
-            >
-              {jummahTimes &&
-                jummahTimes.map((session, index) => (
+            <Swiper {...SWIPER_SETTINGS}>
+              {jummahPrayerTimes &&
+                jummahPrayerTimes.map((session, index) => (
                   <SwiperSlide key={index}>
                     <div className="text-center px-6">
                       <div className="mb-2">
                         <h3 className="text-lg font-medium text-gray-700 uppercase">
-                          {jummahTimes.length === 1
+                          {jummahPrayerTimes.length === 1
                             ? "Jumaah"
                             : `Jumaah ${index + 1}`}
                         </h3>
                       </div>
                       <div className="mb-1">
                         <span className="text-3xl md:text-4xl font-light text-theme">
-                          {session.starts}
+                          {session.start}
                         </span>
                       </div>
                       <div className="text-sm text-gray-500 uppercase">

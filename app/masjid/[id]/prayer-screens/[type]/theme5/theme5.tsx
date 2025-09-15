@@ -16,18 +16,16 @@ export default function PrayerClient({
   formattedData: FormattedData;
 }) {
   const {
-    prayerTimes,
-    jummahTimes,
-    timeUntilNext,
-    nextPrayer,
-    nextPrayerTime,
+    dailyPrayerTimes,
+    jummahPrayerTimes,
+    prayerInfo,
     hijriDate,
     gregorianDate,
   } = formattedData;
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
-  const countdown = useCountdown(timeUntilNext);
+  const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   return (
     <div className="font-sans h-screen">
@@ -97,11 +95,11 @@ export default function PrayerClient({
                 <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-3xl font-medium tracking-wider uppercase mb-2 text-gray-800">
                   Until{" "}
                   <span className="font-bold text-theme-gradient">
-                    {nextPrayer}
+                    {prayerInfo?.next.name}
                   </span>{" "}
                   at&nbsp;
                   {formatTime({
-                    timeString: nextPrayerTime || "",
+                    timeString: prayerInfo?.next.time || "",
                     config: {
                       timeZone: config.timeZone,
                       is12Hour: config.is12Hour,
@@ -145,13 +143,11 @@ export default function PrayerClient({
 
                   {/* Prayer Rows */}
                   <div className="divide-y divide-gray-200">
-                    {prayerTimes?.map((prayer) => (
+                    {dailyPrayerTimes?.map((prayer) => (
                       <div
                         key={prayer.name}
                         className={`grid grid-cols-12 gap-2 items-center px-6 py-4 transition-all ${
-                          prayer.isActive
-                            ? "bg-theme text-white"
-                            : ""
+                          prayer.isActive ? "bg-theme text-white" : ""
                         }`}
                       >
                         {/* Prayer Icon */}
@@ -176,7 +172,7 @@ export default function PrayerClient({
                         {/* Athan Time */}
                         <div className="col-span-3 text-center">
                           <div className="text-lg sm:text-2xl lg:text-3xl font-light">
-                            {prayer.starts}
+                            {prayer.start}
                           </div>
                         </div>
 
@@ -190,7 +186,7 @@ export default function PrayerClient({
                     ))}
 
                     {/* Jummah Section */}
-                    {jummahTimes && jummahTimes.length > 0 && (
+                    {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
                       <>
                         {/* Jummah Header */}
                         <div className="bg-gray-100 px-6 py-4">
@@ -211,7 +207,7 @@ export default function PrayerClient({
                         </div>
 
                         {/* Jummah Rows */}
-                        {jummahTimes.map((session, index) => (
+                        {jummahPrayerTimes.map((session, index) => (
                           <div
                             key={index}
                             className="grid grid-cols-12 gap-2 items-center px-6 py-4"
@@ -227,7 +223,7 @@ export default function PrayerClient({
 
                             <div className="col-span-5">
                               <div className="text-base sm:text-lg lg:text-xl font-medium tracking-wider uppercase">
-                                {jummahTimes.length === 1
+                                {jummahPrayerTimes.length === 1
                                   ? "Jumaah"
                                   : `Jumaah ${index + 1}`}
                               </div>

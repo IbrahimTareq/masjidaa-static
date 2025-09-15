@@ -1,21 +1,27 @@
 import { getPrayerArabicName, PrayerName } from "@/utils/prayer";
+import { DailyPrayers } from "../data/masjidPrayers";
 
-export const formatPrayerTimes = ({
+export type PrayerTime = {
+  name: string;
+  icon: string;
+  arabic: string;
+  start: string;
+  iqamah: string | null;
+  isActive: boolean;
+};
+
+export const enrichPrayerTimes = ({
   data,
-  sunrise,
   currentPrayer,
 }: {
-  data: any;
-  sunrise?: boolean;
+  data: DailyPrayers | undefined;
   currentPrayer?: string;
-}) => {
+}): PrayerTime[] | null => {
   if (!data) return null;
 
-  const isCurrentPrayer = currentPrayer || data.prayerInfo?.current.name || null;
+  const isCurrentPrayer = currentPrayer || null;
 
-  const prayerOrder = sunrise
-    ? ["sunrise", "fajr", "dhuhr", "asr", "maghrib", "isha"]
-    : ["fajr", "dhuhr", "asr", "maghrib", "isha"];
+  const prayerOrder = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
 
   const prayerLabels: Record<string, string> = {
     fajr: "Fajr",
@@ -36,36 +42,12 @@ export const formatPrayerTimes = ({
   };
 
   return prayerOrder.map((prayer) => {
-    // Get prayer times
-    let startsTime = "";
-    let iqamahTime = "";
-
-    if (prayer === "sunrise") {
-      startsTime = data?.sunrise || "";
-      iqamahTime = data?.duha || "";
-    } else if (prayer === "fajr") {
-      startsTime = data?.fajr.start || "";
-      iqamahTime = data?.fajr.iqamah || "";
-    } else if (prayer === "dhuhr") {
-      startsTime = data?.dhuhr.start || "";
-      iqamahTime = data?.dhuhr.iqamah || "";
-    } else if (prayer === "asr") {
-      startsTime = data?.asr.start || "";
-      iqamahTime = data?.asr.iqamah || "";
-    } else if (prayer === "maghrib") {
-      startsTime = data?.maghrib.start || "";
-      iqamahTime = data?.maghrib.iqamah || "";
-    } else if (prayer === "isha") {
-      startsTime = data?.isha.start || "";
-      iqamahTime = data?.isha.iqamah || "";
-    }
-
     return {
       name: prayerLabels[prayer],
       icon: prayerIcons[prayer],
       arabic: getPrayerArabicName(prayer as PrayerName),
-      starts: startsTime,
-      iqamah: iqamahTime,
+      start: data[prayer as keyof DailyPrayers].start,
+      iqamah: data[prayer as keyof DailyPrayers].iqamah,
       isActive: isCurrentPrayer === prayer,
     };
   });

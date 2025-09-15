@@ -4,8 +4,7 @@ import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useMasjidContext } from "@/context/masjidContext";
 import { FormattedData } from "@/lib/server/services/prayer";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
-import { BRAND_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { useEffect, useState } from "react";
 
 export default function Theme5({
@@ -14,37 +13,36 @@ export default function Theme5({
   formattedData: FormattedData;
 }) {
   const {
-    prayerTimes,
-    jummahTimes,
+    dailyPrayerTimes,
+    jummahPrayerTimes,
     lastUpdated,
-    currentPrayer,
-    nextPrayer,
-    nextPrayerTime,
+    prayerInfo,
     hijriDate,
     gregorianDate,
-    timeUntilNext,
   } = formattedData;
   const masjid = useMasjidContext();
 
   const [secondsLeft, setSecondsLeft] = useState(() =>
-    getTimeUntilNextInSeconds(timeUntilNext)
+    getTimeUntilNextInSeconds(
+      prayerInfo?.timeUntilNext || { hours: 0, minutes: 0, seconds: 0 }
+    )
   );
 
   useEffect(() => {
-    if (timeUntilNext) {
-      setSecondsLeft(getTimeUntilNextInSeconds(timeUntilNext));
+    if (prayerInfo?.timeUntilNext) {
+      setSecondsLeft(getTimeUntilNextInSeconds(prayerInfo?.timeUntilNext));
     }
-  }, [timeUntilNext]);
+  }, [prayerInfo?.timeUntilNext]);
 
   useEffect(() => {
-    if (!timeUntilNext || secondsLeft <= 0) return;
+    if (!prayerInfo?.timeUntilNext || secondsLeft <= 0) return;
 
     const interval = setInterval(() => {
       setSecondsLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeUntilNext, secondsLeft]);
+  }, [prayerInfo?.timeUntilNext, secondsLeft]);
 
   const countdown = calculateCountdown(secondsLeft);
 
@@ -96,12 +94,15 @@ export default function Theme5({
           <div className="text-center">
             <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium tracking-wider uppercase mb-2">
               Until&nbsp;
-              <span className="font-bold uppercase">{nextPrayer}</span> at&nbsp;
-              {nextPrayerTime}
+              <span className="font-bold uppercase">
+                {prayerInfo?.next.name}
+              </span>{" "}
+              at&nbsp;
+              {prayerInfo?.next.time}
             </div>
             <div className="text-xs sm:text-sm md:text-base lg:text-lg font-medium tracking-wider uppercase text-gray-100">
               Current time:&nbsp;
-              {currentPrayer}
+              {prayerInfo?.current.time}
             </div>
           </div>
         </div>
@@ -142,7 +143,7 @@ export default function Theme5({
 
                 {/* Prayer Rows with dividers */}
                 <div>
-                  {prayerTimes?.map((prayer) => (
+                  {dailyPrayerTimes?.map((prayer) => (
                     <div
                       key={prayer.name}
                       className={`grid grid-cols-12 gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 transition-all ${
@@ -172,7 +173,7 @@ export default function Theme5({
                       <div className="col-span-3 text-center relative">
                         <div className="absolute left-0 top-0 h-full w-px bg-teal-700 opacity-20"></div>
                         <div className="text-xs sm:text-sm md:text-base lg:text-lg font-light tracking-wide">
-                          {prayer.starts}
+                          {prayer.start}
                         </div>
                       </div>
 
@@ -187,7 +188,7 @@ export default function Theme5({
                   ))}
 
                   {/* Jummah Header */}
-                  {jummahTimes && jummahTimes.length > 0 && (
+                  {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
                     <div className="bg-white/10 px-2 sm:px-4 py-2 sm:py-3">
                       <div className="grid grid-cols-12 gap-1 sm:gap-2">
                         <div className="col-span-1"></div>
@@ -207,9 +208,9 @@ export default function Theme5({
                   )}
 
                   {/* Jummah Row(s) */}
-                  {jummahTimes &&
-                    jummahTimes.length > 0 &&
-                    jummahTimes.map((session, index) => (
+                  {jummahPrayerTimes &&
+                    jummahPrayerTimes.length > 0 &&
+                    jummahPrayerTimes.map((session, index) => (
                       <div
                         key={index}
                         className={`grid grid-cols-12 gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 transition-all bg-transparent`}
@@ -227,7 +228,7 @@ export default function Theme5({
                         {/* Prayer Name */}
                         <div className="col-span-5">
                           <div className="text-xs sm:text-sm md:text-base font-medium tracking-wider uppercase text-white">
-                            {jummahTimes.length === 1
+                            {jummahPrayerTimes.length === 1
                               ? "Jumaah"
                               : `Jumaah ${index + 1}`}
                           </div>
@@ -237,7 +238,7 @@ export default function Theme5({
                         <div className="col-span-3 text-center relative">
                           <div className="absolute left-0 top-0 h-full w-px bg-teal-700 opacity-20"></div>
                           <div className="text-xs sm:text-sm md:text-base lg:text-lg font-light tracking-wide text-white">
-                            {session.starts}
+                            {session.start}
                           </div>
                         </div>
 

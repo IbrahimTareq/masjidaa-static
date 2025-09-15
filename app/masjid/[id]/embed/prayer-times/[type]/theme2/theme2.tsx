@@ -2,16 +2,20 @@
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { FormattedData } from "@/lib/server/services/prayer";
-import { BRAND_NAME } from "@/utils/shared/constants";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default function Theme2({
   formattedData,
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, jummahTimes, lastUpdated, hijriDate, gregorianDate } =
-    formattedData;
+  const {
+    dailyPrayerTimes,
+    jummahPrayerTimes,
+    lastUpdated,
+    hijriDate,
+    gregorianDate,
+  } = formattedData;
 
   return (
     <div className="max-w-[360px] mx-auto bg-white rounded-xl border border-gray-200 font-montserrat text-sm overflow-hidden">
@@ -49,7 +53,7 @@ export default function Theme2({
             </tr>
           </thead>
           <tbody>
-            {prayerTimes?.map((prayer) => (
+            {dailyPrayerTimes?.map((prayer) => (
               <tr
                 key={prayer.name}
                 className={`border-b border-gray-100 transition-colors duration-200 ${
@@ -69,7 +73,7 @@ export default function Theme2({
                 <td className="py-3 px-4 text-center border-l border-gray-100 relative">
                   <div className="pr-3">
                     <span className="text-sm font-medium text-gray-700">
-                      {prayer.starts}
+                      {prayer.start}
                     </span>
                   </div>
                 </td>
@@ -84,7 +88,7 @@ export default function Theme2({
             ))}
 
             {/* Jummah Header Row */}
-            {jummahTimes && jummahTimes.length > 0 && (
+            {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
               <tr className="bg-gray-100 border-b border-gray-200">
                 <td className="py-3 px-4 text-left">
                   <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider opacity-0">
@@ -105,7 +109,7 @@ export default function Theme2({
             )}
 
             {/* Jummah Row(s) */}
-            {jummahTimes?.map((session, index) => (
+            {jummahPrayerTimes?.map((session, index) => (
               <tr
                 key={index}
                 className="border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors duration-200"
@@ -115,7 +119,7 @@ export default function Theme2({
                     <PrayerIcon type="calendar" className="text-theme" />
                   </div>
                   <span className="font-semibold text-gray-800 text-sm">
-                    {jummahTimes.length === 1
+                    {jummahPrayerTimes.length === 1
                       ? "Jummah"
                       : `Jummah ${index + 1}`}
                   </span>
@@ -123,7 +127,7 @@ export default function Theme2({
                 <td className="py-3 px-4 text-center border-l border-gray-100 relative">
                   <div className="pr-3">
                     <span className="text-sm font-medium text-gray-700">
-                      {session.starts}
+                      {session.start}
                     </span>
                   </div>
                 </td>

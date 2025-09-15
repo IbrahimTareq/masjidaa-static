@@ -4,10 +4,13 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
 import { FormattedData } from "@/lib/server/services/prayer";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
-import { BRAND_NAME, DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
+import {
+  BRAND_NAME,
+  DOMAIN_NAME,
+  SWIPER_SETTINGS,
+} from "@/utils/shared/constants";
 import { useEffect, useState } from "react";
 import "swiper/css";
-import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function Theme1({
@@ -16,10 +19,10 @@ export default function Theme1({
   formattedData: FormattedData;
 }) {
   const {
-    prayerTimes,
-    jummahTimes,
+    dailyPrayerTimes,
+    jummahPrayerTimes,
     lastUpdated,
-    nextPrayer,
+    prayerInfo,
     hijriDate,
     gregorianDate,
   } = formattedData;
@@ -41,13 +44,27 @@ export default function Theme1({
   }, [hasUpdates]);
 
   const [secondsLeft, setSecondsLeft] = useState(() =>
-    getTimeUntilNextInSeconds(formattedData.timeUntilNext)
+    getTimeUntilNextInSeconds(
+      formattedData.prayerInfo?.timeUntilNext || {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      }
+    )
   );
 
   // Update seconds left when data changes
   useEffect(() => {
-    setSecondsLeft(getTimeUntilNextInSeconds(formattedData.timeUntilNext));
-  }, [formattedData.timeUntilNext]);
+    setSecondsLeft(
+      getTimeUntilNextInSeconds(
+        formattedData.prayerInfo?.timeUntilNext || {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        }
+      )
+    );
+  }, [formattedData.prayerInfo?.timeUntilNext]);
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -79,7 +96,9 @@ export default function Theme1({
         <div className="text-center mb-6">
           <h2 className="text-xl font-light mb-4">
             Time until&nbsp;
-            <span className="font-bold uppercase">{nextPrayer}</span>{" "}
+            <span className="font-bold uppercase">
+              {prayerInfo?.next.name}
+            </span>{" "}
           </h2>
 
           <div className="flex justify-center items-center gap-2 mb-2">
@@ -121,7 +140,7 @@ export default function Theme1({
 
         {/* Prayer Times Grid */}
         <div className="grid grid-cols-2 gap-4 mb-4 max-w-2xl mx-auto">
-          {prayerTimes?.map((prayer) => (
+          {dailyPrayerTimes?.map((prayer) => (
             <div
               key={prayer.name}
               className={`text-center p-2 rounded transition-all ${
@@ -136,7 +155,7 @@ export default function Theme1({
                 </h3>
               </div>
               <div className="mb-1">
-                <span className="text-lg font-light">{prayer.starts}</span>
+                <span className="text-lg font-light">{prayer.start}</span>
               </div>
               {prayer.iqamah && (
                 <div className="text-xs opacity-75 uppercase">
@@ -147,10 +166,10 @@ export default function Theme1({
           ))}
 
           {/* Jummah Slider Card */}
-          {jummahTimes && jummahTimes.length > 0 && (
+          {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
             <div className="bg-white/10 backdrop-blur-sm text-white shadow-sm p-2 rounded transition-all relative">
               {/* Left Arrow - only show if more than 1 session */}
-              {jummahTimes.length > 1 && (
+              {jummahPrayerTimes.length > 1 && (
                 <div className="absolute left-1 top-1/2 transform -translate-y-1/2 text-white/60">
                   <svg
                     width="12"
@@ -164,7 +183,7 @@ export default function Theme1({
               )}
 
               {/* Right Arrow - only show if more than 1 session */}
-              {jummahTimes.length > 1 && (
+              {jummahPrayerTimes.length > 1 && (
                 <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-white/60">
                   <svg
                     width="12"
@@ -177,22 +196,20 @@ export default function Theme1({
                 </div>
               )}
 
-              <Swiper
-                {...SWIPER_SETTINGS}
-              >
-                {jummahTimes.map((session, index) => (
+              <Swiper {...SWIPER_SETTINGS}>
+                {jummahPrayerTimes.map((session, index) => (
                   <SwiperSlide key={index}>
                     <div className="text-center px-2">
                       <div className="mb-1">
                         <h3 className="text-xs font-medium uppercase tracking-wide">
-                          {jummahTimes.length === 1
+                          {jummahPrayerTimes.length === 1
                             ? "Jumaah"
                             : `Jumaah ${index + 1}`}
                         </h3>
                       </div>
                       <div className="mb-1">
                         <span className="text-lg font-light">
-                          {session.starts}
+                          {session.start}
                         </span>
                       </div>
                       <div className="text-xs opacity-75 uppercase">

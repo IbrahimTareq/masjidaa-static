@@ -14,10 +14,10 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, jummahTimes, timeUntilNext, nextPrayer } = formattedData;
+  const { dailyPrayerTimes, jummahPrayerTimes, prayerInfo } = formattedData;
   const masjid = useMasjidContext();
 
-  const countdown = useCountdown(timeUntilNext);
+  const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   return (
     <LayoutWithHeader headerTitle={masjid?.name || "Masjid"}>
@@ -27,7 +27,7 @@ export default function PrayerClient({
         <div className="flex-[2] flex flex-col justify-center text-center min-h-0">
           <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light mb-2 sm:mb-4 lg:mb-6 text-gray-900">
             <span className="font-bold text-theme-gradient uppercase">
-              {nextPrayer}
+              {prayerInfo?.next.name}
             </span>
             &nbsp;will begin in
           </h2>
@@ -88,7 +88,7 @@ export default function PrayerClient({
         {/* Prayer Times Grid - Takes remaining space and fits within container */}
         <div className="flex-[3] min-h-0 mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-2 lg:gap-5 h-full p-1 sm:p-2 max-w-6xl mx-auto">
-            {prayerTimes?.map((prayer) => {
+            {dailyPrayerTimes?.map((prayer) => {
               return (
                 <div
                   key={prayer.name}
@@ -110,7 +110,7 @@ export default function PrayerClient({
                       {/* Adhan Time */}
                       <div className="text-left">
                         <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold leading-none">
-                          {prayer?.starts}
+                          {prayer?.start}
                         </div>
                         <div className="text-sm sm:text-base lg:text-lg font-medium mt-2 uppercase">
                           Starts
@@ -137,12 +137,12 @@ export default function PrayerClient({
             {/* Jummah Card */}
             <div className="text-center p-2 sm:p-3 lg:p-4 rounded-lg transition-all bg-gray-50 border border-gray-200 text-gray-900 shadow-sm hover:shadow-md h-full">
               <Swiper {...SWIPER_SETTINGS}>
-                {jummahTimes?.map((session, index) => (
+                {jummahPrayerTimes?.map((session, index) => (
                   <SwiperSlide key={index} className="h-full">
                     <div className="h-full flex flex-col">
                       <div className="mb-3">
                         <h3 className="text-sm sm:text-base lg:text-lg font-medium uppercase tracking-wide">
-                          {jummahTimes?.length === 1
+                          {jummahPrayerTimes?.length === 1
                             ? "Jumaah جمعة"
                             : `Jumaah ${index + 1}`}
                         </h3>

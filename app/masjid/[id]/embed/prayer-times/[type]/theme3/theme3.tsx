@@ -9,8 +9,13 @@ export default function Theme3({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, jummahTimes, lastUpdated, hijriDate, gregorianDate } =
-    formattedData;
+  const {
+    dailyPrayerTimes,
+    jummahPrayerTimes,
+    lastUpdated,
+    hijriDate,
+    gregorianDate,
+  } = formattedData;
 
   return (
     <div className="bg-white text-gray-800 min-h-screen">
@@ -43,7 +48,7 @@ export default function Theme3({
 
           {/* Prayer Rows with dividers */}
           <div className="divide-y divide-gray-100">
-            {prayerTimes?.map((prayer) => (
+            {dailyPrayerTimes?.map((prayer) => (
               <div
                 key={prayer.name}
                 className={`grid grid-cols-12 gap-1 items-center px-3 py-4 transition-all ${
@@ -70,7 +75,7 @@ export default function Theme3({
                 <div className="col-span-4 text-center relative">
                   <div className="absolute left-0 top-0 h-full w-px bg-gray-200"></div>
                   <div className="text-sm font-medium tracking-wide text-gray-700">
-                    {prayer.starts}
+                    {prayer.start}
                   </div>
                 </div>
 
@@ -85,7 +90,7 @@ export default function Theme3({
             ))}
 
             {/* Jummah Header */}
-            {jummahTimes && jummahTimes.length > 0 && (
+            {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
               <div className="bg-gray-100 px-3 py-2 border-t border-gray-200">
                 <div className="grid grid-cols-12 gap-1">
                   <div className="col-span-1"></div>
@@ -105,9 +110,9 @@ export default function Theme3({
             )}
 
             {/* Jummah Row(s) */}
-            {jummahTimes &&
-              jummahTimes.length > 0 &&
-              jummahTimes.map((session, index) => (
+            {jummahPrayerTimes &&
+              jummahPrayerTimes.length > 0 &&
+              jummahPrayerTimes.map((session, index) => (
                 <div
                   key={index}
                   className="grid grid-cols-12 gap-1 items-center px-3 py-4 transition-all bg-white hover:bg-gray-50"
@@ -122,7 +127,7 @@ export default function Theme3({
                   {/* Prayer Name */}
                   <div className="col-span-4">
                     <div className="text-sm font-semibold tracking-wider uppercase text-gray-800">
-                      {jummahTimes.length === 1
+                      {jummahPrayerTimes.length === 1
                         ? "Jumaah"
                         : `Jumaah ${index + 1}`}
                     </div>
@@ -132,7 +137,7 @@ export default function Theme3({
                   <div className="col-span-4 text-center relative">
                     <div className="absolute left-0 top-0 h-full w-px bg-gray-200"></div>
                     <div className="text-sm font-medium tracking-wide text-gray-700">
-                      {session.starts}
+                      {session.start}
                     </div>
                   </div>
 

@@ -3,6 +3,7 @@
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useCountdown } from "@/hooks/useCountdown";
+import { PrayerInfo } from "@/lib/server/data/masjidPrayers";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/services/prayer";
 
@@ -33,7 +34,7 @@ const DateSection: React.FC<DateSectionProps> = ({
 };
 
 interface TimeSectionProps {
-  timeUntilNext: FormattedData["timeUntilNext"];
+  timeUntilNext: PrayerInfo["timeUntilNext"];
   isMobile?: boolean;
 }
 
@@ -100,8 +101,13 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const { prayerTimes, jummahTimes, timeUntilNext, hijriDate, gregorianDate } =
-    formattedData;
+  const {
+    dailyPrayerTimes,
+    jummahPrayerTimes,
+    prayerInfo,
+    hijriDate,
+    gregorianDate,
+  } = formattedData;
   const masjid = useMasjidContext();
 
   return (
@@ -117,7 +123,16 @@ export default function PrayerClient({
             />
 
             {/* Current Time */}
-            <TimeSection timeUntilNext={timeUntilNext} isMobile />
+            <TimeSection
+              timeUntilNext={
+                prayerInfo?.timeUntilNext || {
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                }
+              }
+              isMobile
+            />
           </div>
 
           {/* Main Content */}
@@ -148,7 +163,7 @@ export default function PrayerClient({
 
                 {/* Prayer Rows */}
                 <div className="flex-1 flex flex-col">
-                  {prayerTimes?.map((prayer) => {
+                  {dailyPrayerTimes?.map((prayer) => {
                     return (
                       <div
                         key={prayer.name}
@@ -170,7 +185,7 @@ export default function PrayerClient({
                           <div className="text-center relative">
                             <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
                             <span className="text-base sm:text-lg lg:text-2xl xl:text-4xl 2xl:text-6xl font-light tracking-wide">
-                              {prayer.starts}
+                              {prayer.start}
                             </span>
                           </div>
                           <div className="text-center relative">
@@ -198,22 +213,28 @@ export default function PrayerClient({
               <hr className="border-gray-300" />
 
               {/* Current Time */}
-              <TimeSection timeUntilNext={timeUntilNext} />
+              <TimeSection
+                timeUntilNext={
+                  prayerInfo?.timeUntilNext || {
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0,
+                  }
+                }
+              />
 
               <hr className="border-gray-300" />
 
               {/* Jumu'ah */}
               <div className="text-center">
-                <Swiper
-                  {...SWIPER_SETTINGS}
-                >
-                  {jummahTimes &&
-                    jummahTimes.map((session, index) => (
+                <Swiper {...SWIPER_SETTINGS}>
+                  {jummahPrayerTimes &&
+                    jummahPrayerTimes.map((session, index) => (
                       <SwiperSlide key={index} className="h-full">
                         <div className="flex flex-col justify-between h-full">
                           <div className="text-center">
                             <h3 className="text-xl xl:text-3xl font-bold text-gray-800 tracking-wider mb-4 uppercase">
-                              {jummahTimes.length > 1
+                              {jummahPrayerTimes.length > 1
                                 ? `Jumaah Session ${index + 1}`
                                 : "Jumaah جمعة"}
                             </h3>
@@ -260,13 +281,13 @@ export default function PrayerClient({
             {/* Mobile Jumu'ah - Shows after prayer table on mobile */}
             <div className="lg:hidden bg-gray-50 rounded-lg p-4">
               <Swiper {...SWIPER_SETTINGS}>
-                {jummahTimes &&
-                  jummahTimes.map((session, index) => (
+                {jummahPrayerTimes &&
+                  jummahPrayerTimes.map((session, index) => (
                     <SwiperSlide key={index} className="h-full">
                       <div className="flex flex-col justify-between h-full">
                         <div className="text-center">
                           <h3 className="text-lg font-bold text-gray-800 text-center mb-3">
-                            {jummahTimes.length > 1
+                            {jummahPrayerTimes.length > 1
                               ? `Jumaah ${index + 1}`
                               : "Jumaah جمعة"}
                           </h3>

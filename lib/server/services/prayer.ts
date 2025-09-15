@@ -1,78 +1,51 @@
+import { DisplayDates, getMasjidDates } from "../data/masjidDates";
 import {
-  formatGregorianDate,
-  formatHijriDate,
-} from "@/lib/server/formatters/dateTime";
-import { getMasjidById } from "../data/masjid";
-import { getMasjidPrayers } from "../data/masjidPrayers";
-import { formatPrayerTimes } from "../formatters/prayer";
+  getMasjidPrayers,
+  Jummah,
+  PrayerSchedule,
+} from "../data/masjidPrayers";
+import { enrichPrayerTimes } from "../formatters/prayer";
 
 export type PrayerTime = {
   name: string;
   icon: string;
   arabic: string;
-  starts: string;
+  start: string;
   iqamah: string | null;
   isActive: boolean;
 };
 
-export type FormattedData = {
-  prayerTimes: PrayerTime[] | null;
-  prayerTimesSunrise: any;
-  jummahTimes:
-    | {
-        start: string;
-        khutbah: string;
-      }[]
-    | undefined;
-  lastUpdated: string | null;
-  currentPrayer: string | null;
-  nextPrayer: string | null;
-  nextPrayerTime: string | null;
-  hijriDate: string | null;
+export type FormattedData = Omit<PrayerSchedule, "dailyPrayers" | "jummah"> & {
+  dailyPrayerTimes: PrayerTime[] | null;
+  jummahPrayerTimes: Jummah[] | null;
+  hijriDate: string;
   gregorianDate: string;
-  timeUntilNext: {
-    hours: number;
-    minutes: number;
-    seconds: number;
-  };
 };
 
 export async function getServerPrayerData(
   masjidId: string
 ): Promise<FormattedData> {
-  const prayerData = await getMasjidPrayers(masjidId);
-
-  const masjid = await getMasjidById(masjidId);
-  if (!masjid) {
-    throw new Error("Masjid not found");
+  const prayerData: PrayerSchedule | null = await getMasjidPrayers(masjidId);
+  if (!prayerData) {
+    throw new Error("Prayer data not found");
   }
 
-  const now = new Date();
-  const gregorianDate = formatGregorianDate({
-    isoDateString: now.toISOString(),
-  });
-
-  const hijriDate = masjid
-    ? formatHijriDate({ isoDateString: now.toISOString(), masjid })
-    : null;
-
-  const prayerTimes = prayerData.dailyPrayers
-    ? formatPrayerTimes({
-        data: prayerData.dailyPrayers,
-        currentPrayer: prayerData.prayerInfo.current.name,
-      })
-    : null;
+  const dates: DisplayDates | null = await getMasjidDates(masjidId);
+  if (!dates) {
+    throw new Error("Dates not found");
+  }
 
   return {
-    prayerTimes,
-    prayerTimesSunrise: prayerData.shurq,
-    jummahTimes: prayerData.jummah,
-    hijriDate,
-    gregorianDate,
-    lastUpdated: prayerData.lastUpdated,
-    currentPrayer: prayerData.prayerInfo.current.name,
-    nextPrayer: prayerData.prayerInfo.next.name,
-    nextPrayerTime: prayerData.prayerInfo.next.time,
-    timeUntilNext: prayerData.prayerInfo.timeUntilNext,
+    dailyPrayerTimes: enrichPrayerTimes({
+      data: prayerData?.dailyPrayers,
+      currentPrayer: prayerData?.prayerInfo?.current.name,
+    }),
+    jummahPrayerTimes: prayerData?.jummah || null,
+    shurq: prayerData?.shurq,
+    prayerInfo: prayerData?.prayerInfo,
+    lastUpdated: prayerData?.lastUpdated,
+    hijriDate: dates?.hijri?.formatted,
+    gregorianDate: dates?.gregorian?.formatted,
+    date: prayerData?.date,
   };
 }
