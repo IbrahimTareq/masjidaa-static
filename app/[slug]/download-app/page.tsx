@@ -1,10 +1,9 @@
 "use client";
 
 import { useMasjidContext } from "@/context/masjidContext";
-import { Home, Search, Check, MapPin, Calendar } from "lucide-react";
+import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 
 export default function DownloadApp() {
   const masjid = useMasjidContext();
@@ -12,30 +11,6 @@ export default function DownloadApp() {
   if (!masjid) {
     return <div>Masjid not found</div>;
   }
-
-  useEffect(() => {
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const isAndroid = /android/i.test(navigator.userAgent);
-
-    if (isIOS || isAndroid) {
-      const deepLink = `masjidaa://masjid/${masjid.id}`;
-      const appStore =
-        "https://apps.apple.com/us/app/masjidaa/id123456789"; // <-- real link needed
-      const playStore =
-        "https://play.google.com/store/apps/details?id=com.masjidaa";
-
-      // Try opening the app with an invisible iframe (safer in Chrome)
-      const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.src = deepLink;
-      document.body.appendChild(iframe);
-
-      // Fallback: after 1.5s, go to the store (replace so no back button)
-      setTimeout(() => {
-        window.location.replace(isIOS ? appStore : playStore);
-      }, 1500);
-    }
-  }, [masjid.id]);
 
   return (
     <section className="py-20 bg-theme-accent text-black relative">
