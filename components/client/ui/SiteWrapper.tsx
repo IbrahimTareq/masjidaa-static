@@ -51,7 +51,7 @@ export default function SiteWrapper({
               </NavLink>
               <NavLink href={`/${masjid.slug}/contact`}>Contact</NavLink>
               <NavLink
-                href={`/${masjid.slug}/download-app`}
+                href={`/${masjid.slug}/app-download`}
                 className="bg-theme-gradient text-white font-medium px-6 py-2 rounded hover:bg-theme-gradient/90 transition-colors"
               >
                 Download App
@@ -116,7 +116,7 @@ export default function SiteWrapper({
                 Contact
               </NavLink>
               <NavLink
-                href={`/${masjid.slug}/download-app`}
+                href={`/${masjid.slug}/app-download`}
                 className="block w-full bg-theme-gradient text-white text-center font-medium px-6 py-2 rounded hover:bg-theme-accent/90 transition-colors mt-4"
               >
                 Download App
@@ -173,7 +173,7 @@ export default function SiteWrapper({
                   </FooterLink>
                 </li>
                 <li>
-                  <FooterLink href={`/${masjid.slug}/download-app`}>
+                  <FooterLink href={`/${masjid.slug}/app-download`}>
                     Download App
                   </FooterLink>
                 </li>
