@@ -1,11 +1,13 @@
 import SiteWrapper from "@/components/client/ui/SiteWrapper";
 import ThemeClientWrapper from "@/components/client/ui/ThemeClientWrapper";
+import ThemeWrapper from "@/components/server/ThemeWrapper";
 import { DateTimeProvider } from "@/context/dateTimeContext";
 import { MasjidProvider } from "@/context/masjidContext";
 import { MasjidSiteSettingsProvider } from "@/context/masjidSiteSettingsContext";
 import { getMasjidBySlug } from "@/lib/server/data/masjid";
 import { getPrayerSettingsByMasjidId } from "@/lib/server/data/masjidPrayerSettings";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/data/masjidSiteSettings";
+import { getMasjidThemeById } from "@/lib/server/data/masjidTheme";
 import React from "react";
 
 export default async function MasjidLayout({
@@ -18,16 +20,20 @@ export default async function MasjidLayout({
   const { slug } = await params;
 
   const masjid = await getMasjidBySlug(slug);
-  const prayerSettings = masjid ? await getPrayerSettingsByMasjidId(masjid.id) : null;
-  const siteSettings = masjid ? await getMasjidSiteSettingsByMasjidId(masjid.id) : null;
+  const prayerSettings = masjid
+    ? await getPrayerSettingsByMasjidId(masjid.id)
+    : null;
+  const siteSettings = masjid
+    ? await getMasjidSiteSettingsByMasjidId(masjid.id)
+    : null;
 
   return (
     <MasjidProvider masjid={masjid}>
       <MasjidSiteSettingsProvider siteSettings={siteSettings}>
         <DateTimeProvider settings={prayerSettings}>
-          <ThemeClientWrapper id={masjid?.id || ""}>
+          <ThemeWrapper id={masjid?.id || ""}>
             <SiteWrapper siteSettings={siteSettings}>{children}</SiteWrapper>
-          </ThemeClientWrapper>
+          </ThemeWrapper>
         </DateTimeProvider>
       </MasjidSiteSettingsProvider>
     </MasjidProvider>

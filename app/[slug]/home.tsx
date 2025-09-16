@@ -15,18 +15,6 @@ interface HomeClientProps {
   campaign?: Tables<"donation_campaigns"> | null;
 }
 
-const getUpcomingEvents = (events: Tables<"events">[]) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Start of today
-
-  return events
-    .filter((event) => {
-      const eventDate = new Date(event.date);
-      return eventDate >= today; // Events from today onwards
-    })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-};
-
 export default function HomeClient({
   prayerData,
   events,

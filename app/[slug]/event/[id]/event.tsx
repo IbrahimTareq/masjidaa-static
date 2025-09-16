@@ -5,29 +5,37 @@ import { Tables } from "@/database.types";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { AddToCalendarButton } from "add-to-calendar-button-react";
-import { Calendar, MapPin, Share, X } from "lucide-react";
+import { Calendar, Check, MapPin, Share, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export default function EventClient({ event }: { event: Tables<"events"> }) {
+export default function EventClient({
+  event,
+  eventLink,
+}: {
+  event: Tables<"events">;
+  eventLink: string;
+}) {
   const { formatTime, formatDate } = useDateTimeFormat();
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [showCalendarOptions, setShowCalendarOptions] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement>(null);
 
-  const searchParams = useSearchParams()
-  const eventDateParam = searchParams.get('eventDate')
+  const [copied, setCopied] = useState(false);
+
+  const searchParams = useSearchParams();
+  const eventDateParam = searchParams.get("eventDate");
 
   const eventDate = eventDateParam || event.date;
-  
+
   // Handle click outside to close calendar options
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        calendarRef.current && 
+        calendarRef.current &&
         !calendarRef.current.contains(event.target as Node) &&
-        calendarButtonRef.current && 
+        calendarButtonRef.current &&
         !calendarButtonRef.current.contains(event.target as Node)
       ) {
         setShowCalendarOptions(false);
@@ -35,13 +43,23 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
     };
 
     if (showCalendarOptions) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendarOptions]);
+
+  const shareEvent = async () => {
+    try {
+      await navigator.clipboard.writeText(eventLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200); // reset after 1.2s
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
 
   const openImagePreview = () => {
     if (event?.image) {
@@ -124,11 +142,20 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
 
               {/* Action Buttons - Mobile Only */}
               <div className="flex flex-wrap gap-4 lg:hidden relative">
-                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors cursor-pointer">
-                  <Share className="w-5 h-5" />
-                  <span className="font-medium">Share Event</span>
+                <button
+                  onClick={shareEvent}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors cursor-pointer"
+                >
+                  {copied ? (
+                    <Check className="w-5 h-5 text-white" />
+                  ) : (
+                    <Share className="w-5 h-5" />
+                  )}
+                  <span className="font-medium">
+                    {copied ? "Copied!" : "Share Event Link"}
+                  </span>
                 </button>
-                <button 
+                <button
                   onClick={() => setShowCalendarOptions(!showCalendarOptions)}
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-color cursor-pointer"
                 >
@@ -137,10 +164,13 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
                     Add to Calendar
                   </span>
                 </button>
-                
+
                 {/* Mobile Calendar Options Popup */}
                 {showCalendarOptions && (
-                  <div ref={calendarRef} className="absolute left-0 right-0 bottom-full mb-3 p-4 bg-white rounded-xl shadow-lg border border-gray-100 z-20 animate-fade-in">
+                  <div
+                    ref={calendarRef}
+                    className="absolute left-0 right-0 bottom-full mb-3 p-4 bg-white rounded-xl shadow-lg border border-gray-100 z-20 animate-fade-in"
+                  >
                     <div className="flex flex-wrap gap-2">
                       <AddToCalendarButton
                         name={event.title}
@@ -189,11 +219,20 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
 
               {/* Action Buttons - Desktop Only */}
               <div className="hidden lg:flex gap-4 relative">
-                <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors cursor-pointer">
-                  <Share className="w-5 h-5" />
-                  <span className="font-medium">Share Event</span>
+                <button
+                  onClick={shareEvent}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors cursor-pointer"
+                >
+                  {copied ? (
+                    <Check className="w-5 h-5 text-white" />
+                  ) : (
+                    <Share className="w-5 h-5" />
+                  )}
+                  <span className="font-medium">
+                    {copied ? "Copied!" : "Share Event Link"}
+                  </span>
                 </button>
-                <button 
+                <button
                   ref={calendarButtonRef}
                   onClick={() => setShowCalendarOptions(!showCalendarOptions)}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
@@ -203,35 +242,38 @@ export default function EventClient({ event }: { event: Tables<"events"> }) {
                     Add to Calendar
                   </span>
                 </button>
-                
+
                 {/* Calendar Options Popup */}
                 {showCalendarOptions && (
-                  <div ref={calendarRef} className="absolute right-0 bottom-full mb-3 p-4 bg-white rounded-xl shadow-lg border border-gray-100 z-20 animate-fade-in">
+                  <div
+                    ref={calendarRef}
+                    className="absolute right-0 bottom-full mb-3 p-4 bg-white rounded-xl shadow-lg border border-gray-100 z-20 animate-fade-in"
+                  >
                     <div className="flex flex-wrap gap-2">
-                    <AddToCalendarButton
-                      name={event.title}
-                      description={event.description || ""}
-                      location={event.location || ""}
-                      startDate={eventDate}
-                      startTime={event.start_time || ""}
-                      endTime={event.start_time || ""}
-                      options={[
-                        "Apple",
-                        "Google",
-                        "iCal",
-                        "Microsoft365",
-                        "Outlook.com",
-                        "Yahoo",
-                      ]}
-                      buttonsList
-                      hideTextLabelButton
-                      buttonStyle="round"
-                      lightMode="bodyScheme"
-                    />
+                      <AddToCalendarButton
+                        name={event.title}
+                        description={event.description || ""}
+                        location={event.location || ""}
+                        startDate={eventDate}
+                        startTime={event.start_time || ""}
+                        endTime={event.start_time || ""}
+                        options={[
+                          "Apple",
+                          "Google",
+                          "iCal",
+                          "Microsoft365",
+                          "Outlook.com",
+                          "Yahoo",
+                        ]}
+                        buttonsList
+                        hideTextLabelButton
+                        buttonStyle="round"
+                        lightMode="bodyScheme"
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             </div>
           </div>
         </main>

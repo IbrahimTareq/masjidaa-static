@@ -1,5 +1,7 @@
 import { getEvent } from "@/lib/server/actions/eventActions";
 import EventClient from "./event";
+import { getMasjidEventShortCodeById } from "@/lib/server/data/masjidEventShortCode";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default async function Page({
   params,
@@ -11,7 +13,9 @@ export default async function Page({
   const { id } = await params;
   const eventDate = (await searchParams).eventDate;
   const event = await getEvent(id);
-
+  const shortCode = await getMasjidEventShortCodeById(id);
+  const eventLink = `${DOMAIN_NAME}/r/${shortCode}`;
+  
   if (!event) {
     return <div>Event not found</div>;
   }
@@ -38,7 +42,7 @@ export default async function Page({
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <EventClient event={event} />
+      <EventClient event={event} eventLink={eventLink} />
     </>
   );
 }
