@@ -8,7 +8,7 @@ import {
   formatCurrentTime,
   formatTime,
 } from "@/lib/server/formatters/dateTime";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 export default function PrayerClient({
   formattedData,

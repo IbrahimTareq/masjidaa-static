@@ -1,4 +1,4 @@
-import { getServerPrayerData } from "@/lib/server/services/prayer";
+import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import Theme1 from "./theme1/theme1";
 import Theme2 from "./theme2/theme2";
 import Theme3 from "./theme3/theme3";

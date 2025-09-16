@@ -3,9 +3,9 @@
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useCountdown } from "@/hooks/useCountdown";
-import { PrayerInfo } from "@/lib/server/data/masjidPrayers";
+import { PrayerInfo } from "@/lib/server/services/masjidPrayers";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";

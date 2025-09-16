@@ -1,7 +1,7 @@
 "use client";
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default function Theme2({

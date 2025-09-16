@@ -1,6 +1,6 @@
 import { Database } from "@/database.types";
-import { getMasjidById } from "../data/masjid";
-import { getMasjidThemeById } from "../data/masjidTheme";
+import { getMasjidById } from "../../services/masjid";
+import { getMasjidThemeById } from "../../services/masjidTheme";
 
 type Theme = Database["public"]["Tables"]["themes"]["Row"];
 

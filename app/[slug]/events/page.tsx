@@ -1,7 +1,7 @@
 import { Tables } from "@/database.types";
-import { convertEventsToCalendarEvents } from "@/lib/convertEventsToCalendarEvents";
-import { getMasjidBySlug } from "@/lib/server/data/masjid";
-import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
+import { convertEventsToCalendarEvents } from "@/lib/server/formatters/calendar";
+import { getMasjidBySlug } from "@/lib/server/services/masjid";
+import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 import EventsClient from "./events";
 
 export default async function Page({

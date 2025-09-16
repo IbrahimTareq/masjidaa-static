@@ -1,4 +1,4 @@
-import { getMasjidDonationCampaignById } from "@/lib/server/data/masjidDonationCampaign";
+import { getMasjidDonationCampaignById } from "@/lib/server/services/masjidDonationCampaign";
 import DonationClient from "./donation";
 
 export default async function Page({

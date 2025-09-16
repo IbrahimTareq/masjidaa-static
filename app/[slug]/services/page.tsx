@@ -1,5 +1,5 @@
-import { getMasjidBySlug } from "@/lib/server/data/masjid";
-import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/data/masjidSiteSettings";
+import { getMasjidBySlug } from "@/lib/server/services/masjid";
+import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
 import ServicesClient from "./services";
 
 export default async function Page({

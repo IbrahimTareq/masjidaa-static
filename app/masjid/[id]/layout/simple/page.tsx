@@ -1,6 +1,6 @@
 import Slideshow from "@/components/client/interactive/Slideshow";
 import { Ticker } from "@/components/client/interactive/Ticker";
-import { getMasjidSlidesById } from "@/lib/server/data/masjidSlides";
+import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
 
 export default async function SimpleLayoutPage({
   params,

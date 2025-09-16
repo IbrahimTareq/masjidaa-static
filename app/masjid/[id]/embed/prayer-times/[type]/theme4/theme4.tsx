@@ -1,6 +1,6 @@
 "use client";
 
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import {
   BRAND_NAME,
   DOMAIN_NAME,

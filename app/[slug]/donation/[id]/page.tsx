@@ -1,12 +1,12 @@
 import { getDonationCampaign } from "@/lib/server/actions/donationCampaignActions";
-import { getMasjidById } from "@/lib/server/data/masjid";
-import { getMasjidBankAccountById } from "@/lib/server/data/masjidBankAccount";
-import { getShortLinkById } from "@/lib/server/data/shortLink";
-import { getMasjidThemeById } from "@/lib/server/data/masjidTheme";
+import { getMasjidById } from "@/lib/server/services/masjid";
+import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
+import { getShortLinkById } from "@/lib/server/services/shortLink";
+import { getMasjidThemeById } from "@/lib/server/services/masjidTheme";
 
 import DonationDisplay from "@/app/[slug]/donation/[id]/donation";
-import { getDonationCount } from "@/lib/server/data/donationCount";
-import { getDonationCountMonthly } from "@/lib/server/data/donationCountMonthly";
+import { getDonationCount } from "@/lib/server/services/donationCount";
+import { getDonationCountMonthly } from "@/lib/server/services/donationCountMonthly";
 
 export default async function DonationCampaignPage({
   params,

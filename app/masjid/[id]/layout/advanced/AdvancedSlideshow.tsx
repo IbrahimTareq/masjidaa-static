@@ -2,7 +2,7 @@
 
 import { useMasjidContext } from "@/context/masjidContext";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { useRef } from "react";
 
 import Slideshow, { Slide } from "@/components/client/interactive/Slideshow";

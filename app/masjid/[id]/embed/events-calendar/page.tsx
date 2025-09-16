@@ -1,7 +1,7 @@
 import Calendar from "@/components/client/interactive/Calendar";
 import { Tables } from "@/database.types";
-import { convertEventsToCalendarEvents } from "@/lib/convertEventsToCalendarEvents";
-import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
+import { convertEventsToCalendarEvents } from "@/lib/server/formatters/calendar";
+import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 
 export default async function CalendarPage({
   params,

@@ -1,5 +1,5 @@
 import { getPrayerArabicName, PrayerName } from "@/utils/prayer";
-import { DailyPrayers } from "../data/masjidPrayers";
+import { DailyPrayers } from "../services/masjidPrayers";
 
 export type PrayerTime = {
   name: string;

@@ -1,4 +1,4 @@
-import { getServerTheme } from "@/lib/server/services/theme";
+import { getServerTheme } from "@/lib/server/domain/theme/getServerTheme";
 import ThemeScript from "@/components/client/ui/ThemeScript";
 
 interface ThemeWrapperProps {

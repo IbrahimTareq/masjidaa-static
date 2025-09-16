@@ -2,7 +2,7 @@
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useMasjidContext } from "@/context/masjidContext";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { useEffect, useState } from "react";

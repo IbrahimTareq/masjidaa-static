@@ -1,9 +1,9 @@
 import HomeClient from "@/app/[slug]/home";
-import { getMasjidBySlug } from "@/lib/server/data/masjid";
-import { getMasjidDonationCampaignById } from "@/lib/server/data/masjidDonationCampaign";
-import { getMasjidEventsByMasjidId } from "@/lib/server/data/masjidEvents";
-import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/data/masjidSiteSettings";
-import { getServerPrayerData } from "@/lib/server/services/prayer";
+import { getMasjidBySlug } from "@/lib/server/services/masjid";
+import { getMasjidDonationCampaignById } from "@/lib/server/services/masjidDonationCampaign";
+import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
+import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
+import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default async function Page({

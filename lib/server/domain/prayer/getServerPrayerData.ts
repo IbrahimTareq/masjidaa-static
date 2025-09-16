@@ -1,10 +1,10 @@
-import { DisplayDates, getMasjidDates } from "../data/masjidDates";
+import { DisplayDates, getMasjidDates } from "../../services/masjidDates";
 import {
   getMasjidPrayers,
   Jummah,
   PrayerSchedule,
-} from "../data/masjidPrayers";
-import { enrichPrayerTimes } from "../formatters/prayer";
+} from "../../services/masjidPrayers";
+import { enrichPrayerTimes } from "../../formatters/prayer";
 
 export type PrayerTime = {
   name: string;

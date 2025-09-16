@@ -6,7 +6,7 @@ import { EventsCarousel } from "@/components/client/interactive/EventsCarousel";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useMasjidSiteSettings } from "@/context/masjidSiteSettingsContext";
 import { Tables } from "@/database.types";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import Link from "next/link";
 
 interface HomeClientProps {

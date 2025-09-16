@@ -3,7 +3,7 @@
 import LayoutWithHeader from "@/components/LayoutWithHeader";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useCountdown } from "@/hooks/useCountdown";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";

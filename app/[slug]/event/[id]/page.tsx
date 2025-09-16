@@ -1,6 +1,6 @@
 import { getEvent } from "@/lib/server/actions/eventActions";
 import EventClient from "./event";
-import { getMasjidEventShortCodeById } from "@/lib/server/data/masjidEventShortCode";
+import { getMasjidEventShortCodeById } from "@/lib/server/services/masjidEventShortCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 
 export default async function Page({

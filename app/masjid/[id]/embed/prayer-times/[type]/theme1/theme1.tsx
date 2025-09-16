@@ -2,7 +2,7 @@
 
 import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import {
   BRAND_NAME,

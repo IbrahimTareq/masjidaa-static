@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getMasjidSubscriptionByMasjidId } from "./lib/server/data/masjidSubscription";
+import { getMasjidSubscriptionByMasjidId } from "./lib/server/services/masjidSubscription";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

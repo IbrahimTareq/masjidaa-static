@@ -1,6 +1,6 @@
 import AdvancedSlideshow from "@/app/masjid/[id]/layout/advanced/AdvancedSlideshow";
-import { getMasjidSlidesById } from "@/lib/server/data/masjidSlides";
-import { getServerPrayerData } from "@/lib/server/services/prayer";
+import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
+import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 export default async function AdvancedLayoutPage({
   params,

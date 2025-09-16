@@ -5,7 +5,7 @@ import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useCountdown } from "@/hooks/useCountdown";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
-import { FormattedData } from "@/lib/server/services/prayer";
+import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { useEffect } from "react";
 
 import "swiper/css";
