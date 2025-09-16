@@ -23,6 +23,16 @@ export function useSlidesRealtime(masjidId: string) {
         {
           event: "*",
           schema: "public",
+          table: "masjids",
+          filter: `id=eq.${masjidId}`,
+        },
+        handleChange
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
           table: "masjid_slides",
           filter: `masjid_id=eq.${masjidId}`,
         },

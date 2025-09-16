@@ -1,227 +1,152 @@
-import { Calendar, DollarSign, Megaphone, Users } from "lucide-react";
-import Xarrow, { Xwrapper } from "react-xarrows";
 import PrayerLayout from "@/components/LayoutWithHeader";
+import { useMasjidContext } from "@/context/masjidContext";
+import { useQRCode } from "@/hooks/useQRCode";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRef } from "react";
 
 export default function DownloadApp() {
+  const masjid = useMasjidContext();
+
+  if (!masjid) {
+    return <div>Masjid not found</div>;
+  }
+
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  useQRCode(
+    {
+      data: `${DOMAIN_NAME}/${masjid?.slug}`,
+      width: 180,
+      height: 180,
+    },
+    qrRef
+  );
+
   return (
     <PrayerLayout headerTitle="Join our community online">
-      <div className="h-full bg-white relative overflow-hidden">
-        {/* Main Content */}
-        <div className="h-full flex flex-col">
-          {/* Center Content with Phone and Features */}
-          <div className="flex-1 flex items-center justify-center px-4 py-6">
-            <Xwrapper>
-              <div className="relative max-w-4xl w-full">
-                {/* Feature Icons - Desktop Layout */}
-                <div className="hidden lg:block">
-                  {/* Left Side Features */}
-                  <div className="absolute -left-32 top-1/2 -translate-y-1/2 space-y-32">
-                    <div
-                      id="different-groups"
-                      className="flex flex-col items-center text-center text-gray-700"
-                    >
-                      <Users className="w-12 h-12 mb-3" />
-                      <div className="font-semibold text-xl">Prayer Times</div>
-                    </div>
-                    <div
-                      id="donations"
-                      className="flex flex-col items-center text-center text-gray-700"
-                    >
-                      <DollarSign className="w-12 h-12 mb-3" />
-                      <div className="font-semibold text-xl">Donations and</div>
-                      <div className="font-semibold text-xl">Projects</div>
-                    </div>
+      <section className="text-black relative h-full py-10">
+        <div className="max-w-7xl mx-auto px-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Left Side */}
+          <div className="flex flex-col justify-start">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+              Stay connected with&nbsp;
+              <span className="text-theme">{masjid.name}</span>
+            </h1>
+            <p className="text-lg font-semibold text-gray-600 mb-8">
+              Get accurate prayer times with helpful iqama reminders, instant
+              updates on announcements and events, and never miss a moment with
+              your community. You can also support your masjid easily and
+              securely, helping it continue to serve you and others.
+            </p>
+
+            <div className="w-48 h-48 bg-white border-1 border-gray-200 rounded-xl overflow-hidden flex items-center justify-center p-1">
+              <div ref={qrRef} className="qr-code-container w-full h-full" />
+            </div>
+          </div>
+
+          {/* Right Side: Fake phone preview */}
+          <div className="flex justify-center mt-10">
+            <div className="relative w-[300px] h-[600px] rounded-[2.5rem] border-4 border-gray-800 bg-black shadow-2xl overflow-hidden pointer-events-none">
+              {/* Notch */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20"></div>
+
+              {/* Screen content */}
+              <div className="absolute inset-0 flex flex-col bg-white text-black">
+                {/* Top banner */}
+                <div className="h-56 bg-theme"></div>
+
+                {/* Masjid card */}
+                <div className="relative -mt-30 mx-4 bg-white rounded-2xl shadow p-4">
+                  <h2 className="font-bold text-md mb-2">{masjid.name}</h2>
+
+                  {/* Floating logo */}
+                  <div className="absolute top-4 right-4 w-12 h-12 bg-white rounded-lg border-2 border-gray-100 flex justify-center items-center p-2 shadow-sm">
+                    <img
+                      src={masjid.logo || ""}
+                      alt="Masjid Logo"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
 
-                  {/* Right Side Features */}
-                  <div className="absolute -right-32 top-1/2 -translate-y-1/2 space-y-32">
-                    <div
-                      id="event-updates"
-                      className="flex flex-col items-center text-center text-gray-700"
-                    >
-                      <Calendar className="w-12 h-12 mb-3" />
-                      <div className="font-semibold text-xl">Event Updates</div>
-                    </div>
-                    <div
-                      id="announcements"
-                      className="flex flex-col items-center text-center text-gray-700"
-                    >
-                      <Megaphone className="w-12 h-12 mb-3" />
-                      <div className="font-semibold text-xl">Announcements</div>
-                    </div>
+                  <div className="text-xs text-gray-600 space-y-1">
+                    <p>🌐 {masjid.website}</p>
+                    <p>📞 {masjid.contact_number}</p>
+                    <p>📍 {masjid.address_label}</p>
                   </div>
-                </div>
 
-                {/* Phone Mockup - Center */}
-                <div className="flex justify-center">
-                  <div className="relative">
-                    {/* Background Phone 1 - Left tilted */}
-                    <div className="absolute -left-20 top-4 w-64 h-[520px] sm:w-72 sm:h-[580px] bg-black rounded-[3rem] p-4 shadow-xl transform -rotate-12 scale-90 opacity-60 z-10">
-                      <div className="w-full h-full bg-gray-100 rounded-[2.5rem] overflow-hidden relative">
-                        <div className="w-full h-full bg-white flex flex-col">
-                          {/* WhatsApp Header */}
-                          <div className="bg-theme h-16 flex items-center px-4"></div>
-                          {/* Chat content */}
-                          <div className="flex-1 p-4 space-y-3">
-                            <div className="bg-gray-200 rounded-lg p-2 w-3/4">
-                              <div className="w-full h-3 bg-gray-300 rounded"></div>
-                            </div>
-                            <div className="bg-theme-accent rounded-lg p-2 w-2/3 ml-auto">
-                              <div className="w-full h-3 bg-theme rounded"></div>
-                            </div>
-                            <div className="bg-gray-200 rounded-lg p-2 w-1/2">
-                              <div className="w-full h-3 bg-gray-300 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  {/* Action buttons */}
+                  <div className="flex flex-row justify-between mt-6">
+                    <div className="flex-1 flex items-center justify-center py-2 mx-2 rounded-xl bg-green-100">
+                      <Check className="w-4 h-4" />
                     </div>
-
-                    {/* Background Phone 2 - Right tilted */}
-                    <div className="absolute -right-20 top-4 w-64 h-[520px] sm:w-72 sm:h-[580px] bg-black rounded-[3rem] p-4 transform rotate-12 scale-90 opacity-60 z-10">
-                      <div className="w-full h-full bg-gray-100 rounded-[2.5rem] overflow-hidden relative">
-                        <div className="w-full h-full bg-white flex flex-col">
-                          {/* WhatsApp Header */}
-                          <div className="bg-theme h-16 flex items-center px-4"></div>
-                          {/* Chat content */}
-                          <div className="flex-1 p-4 space-y-3">
-                            <div className="bg-theme-accent rounded-lg p-2 w-2/3 ml-auto">
-                              <div className="w-full h-3 bg-theme rounded"></div>
-                            </div>
-                            <div className="bg-gray-200 rounded-lg p-2 w-3/4">
-                              <div className="w-full h-3 bg-gray-300 rounded"></div>
-                            </div>
-                            <div className="bg-gray-200 rounded-lg p-2 w-1/2">
-                              <div className="w-full h-3 bg-gray-300 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="flex-1 flex items-center justify-center py-2 mx-2">
+                      <MapPin className="w-4 h-4" />
                     </div>
-
-                    {/* Main Phone Frame - Front */}
-                    <div
-                      id="main-phone"
-                      className="relative w-64 h-[520px] sm:w-72 sm:h-[580px] bg-black rounded-[3rem] p-4 z-20"
-                    >
-                      <div className="w-full h-full bg-gray-100 rounded-[2.5rem] overflow-hidden relative">
-                        {/* Phone Screen Content */}
-                        <div className="w-full h-full bg-white flex flex-col">
-                          {/* WhatsApp Header */}
-                          <div className="bg-theme h-16 flex items-center px-4"></div>
-
-                          {/* Chat Messages */}
-                          <div className="flex-1 p-4 space-y-3">
-                            <div className="bg-gray-200 rounded-lg p-2 w-3/4">
-                              <div className="w-full h-3 bg-gray-300 rounded mb-1"></div>
-                            </div>
-                            <div className="bg-theme-accent rounded-lg p-2 w-2/3 ml-auto">
-                              <div className="w-full h-3 bg-theme rounded mb-1"></div>
-                            </div>
-
-                            {/* QR Code Section */}
-                            <div className="flex justify-center my-6">
-                              <div className="w-64 h-64 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
-                                <img
-                                  src="/qrcode.png"
-                                  alt="QR Code"
-                                  className="w-64 h-64 object-contain"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="bg-gray-200 rounded-lg p-2 w-3/4">
-                              <div className="w-full h-3 bg-gray-300 rounded mb-1"></div>
-                            </div>
-                            <div className="bg-gray-200 rounded-lg p-2 w-1/2">
-                              <div className="w-full h-3 bg-gray-300 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Scan Me Button */}
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30">
-                      <div className="bg-theme text-white px-8 py-3 rounded-xl font-bold text-4xl whitespace-nowrap">
-                        SCAN ME
-                      </div>
+                    <div className="flex-1 flex items-center justify-center py-2 mx-2">
+                      <Calendar className="w-4 h-4" />
                     </div>
                   </div>
                 </div>
 
-                {/* Connecting Arrows - Desktop Only */}
-                <div className="hidden lg:block">
-                  <Xarrow
-                    start="main-phone"
-                    end="event-updates"
-                    color="gray"
-                    strokeWidth={2}
-                    headSize={4}
-                    startAnchor={{ position: "right", offset: { y: -80 } }}
-                    endAnchor="left"
-                    path="smooth"
-                  />
-                  <Xarrow
-                    start="main-phone"
-                    end="donations"
-                    color="gray"
-                    strokeWidth={2}
-                    headSize={4}
-                    startAnchor={{ position: "left", offset: { y: 80 } }}
-                    endAnchor="right"
-                    path="smooth"
-                  />
-                  <Xarrow
-                    start="main-phone"
-                    end="different-groups"
-                    color="gray"
-                    strokeWidth={2}
-                    headSize={4}
-                    startAnchor={{ position: "left", offset: { y: -80 } }}
-                    endAnchor="right"
-                    path="smooth"
-                  />
-                  <Xarrow
-                    start="main-phone"
-                    end="announcements"
-                    color="gray"
-                    strokeWidth={2}
-                    headSize={4}
-                    startAnchor={{ position: "right", offset: { y: 80 } }}
-                    endAnchor="left"
-                    path="smooth"
-                  />
+                {/* Prayer timetable */}
+                <div className="mt-4 flex-1 px-4 overflow-y-auto bg-white">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-gray-500">
+                        <th className="text-left pb-2">Prayer</th>
+                        <th className="text-center pb-2">Starts</th>
+                        <th className="text-center pb-2">Iqamah</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y text-gray-800">
+                      <tr>
+                        <td className="py-2 font-semibold">Fajr</td>
+                        <td className="text-center">4:52 AM</td>
+                        <td className="text-center">6:50 AM</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 font-semibold">Dhuhr</td>
+                        <td className="text-center">12:16 PM</td>
+                        <td className="text-center">12:00 PM</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 font-semibold">Asr</td>
+                        <td className="text-center">3:37 PM</td>
+                        <td className="text-center">2:00 PM</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 font-semibold">Maghrib</td>
+                        <td className="text-center">6:11 PM</td>
+                        <td className="text-center">6:00 PM</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 font-semibold">Isha</td>
+                        <td className="text-center">7:34 PM</td>
+                        <td className="text-center">8:00 PM</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
 
-                {/* Mobile Features - Below Phone */}
-                <div className="lg:hidden mt-16 grid grid-cols-2 gap-12 text-gray-700">
-                  <div className="text-center">
-                    <Calendar className="w-12 h-12 mx-auto mb-3" />
-                    <div className="font-semibold text-lg">Event Updates</div>
+                {/* Bottom nav */}
+                <div className="border-t bg-white flex justify-between py-2 px-15 text-gray-500 text-xs">
+                  <div className="flex flex-col items-center">
+                    <Home />
+                    <span>Home</span>
                   </div>
-                  <div className="text-center">
-                    <Users className="w-12 h-12 mx-auto mb-3" />
-                    <div className="font-semibold text-lg">
-                      Different groups
-                    </div>
-                    <div className="font-semibold text-lg">and classes</div>
-                  </div>
-                  <div className="text-center">
-                    <DollarSign className="w-12 h-12 mx-auto mb-3" />
-                    <div className="font-semibold text-lg">Donations and</div>
-                    <div className="font-semibold text-lg">Projects</div>
-                  </div>
-                  <div className="text-center">
-                    <Megaphone className="w-12 h-12 mx-auto mb-3" />
-                    <div className="font-semibold text-lg">Announcements</div>
+                  <div className="flex flex-col items-center">
+                    <Search />
+                    <span>Discover</span>
                   </div>
                 </div>
               </div>
-            </Xwrapper>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </PrayerLayout>
   );
 }
