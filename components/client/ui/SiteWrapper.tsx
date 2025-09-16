@@ -46,12 +46,15 @@ export default function SiteWrapper({
                 Announcements
               </NavLink>
               <NavLink href={`/${masjid.slug}/services`}>Services</NavLink>
+              <NavLink href={`/${masjid.slug}/donations`}>
+                Donations
+              </NavLink>
               <NavLink href={`/${masjid.slug}/contact`}>Contact</NavLink>
               <NavLink
-                href={`/${masjid.slug}/donations`}
+                href={`/${masjid.slug}/download-app`}
                 className="bg-theme-gradient text-white font-medium px-6 py-2 rounded hover:bg-theme-gradient/90 transition-colors"
               >
-                Donate Now
+                Download App
               </NavLink>
             </div>
 
@@ -106,14 +109,17 @@ export default function SiteWrapper({
               <NavLink href={`/${masjid.slug}/services`} mobile>
                 Services
               </NavLink>
+              <NavLink href={`/${masjid.slug}/donations`} mobile>
+                Donations
+              </NavLink>
               <NavLink href={`/${masjid.slug}/contact`} mobile>
                 Contact
               </NavLink>
               <NavLink
-                href={`/${masjid.slug}/donations`}
+                href={`/${masjid.slug}/download-app`}
                 className="block w-full bg-theme-gradient text-white text-center font-medium px-6 py-2 rounded hover:bg-theme-accent/90 transition-colors mt-4"
               >
-                Donate Now
+                Download App
               </NavLink>
             </div>
           </div>
@@ -164,6 +170,11 @@ export default function SiteWrapper({
                 <li>
                   <FooterLink href={`/${masjid.slug}/donations`}>
                     Donations
+                  </FooterLink>
+                </li>
+                <li>
+                  <FooterLink href={`/${masjid.slug}/download-app`}>
+                    Download App
                   </FooterLink>
                 </li>
                 <li>
