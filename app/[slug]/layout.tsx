@@ -1,5 +1,4 @@
 import SiteWrapper from "@/components/client/ui/SiteWrapper";
-import ThemeClientWrapper from "@/components/client/ui/ThemeClientWrapper";
 import ThemeWrapper from "@/components/server/ThemeWrapper";
 import { DateTimeProvider } from "@/context/dateTimeContext";
 import { MasjidProvider } from "@/context/masjidContext";
@@ -7,7 +6,6 @@ import { MasjidSiteSettingsProvider } from "@/context/masjidSiteSettingsContext"
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getPrayerSettingsByMasjidId } from "@/lib/server/services/masjidPrayerSettings";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
-import { getMasjidThemeById } from "@/lib/server/services/masjidTheme";
 import React from "react";
 
 export default async function MasjidLayout({

@@ -26,22 +26,22 @@ export default async function Page({
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    url: masjid.website,
-    sameAs: `${DOMAIN_NAME}/${slug}`,
-    logo: masjid.logo,
-    name: masjid.name,
-    description: masjid.description,
-    email: masjid.email,
-    telephone: masjid.contact_number,
+    "@type": "Mosque",
+    name: masjid?.name,
+    url: `${DOMAIN_NAME}/${masjid?.slug}`,
+    sameAs: masjid?.website,
+    logo: masjid?.logo,
+    description: `Masjid profile for ${masjid?.name} on Masjidaa – prayer times, events, announcements & donations.`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: masjid.street,
-      addressLocality: masjid.city,
-      addressCountry: masjid.country,
-      addressRegion: masjid.region,
-      postalCode: masjid.postcode,
+      streetAddress: masjid?.street,
+      addressLocality: masjid?.city,
+      addressRegion: masjid?.region,
+      postalCode: masjid?.postcode,
+      addressCountry: masjid?.country,
     },
+    telephone: masjid?.contact_number,
+    hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`
   };
 
   if (siteSettings?.featured_campaign_id) {
