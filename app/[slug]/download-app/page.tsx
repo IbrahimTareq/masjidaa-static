@@ -36,7 +36,7 @@ export default function DownloadApp() {
 
           <div className="flex gap-4">
             <Link
-              href="https://apps.apple.com/us/app/masjidaa/id123456789"
+              href="https://apps.apple.com/us/app/pillars-prayer-times-qibla/id1559086853"
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer"
@@ -49,7 +49,7 @@ export default function DownloadApp() {
               />
             </Link>
             <Link
-              href="https://play.google.com/store/apps/details?id=com.masjidaa"
+              href="https://play.google.com/store/apps/details?id=com.pillars.pillars"
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer"
@@ -64,13 +64,10 @@ export default function DownloadApp() {
           </div>
         </div>
 
-        {/* Right Side: Fake phone preview */}
         <div className="flex justify-center mt-10 lg:mt-0">
           <div className="relative w-[300px] h-[600px] rounded-[2.5rem] border-4 border-gray-800 bg-black shadow-2xl overflow-hidden pointer-events-none">
-            {/* Notch */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20"></div>
 
-            {/* Screen content */}
             <div className="absolute inset-0 flex flex-col bg-white text-black">
               {/* Top banner */}
               <div className="h-56 bg-theme"></div>

@@ -3,8 +3,6 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { useQRCode } from "@/hooks/useQRCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { useRef } from "react";
 
 export default function DownloadApp() {
