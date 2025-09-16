@@ -5,6 +5,26 @@ import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
 import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const masjid = await getMasjidBySlug(slug);
+
+  const name = masjid?.name ?? "Masjid";
+
+  return {
+    title: name,
+    description: `Stay connected with ${name}. Download the Masjidaa app for prayer times, events, announcements & donation updates.`,
+    openGraph: {
+      images: masjid?.logo ?? "/masjidaa.svg",
+    },
+  };
+}
 
 export default async function Page({
   params,
@@ -41,7 +61,7 @@ export default async function Page({
       addressCountry: masjid?.country,
     },
     telephone: masjid?.contact_number,
-    hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`
+    hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`,
   };
 
   if (siteSettings?.featured_campaign_id) {

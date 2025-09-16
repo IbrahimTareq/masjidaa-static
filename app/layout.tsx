@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     default: 'Masjidaa',
   },
   description: 'The most comprehensive masjid management platform.',
+  openGraph: {
+    images: '/masjidaa.svg',
+  },
 };
 
 export default function RootLayout({
