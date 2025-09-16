@@ -17,32 +17,34 @@ export default function DownloadApp() {
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     const isAndroid = /android/i.test(navigator.userAgent);
 
-    // Construct deep link to app's masjid page
-    const deepLink = `masjidaa://masjid/${masjid.id}`;
-
     if (isIOS || isAndroid) {
-      // Try opening the app
-      window.location.href = deepLink;
+      const deepLink = `masjidaa://masjid/${masjid.id}`;
+      const appStore =
+        "https://apps.apple.com/us/app/masjidaa/id123456789"; // <-- real link needed
+      const playStore =
+        "https://play.google.com/store/apps/details?id=com.masjidaa";
 
-      // Fallback after delay
+      // Try opening the app with an invisible iframe (safer in Chrome)
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = deepLink;
+      document.body.appendChild(iframe);
+
+      // Fallback: after 1.5s, go to the store (replace so no back button)
       setTimeout(() => {
-        if (isIOS) {
-          window.location.href =
-            "https://apps.apple.com/us/app/masjidaa/id123456789"; // <-- replace with real App Store link
-        } else if (isAndroid) {
-          window.location.href =
-            "https://play.google.com/store/apps/details?id=com.masjidaa";
-        }
-      }, 1500); // give app ~1.5s to respond
+        window.location.replace(isIOS ? appStore : playStore);
+      }, 1500);
     }
   }, [masjid.id]);
 
   return (
     <section className="py-20 bg-theme-accent text-black relative">
+      {/* Decorative background */}
       <div
         className="absolute inset-0 bg-[url('/pattern8.jpg')] bg-repeat opacity-10 pointer-events-none"
         style={{ backgroundSize: "400px" }}
       />
+
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 items-center">
         {/* Left Side */}
         <div>
@@ -87,21 +89,19 @@ export default function DownloadApp() {
           </div>
         </div>
 
-        {/* Right Side */}
+        {/* Right Side: Fake phone preview */}
         <div className="flex justify-center mt-10 lg:mt-0">
-          {/* Fake phone shell (static preview only) */}
           <div className="relative w-[300px] h-[600px] rounded-[2.5rem] border-4 border-gray-800 bg-black shadow-2xl overflow-hidden pointer-events-none">
             {/* Notch */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20"></div>
 
             {/* Screen content */}
             <div className="absolute inset-0 flex flex-col bg-white text-black">
-              {/* Top bar */}
+              {/* Top banner */}
               <div className="h-56 bg-theme"></div>
 
               {/* Masjid card */}
               <div className="relative -mt-30 mx-4 bg-white rounded-2xl shadow p-4">
-                {/* Masjid name */}
                 <h2 className="font-bold text-md mb-2">{masjid.name}</h2>
 
                 {/* Floating logo */}
@@ -113,7 +113,6 @@ export default function DownloadApp() {
                   />
                 </div>
 
-                {/* Details */}
                 <div className="text-xs text-gray-600 space-y-1">
                   <p>🌐 {masjid.website}</p>
                   <p>📞 {masjid.contact_number}</p>
