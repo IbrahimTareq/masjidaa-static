@@ -1,7 +1,7 @@
 "use client";
 
 import { Tables } from "@/database.types";
-import { Pin, Plus, RefreshCw } from "lucide-react";
+import { Pin } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -39,43 +39,6 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
           Pinned
         </span>
       );
-    }
-
-    // Check if announcement is recent (within last 7 days)
-    const createdDate = new Date(announcement.created_at || "");
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-
-    if (createdDate > weekAgo) {
-      badges.push(
-        <span
-          key="added"
-          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
-        >
-          <Plus className="w-3 h-3 mr-1" />
-          added
-        </span>
-      );
-    }
-
-    // Check if updated recently (and not already showing "added")
-    if (
-      announcement.updated_at &&
-      announcement.updated_at !== announcement.created_at &&
-      !(createdDate > weekAgo)
-    ) {
-      const updatedDate = new Date(announcement.updated_at);
-      if (updatedDate > weekAgo) {
-        badges.push(
-          <span
-            key="updated"
-            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-          >
-            <RefreshCw className="w-3 h-3 mr-1" />
-            updated
-          </span>
-        );
-      }
     }
 
     return badges.length > 0 ? (
