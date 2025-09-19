@@ -23,7 +23,7 @@ export default function DownloadApp() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 items-center">
         {/* Left Side */}
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
             Stay connected with&nbsp;
             <span className="text-theme">{masjid.name}</span>
           </h1>
