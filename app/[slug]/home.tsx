@@ -61,15 +61,15 @@ export default function HomeClient({
                   <Donation campaign={campaign} masjid={masjid} />
                 </div>
               </div>
-            ) : (
+            ) : masjid.bg_image ? (
               <div className="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden shadow-xl">
                 <img
-                  src={masjid.bg_image || "/masjid-bg.png"}
+                  src={masjid.bg_image}
                   alt={masjid.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
