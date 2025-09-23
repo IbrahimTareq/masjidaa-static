@@ -4,14 +4,19 @@ import { getMasjidSubscriptionByMasjidId } from "./lib/server/services/masjidSub
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const masjidId = req.nextUrl.pathname.split("/")[2];
 
-  // Match any /masjid/[id]/embed/* route
-  if (pathname.startsWith("/masjid/") && pathname.includes("/embed/")) {
-    const masjidId = req.nextUrl.pathname.split("/")[2];
+  // Check if this is a paid feature path
+  const isPaidFeature =
+    pathname.includes("/embed/") ||
+    !pathname.includes("/prayer-screens/theme1") ||
+    pathname.includes("/layout/advanced") ||
+    pathname.includes("/layout/simple");
+
+  if (pathname.startsWith("/masjid/") && isPaidFeature) {
     const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
-    const tier = subscription?.tier;
 
-    if (tier === "free") {
+    if (subscription?.tier === "free") {
       return new NextResponse(
         "You do not have access to this feature. Please upgrade to a paid plan to access this feature.",
         { status: 403 }
@@ -24,5 +29,9 @@ export async function middleware(req: NextRequest) {
 
 // Only run middleware on paths we care about
 export const config = {
-  matcher: ["/masjid/:id/embed/:path*"],
+  matcher: [
+    "/masjid/:id/embed/:path*",
+    "/masjid/:id/prayer-screens/:path*",
+    "/masjid/:id/layout/:path*",
+  ],
 };
