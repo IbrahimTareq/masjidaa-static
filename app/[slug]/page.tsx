@@ -18,6 +18,7 @@ export async function generateMetadata({
   const name = masjid?.name ?? "Masjid";
 
   return {
+    metadataBase: new URL(DOMAIN_NAME),
     title: name,
     description: `Stay connected with ${name}. Download the Masjidaa app for prayer times, events, announcements & donation updates.`,
     openGraph: {

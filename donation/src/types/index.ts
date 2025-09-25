@@ -108,7 +108,7 @@ export interface ShortLink {
   created_at?: string | null;
   masjid_id?: string | null;
   original_url?: string;
-  type?: "Event" | "Announcement" | "Donation" | "Masjid" | "Other";
+  type?: "event" | "announcement" | "donation-campaign" | "masjid" | "other";
 }
 
 /**

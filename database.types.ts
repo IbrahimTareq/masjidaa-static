@@ -71,34 +71,40 @@ export type Database = {
       anonymous_users: {
         Row: {
           created_at: string | null
-          device_id: string
+          device_brand: string | null
+          device_model: string | null
+          device_os: string | null
+          device_os_version: string | null
+          device_type: string | null
           id: string
           is_admin_device: boolean
           last_seen_at: string
-          platform: Database["public"]["Enums"]["platform"]
-          platform_version: string | null
           push_token: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
-          device_id: string
+          device_brand?: string | null
+          device_model?: string | null
+          device_os?: string | null
+          device_os_version?: string | null
+          device_type?: string | null
           id?: string
           is_admin_device?: boolean
           last_seen_at?: string
-          platform: Database["public"]["Enums"]["platform"]
-          platform_version?: string | null
           push_token?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
-          device_id?: string
+          device_brand?: string | null
+          device_model?: string | null
+          device_os?: string | null
+          device_os_version?: string | null
+          device_type?: string | null
           id?: string
           is_admin_device?: boolean
           last_seen_at?: string
-          platform?: Database["public"]["Enums"]["platform"]
-          platform_version?: string | null
           push_token?: string | null
           updated_at?: string | null
         }
@@ -227,77 +233,6 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      event_enrolment_responses: {
-        Row: {
-          created_at: string | null
-          enrolment_id: string
-          id: string
-          responses: Json
-        }
-        Insert: {
-          created_at?: string | null
-          enrolment_id: string
-          id?: string
-          responses: Json
-        }
-        Update: {
-          created_at?: string | null
-          enrolment_id?: string
-          id?: string
-          responses?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_enrolment"
-            columns: ["enrolment_id"]
-            isOneToOne: false
-            referencedRelation: "event_enrolments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      event_enrolments: {
-        Row: {
-          anonymous_user_id: string
-          created_at: string | null
-          event_id: string
-          id: string
-          paid: boolean
-          updated_at: string | null
-        }
-        Insert: {
-          anonymous_user_id: string
-          created_at?: string | null
-          event_id: string
-          id?: string
-          paid?: boolean
-          updated_at?: string | null
-        }
-        Update: {
-          anonymous_user_id?: string
-          created_at?: string | null
-          event_id?: string
-          id?: string
-          paid?: boolean
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_enrolments_anonymous_user_id_fkey"
-            columns: ["anonymous_user_id"]
-            isOneToOne: false
-            referencedRelation: "anonymous_users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_enrolments_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -453,29 +388,29 @@ export type Database = {
       masjid_bank_accounts: {
         Row: {
           created_at: string | null
-          deactivated: boolean
           default: boolean
           id: string
           masjid_id: string
           name: string | null
+          status: Database["public"]["Enums"]["bank_account_status"]
           stripe_account_id: string
         }
         Insert: {
           created_at?: string | null
-          deactivated?: boolean
           default?: boolean
           id?: string
           masjid_id: string
           name?: string | null
+          status?: Database["public"]["Enums"]["bank_account_status"]
           stripe_account_id: string
         }
         Update: {
           created_at?: string | null
-          deactivated?: boolean
           default?: boolean
           id?: string
           masjid_id?: string
           name?: string | null
+          status?: Database["public"]["Enums"]["bank_account_status"]
           stripe_account_id?: string
         }
         Relationships: [
@@ -692,44 +627,6 @@ export type Database = {
           },
         ]
       }
-      masjid_layout_components: {
-        Row: {
-          component_name: string
-          created_at: string | null
-          id: string
-          layout_type: string
-          masjid_id: string
-          props: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          component_name: string
-          created_at?: string | null
-          id?: string
-          layout_type: string
-          masjid_id: string
-          props?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          component_name?: string
-          created_at?: string | null
-          id?: string
-          layout_type?: string
-          masjid_id?: string
-          props?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "masjid_layout_components_masjid_id_fkey"
-            columns: ["masjid_id"]
-            isOneToOne: false
-            referencedRelation: "masjids"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       masjid_prayer_settings: {
         Row: {
           asr_adjustment: number
@@ -910,6 +807,7 @@ export type Database = {
           layout_type: Database["public"]["Enums"]["layout_type"]
           masjid_id: string
           props: Json
+          reference_id: string | null
           slide_type: string
         }
         Insert: {
@@ -918,6 +816,7 @@ export type Database = {
           layout_type: Database["public"]["Enums"]["layout_type"]
           masjid_id: string
           props: Json
+          reference_id?: string | null
           slide_type: string
         }
         Update: {
@@ -926,6 +825,7 @@ export type Database = {
           layout_type?: Database["public"]["Enums"]["layout_type"]
           masjid_id?: string
           props?: Json
+          reference_id?: string | null
           slide_type?: string
         }
         Relationships: [
@@ -1044,6 +944,7 @@ export type Database = {
           short_link_id: string | null
           slug: string
           state: string | null
+          statement_descriptor: string | null
           street: string | null
           subscription_id: string | null
           suburb: string | null
@@ -1075,6 +976,7 @@ export type Database = {
           short_link_id?: string | null
           slug: string
           state?: string | null
+          statement_descriptor?: string | null
           street?: string | null
           subscription_id?: string | null
           suburb?: string | null
@@ -1106,6 +1008,7 @@ export type Database = {
           short_link_id?: string | null
           slug?: string
           state?: string | null
+          statement_descriptor?: string | null
           street?: string | null
           subscription_id?: string | null
           suburb?: string | null
@@ -1466,48 +1369,30 @@ export type Database = {
         Row: {
           announcements: boolean | null
           anonymous_user_id: string
-          azan: boolean | null
           created_at: string | null
           events: boolean | null
           id: string
-          iqama_asr: boolean | null
-          iqama_dhuhr: boolean | null
-          iqama_fajr: boolean | null
-          iqama_isha: boolean | null
-          iqama_maghrib: boolean | null
-          iqama_time_changes: boolean | null
+          iqamah_time_changes: boolean | null
           masjid_id: string
           updated_at: string | null
         }
         Insert: {
           announcements?: boolean | null
           anonymous_user_id: string
-          azan?: boolean | null
           created_at?: string | null
           events?: boolean | null
           id?: string
-          iqama_asr?: boolean | null
-          iqama_dhuhr?: boolean | null
-          iqama_fajr?: boolean | null
-          iqama_isha?: boolean | null
-          iqama_maghrib?: boolean | null
-          iqama_time_changes?: boolean | null
+          iqamah_time_changes?: boolean | null
           masjid_id: string
           updated_at?: string | null
         }
         Update: {
           announcements?: boolean | null
           anonymous_user_id?: string
-          azan?: boolean | null
           created_at?: string | null
           events?: boolean | null
           id?: string
-          iqama_asr?: boolean | null
-          iqama_dhuhr?: boolean | null
-          iqama_fajr?: boolean | null
-          iqama_isha?: boolean | null
-          iqama_maghrib?: boolean | null
-          iqama_time_changes?: boolean | null
+          iqamah_time_changes?: boolean | null
           masjid_id?: string
           updated_at?: string | null
         }
@@ -1595,6 +1480,7 @@ export type Database = {
       }
     }
     Enums: {
+      bank_account_status: "pending" | "active" | "disabled"
       calculation_method:
         | "MuslimWorldLeague"
         | "NorthAmerica"
@@ -1615,15 +1501,20 @@ export type Database = {
         | "SeventhOfTheNight"
         | "TwilightAngle"
       layout_type: "simple" | "advanced"
-      madhab: "Standard" | "Hanafi"
-      platform: "ios" | "android" | "unknown"
+      madhab: "Shafi" | "Hanafi"
       recurrence: "none" | "daily" | "week" | "month"
       short_link_type:
-        | "Event"
-        | "Announcement"
-        | "Donation"
-        | "Masjid"
-        | "Other"
+        | "event"
+        | "announcement"
+        | "donation-campaign"
+        | "masjid"
+        | "other"
+      slide_reference_type:
+        | "announcement"
+        | "event"
+        | "custom"
+        | "other"
+        | "donation"
       subscription_type: "free" | "plus" | "pro"
       time_format: "12" | "24"
       volunteer_interest:
@@ -1761,6 +1652,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bank_account_status: ["pending", "active", "disabled"],
       calculation_method: [
         "MuslimWorldLeague",
         "NorthAmerica",
@@ -1783,10 +1675,22 @@ export const Constants = {
         "TwilightAngle",
       ],
       layout_type: ["simple", "advanced"],
-      madhab: ["Standard", "Hanafi"],
-      platform: ["ios", "android", "unknown"],
+      madhab: ["Shafi", "Hanafi"],
       recurrence: ["none", "daily", "week", "month"],
-      short_link_type: ["Event", "Announcement", "Donation", "Masjid", "Other"],
+      short_link_type: [
+        "event",
+        "announcement",
+        "donation-campaign",
+        "masjid",
+        "other",
+      ],
+      slide_reference_type: [
+        "announcement",
+        "event",
+        "custom",
+        "other",
+        "donation",
+      ],
       subscription_type: ["free", "plus", "pro"],
       time_format: ["12", "24"],
       volunteer_interest: [
