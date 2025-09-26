@@ -83,12 +83,10 @@ export default function ServicesClient() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <p className="text-gray-500 max-w-md mx-auto">
-                There are currently no services listed. Please check back later
-                for updates.
-              </p>
-            </div>
+            <p className="text-gray-500 text-center">
+              There are currently no services listed. Please check back later
+              for updates.
+            </p>
           )}
         </div>
       </section>

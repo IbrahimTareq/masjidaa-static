@@ -123,6 +123,7 @@ export type Database = {
           name: string
           short_link_id: string | null
           target_amount: number
+          video: string | null
         }
         Insert: {
           active?: boolean
@@ -136,6 +137,7 @@ export type Database = {
           name: string
           short_link_id?: string | null
           target_amount: number
+          video?: string | null
         }
         Update: {
           active?: boolean
@@ -149,6 +151,7 @@ export type Database = {
           name?: string
           short_link_id?: string | null
           target_amount?: number
+          video?: string | null
         }
         Relationships: [
           {
@@ -842,8 +845,8 @@ export type Database = {
         Row: {
           canceled_at: string | null
           created_at: string | null
-          current_period_end: string
-          current_period_start: string
+          current_period_end: string | null
+          current_period_start: string | null
           id: string
           masjid_id: string
           status: string
@@ -854,8 +857,8 @@ export type Database = {
         Insert: {
           canceled_at?: string | null
           created_at?: string | null
-          current_period_end: string
-          current_period_start: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
           masjid_id: string
           status: string
@@ -866,8 +869,8 @@ export type Database = {
         Update: {
           canceled_at?: string | null
           created_at?: string | null
-          current_period_end?: string
-          current_period_start?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
           masjid_id?: string
           status?: string
@@ -1515,7 +1518,7 @@ export type Database = {
         | "custom"
         | "other"
         | "donation"
-      subscription_type: "free" | "plus" | "pro"
+      subscription_type: "free" | "standard" | "pro"
       time_format: "12" | "24"
       volunteer_interest:
         | "Cleaning"
@@ -1691,7 +1694,7 @@ export const Constants = {
         "other",
         "donation",
       ],
-      subscription_type: ["free", "plus", "pro"],
+      subscription_type: ["free", "standard", "pro"],
       time_format: ["12", "24"],
       volunteer_interest: [
         "Cleaning",
