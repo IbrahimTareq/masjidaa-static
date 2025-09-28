@@ -36,11 +36,11 @@ export default function DonationAmountSelector({
     firstName: "",
     lastName: "",
     email: "",
-    currency: masjid?.local_currency || "AUD",
+    currency: masjid?.local_currency || "aud",
   });
   const [frequency, setFrequency] = useState<PaymentFrequency>("once");
   const [selectedCurrency, setSelectedCurrency] = useState(
-    masjid?.local_currency || "AUD"
+    masjid?.local_currency || "aud"
   );
   const [convertedAmounts, setConvertedAmounts] = useState<
     Record<number, number>
@@ -472,16 +472,16 @@ export default function DonationAmountSelector({
                 onChange={(e) => setSelectedCurrency(e.target.value)}
                 disabled={conversionLoading}
               >
-                <option value="AUD">Australian Dollars</option>
-                <option value="USD">US Dollars</option>
-                <option value="EUR">Euros</option>
-                <option value="GBP">British Pounds</option>
-                <option value="CAD">Canadian Dollars</option>
-                <option value="JPY">Japanese Yen</option>
-                <option value="CNY">Chinese Yuan</option>
-                <option value="INR">Indian Rupees</option>
-                <option value="SGD">Singapore Dollars</option>
-                <option value="MYR">Malaysian Ringgit</option>
+                <option value="aud">Australian Dollars</option>
+                <option value="usd">US Dollars</option>
+                <option value="eur">Euros</option>
+                <option value="gbp">British Pounds</option>
+                <option value="cad">Canadian Dollars</option>
+                <option value="jpy">Japanese Yen</option>
+                <option value="cny">Chinese Yuan</option>
+                <option value="inr">Indian Rupees</option>
+                <option value="sgd">Singapore Dollars</option>
+                <option value="myr">Malaysian Ringgit</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
                 <svg
