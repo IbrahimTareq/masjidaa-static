@@ -8,6 +8,7 @@ export interface DonationMeta {
   email: string;
   first_name: string;
   last_name: string;
+  is_anonymous: boolean;
   amount_cents: number;
   currency: string;
 }
@@ -31,6 +32,7 @@ export interface DonorInfo {
   lastName: string;
   email: string;
   currency: string;
+  isAnonymous: boolean;
 }
 
 /**

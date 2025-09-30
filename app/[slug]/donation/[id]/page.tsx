@@ -7,6 +7,7 @@ import { getMasjidThemeById } from "@/lib/server/services/masjidTheme";
 import DonationDisplay from "@/app/[slug]/donation/[id]/donation";
 import { getDonationCount } from "@/lib/server/services/donationCount";
 import { getDonationCountMonthly } from "@/lib/server/services/donationCountMonthly";
+import { getDonationsByCampaignId } from "@/lib/server/services/donations";
 
 export default async function DonationCampaignPage({
   params,
@@ -26,12 +27,13 @@ export default async function DonationCampaignPage({
     return <div className="p-8 text-center">Masjid not found</div>;
   }
 
-  const [bankAccount, shortLink, theme, donationCount, donationCountMonthly] = await Promise.all([
+  const [bankAccount, shortLink, theme, donationCount, donationCountMonthly, donations] = await Promise.all([
     getMasjidBankAccountById(campaign.bank_account_id || ""),
     getShortLinkById(campaign.short_link_id || ""),
     getMasjidThemeById(masjid.theme_color_id || ""),
     getDonationCount(campaign.id),
-    getDonationCountMonthly(campaign.id)
+    getDonationCountMonthly(campaign.id),
+    getDonationsByCampaignId(campaign.id)
   ]);
 
   return (
@@ -43,6 +45,7 @@ export default async function DonationCampaignPage({
       masjid={masjid}
       donationCount={donationCount || 0}
       donationCountMonthly={donationCountMonthly || 0}
+      donations={donations || []}
     />
   );
 }

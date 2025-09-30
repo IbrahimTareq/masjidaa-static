@@ -12,7 +12,8 @@ export async function createSinglePaymentIntent(
   stripeAccountId: string,
   email: string,
   firstName: string,
-  lastName: string
+  lastName: string,
+  isAnonymous: boolean
 ): Promise<{ client_secret: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation-combined`,
@@ -30,6 +31,7 @@ export async function createSinglePaymentIntent(
         email,
         first_name: firstName,
         last_name: lastName,
+        is_anonymous: isAnonymous,
       }),
     }
   );

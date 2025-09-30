@@ -31,12 +31,13 @@ export default function DonationAmountSelector({
 }: DonationAmountSelectorProps) {
   const masjid = useMasjidContext();
   const [customAmount, setCustomAmount] = useState("");
-  const [coverFee, setCoverFee] = useState(false);
+  const [coverFee, setCoverFee] = useState(true);
   const [donorInfo, setDonorInfo] = useState<DonorInfo>({
     firstName: "",
     lastName: "",
     email: "",
     currency: masjid?.local_currency || "aud",
+    isAnonymous: false,
   });
   const [frequency, setFrequency] = useState<PaymentFrequency>("once");
   const [selectedCurrency, setSelectedCurrency] = useState(
@@ -159,7 +160,9 @@ export default function DonationAmountSelector({
 
       setErrors((prev) => ({ ...prev, amount: undefined }));
     } else {
-      setDonorInfo((prev: DonorInfo) => ({ ...prev, [field]: e.target.value }));
+      const value =
+        e.target.type === "checkbox" ? e.target.checked : e.target.value;
+      setDonorInfo((prev: DonorInfo) => ({ ...prev, [field]: value }));
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
@@ -382,15 +385,14 @@ export default function DonationAmountSelector({
                     className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
                   />
                 </div>
-                <span>
-                  I would like to cover the payment processing fee of{" "}
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency({
-                      amount: calculateProcessingFee(getBaseAmount()),
-                      currency: selectedCurrency,
-                      decimals: 2,
-                    })}
-                  </span>
+                <span className="text-xs">
+                  Yes, I want 100% of my donation to reach the cause (adds&nbsp;
+                  {formatCurrency({
+                    amount: calculateProcessingFee(getBaseAmount()),
+                    currency: selectedCurrency,
+                    decimals: 2,
+                  })}
+                  )
                 </span>
               </label>
             </div>
@@ -459,6 +461,23 @@ export default function DonationAmountSelector({
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
+
+          <div className="pt-2">
+            <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+              <div className="flex-shrink-0">
+                <input
+                  type="checkbox"
+                  id="isAnonymous"
+                  checked={donorInfo.isAnonymous}
+                  onChange={(e) => handleInputChange(e, "isAnonymous")}
+                  className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
+                />
+              </div>
+              <span>
+                Don't display my name publicly on this donation campaign
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Currency Dropdown */}
@@ -511,17 +530,6 @@ export default function DonationAmountSelector({
           {isLoading ? "Processing..." : "Continue to Payment"}
         </button>
       </form>
-      <div className="text-center pt-4">
-        <span className="text-xs text-gray-500">Powered by </span>
-        <a
-          href={`${DOMAIN_NAME}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-black transition-colors"
-        >
-          {BRAND_NAME}
-        </a>
-      </div>
     </div>
   );
 }

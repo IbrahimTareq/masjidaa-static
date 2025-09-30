@@ -44,7 +44,14 @@ const SuccessMessage: React.FC<{
       </p>
     )}
     <p className="text-sm text-gray-500">
-      A donation receipt has been emailed to you
+      A donation receipt has been emailed to you. You can view and manage your
+      donations via the&nbsp;
+      <a
+        href="https://donor.masjidaa.com/"
+        className="text-theme hover:text-theme-gradient"
+      >
+        donor portal.
+      </a>
     </p>
   </div>
 );

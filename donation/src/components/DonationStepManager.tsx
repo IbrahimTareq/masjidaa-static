@@ -14,7 +14,6 @@ interface DonationStepManagerProps {
   shortLink: ShortLink | null;
   monthlyDonorCount: number;
   totalDonorCount: number;
-  setIsShareModalOpen: (isOpen: boolean) => void;
 }
 
 // This is the main component that gets exported
@@ -25,7 +24,6 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
   shortLink,
   monthlyDonorCount,
   totalDonorCount,
-  setIsShareModalOpen,
 }) => {
   return (
     <DonationProvider
@@ -40,7 +38,6 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
         bankAccount={bankAccount}
         shortLink={shortLink}
         monthlyDonorCount={monthlyDonorCount}
-        setIsShareModalOpen={setIsShareModalOpen}
         totalDonorCount={totalDonorCount}
       />
     </DonationProvider>
@@ -51,10 +48,8 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
 const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
   campaign,
   masjid,
-  bankAccount,
   shortLink,
   monthlyDonorCount,
-  setIsShareModalOpen,
   totalDonorCount,
 }) => {
   const {
@@ -86,7 +81,6 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
             monthlyDonorCount={monthlyDonorCount}
             totalDonorCount={totalDonorCount}
             loadingCount={false}
-            setIsShareModalOpen={setIsShareModalOpen}
           />
         </div>
 
@@ -116,7 +110,6 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
         >
           {clientSecret && selectedAmount && donorInfo && (
             <DonationForm
-              shortLink={shortLink?.short_code || ""}
               masjid={masjid.slug}
               name={donorInfo.firstName}
               currency={masjid.local_currency}

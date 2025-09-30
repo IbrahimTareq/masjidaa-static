@@ -183,10 +183,13 @@ export type Database = {
           campaign_id: string
           created_at: string | null
           currency: string
+          donation_type: Database["public"]["Enums"]["donation_type"]
           donor_email: string | null
-          donor_first_name: string | null
-          donor_last_name: string | null
+          donor_first_name: string
+          donor_last_name: string
+          donor_message: string | null
           id: string
+          is_anonymous: boolean
           masjid_id: string
           receipt_id: string | null
           resend_id: string | null
@@ -198,10 +201,13 @@ export type Database = {
           campaign_id: string
           created_at?: string | null
           currency?: string
+          donation_type?: Database["public"]["Enums"]["donation_type"]
           donor_email?: string | null
-          donor_first_name?: string | null
-          donor_last_name?: string | null
+          donor_first_name: string
+          donor_last_name: string
+          donor_message?: string | null
           id?: string
+          is_anonymous?: boolean
           masjid_id: string
           receipt_id?: string | null
           resend_id?: string | null
@@ -213,10 +219,13 @@ export type Database = {
           campaign_id?: string
           created_at?: string | null
           currency?: string
+          donation_type?: Database["public"]["Enums"]["donation_type"]
           donor_email?: string | null
-          donor_first_name?: string | null
-          donor_last_name?: string | null
+          donor_first_name?: string
+          donor_last_name?: string
+          donor_message?: string | null
           id?: string
+          is_anonymous?: boolean
           masjid_id?: string
           receipt_id?: string | null
           resend_id?: string | null
@@ -1051,8 +1060,11 @@ export type Database = {
           created_at: string | null
           currency: string
           email: string
+          fail_count: string | null
+          first_name: string | null
           frequency: string
           id: string
+          last_name: string | null
           masjid_id: string
           next_charge: string
           start_date: string | null
@@ -1068,8 +1080,11 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email: string
+          fail_count?: string | null
+          first_name?: string | null
           frequency: string
           id?: string
+          last_name?: string | null
           masjid_id: string
           next_charge: string
           start_date?: string | null
@@ -1085,8 +1100,11 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email?: string
+          fail_count?: string | null
+          first_name?: string | null
           frequency?: string
           id?: string
+          last_name?: string | null
           masjid_id?: string
           next_charge?: string
           start_date?: string | null
@@ -1136,6 +1154,7 @@ export type Database = {
           clicks: number | null
           created_at: string | null
           id: string
+          is_admin: boolean
           masjid_id: string | null
           original_url: string
           short_code: string
@@ -1145,6 +1164,7 @@ export type Database = {
           clicks?: number | null
           created_at?: string | null
           id?: string
+          is_admin?: boolean
           masjid_id?: string | null
           original_url: string
           short_code: string
@@ -1154,6 +1174,7 @@ export type Database = {
           clicks?: number | null
           created_at?: string | null
           id?: string
+          is_admin?: boolean
           masjid_id?: string | null
           original_url?: string
           short_code?: string
@@ -1263,7 +1284,7 @@ export type Database = {
           id: string
           is_featured: boolean | null
           name: string
-          preview_image_url: string | null
+          preview_url: string
           tags: string[] | null
           template_url: string
           updated_at: string | null
@@ -1275,7 +1296,7 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           name: string
-          preview_image_url?: string | null
+          preview_url: string
           tags?: string[] | null
           template_url: string
           updated_at?: string | null
@@ -1287,7 +1308,7 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           name?: string
-          preview_image_url?: string | null
+          preview_url?: string
           tags?: string[] | null
           template_url?: string
           updated_at?: string | null
@@ -1331,42 +1352,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
-      }
-      user_event_bookmarks: {
-        Row: {
-          bookmarked_at: string | null
-          event_id: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          bookmarked_at?: string | null
-          event_id: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          bookmarked_at?: string | null
-          event_id?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_bookmarks_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_bookmarks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "anonymous_users"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_notification_preferences: {
         Row: {
@@ -1462,6 +1447,44 @@ export type Database = {
       }
     }
     Views: {
+      donations_public: {
+        Row: {
+          amount: number | null
+          campaign_id: string | null
+          created_at: string | null
+          currency: string | null
+          donor_first_name: string | null
+          donor_last_name: string | null
+          is_anonymous: boolean | null
+        }
+        Insert: {
+          amount?: number | null
+          campaign_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          donor_first_name?: string | null
+          donor_last_name?: string | null
+          is_anonymous?: boolean | null
+        }
+        Update: {
+          amount?: number | null
+          campaign_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          donor_first_name?: string | null
+          donor_last_name?: string | null
+          is_anonymous?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "donation_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           created_at: string | null
@@ -1499,6 +1522,7 @@ export type Database = {
         | "Tehran"
         | "Other"
       contact_method: "email" | "phone"
+      donation_type: "one-off" | "recurring"
       high_latitude_rule:
         | "MiddleOfTheNight"
         | "SeventhOfTheNight"
@@ -1511,6 +1535,13 @@ export type Database = {
         | "announcement"
         | "donation-campaign"
         | "masjid"
+        | "simple-layout"
+        | "advanced-layout"
+        | "prayer-screen-1"
+        | "prayer-screen-2"
+        | "prayer-screen-3"
+        | "prayer-screen-4"
+        | "prayer-screen-5"
         | "other"
       slide_reference_type:
         | "announcement"
@@ -1672,6 +1703,7 @@ export const Constants = {
         "Other",
       ],
       contact_method: ["email", "phone"],
+      donation_type: ["one-off", "recurring"],
       high_latitude_rule: [
         "MiddleOfTheNight",
         "SeventhOfTheNight",
@@ -1685,6 +1717,13 @@ export const Constants = {
         "announcement",
         "donation-campaign",
         "masjid",
+        "simple-layout",
+        "advanced-layout",
+        "prayer-screen-1",
+        "prayer-screen-2",
+        "prayer-screen-3",
+        "prayer-screen-4",
+        "prayer-screen-5",
         "other",
       ],
       slide_reference_type: [
