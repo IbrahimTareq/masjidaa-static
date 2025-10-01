@@ -16,5 +16,5 @@ export default async function Page({
 
   const campaigns = await getMasjidDonationCampaignsByMasjidId(masjid.id);
 
-  return <DonationsClient campaigns={campaigns ?? []} slug={slug} />;
+  return <DonationsClient masjid={masjid} campaigns={campaigns ?? []} slug={slug} />;
 }

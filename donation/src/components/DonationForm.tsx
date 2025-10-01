@@ -2,7 +2,6 @@
 
 import { PaymentMode, RecurringMeta } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
-import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import {
   Elements,
   PaymentElement,

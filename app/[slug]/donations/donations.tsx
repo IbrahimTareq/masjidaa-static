@@ -1,12 +1,14 @@
 "use client";
 
-import { Tables } from "@/database.types";
 import { Donations as DonationsComponent } from "@/components/client/interactive/Donations";
+import { Tables } from "@/database.types";
 
 export default function Donations({
+  masjid,
   campaigns,
   slug,
 }: {
+  masjid: Tables<"masjids">;
   campaigns: Tables<"donation_campaigns">[];
   slug: string;
 }) {
@@ -34,7 +36,7 @@ export default function Donations({
       {/* Campaigns Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-0">
-          <DonationsComponent campaigns={campaigns} slug={slug} />
+          <DonationsComponent masjid={masjid} campaigns={campaigns} slug={slug} />
         </div>
       </section>
     </div>

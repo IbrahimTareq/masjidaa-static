@@ -12,7 +12,7 @@ import { CampaignDetails } from "@/components/client/interactive/CampaignDetails
 import { ImagePreviewModal } from "@/components/client/ui/ImagePreviewModal";
 import { ShareModal } from "@/components/client/ui/ShareModal";
 import { useRandomHadith } from "@/hooks/useRandomHadith";
-import { formatCurrency } from "@/utils/currency";
+import { formatCurrency, formatCurrencyWithSymbol } from "@/utils/currency";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { HeartHandshake } from "lucide-react";
 
@@ -134,11 +134,12 @@ export default function DonationDisplay({
                             <div className="flex-1">
                               <div className="font-medium">{displayName}</div>
                               <div className="text-gray-600 flex gap-1">
-                                {formatCurrency({
+                                {donation.currency.toUpperCase()}&nbsp;
+                                {formatCurrencyWithSymbol({
                                   amount: donation.amount,
                                   currency: donation.currency,
                                 })}
-                                , {timeAgo}
+                                &nbsp;•&nbsp;{timeAgo}
                               </div>
                             </div>
                           </div>

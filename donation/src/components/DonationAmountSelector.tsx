@@ -4,9 +4,10 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { DonorInfo, PaymentFrequency } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
 import {
-  BRAND_NAME,
-  DOMAIN_NAME,
-  STRIPE_DONATION_FEE_PERCENTAGE,
+  STRIPE_DONATION_FEE_FIXED,
+  STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC,
+  STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL,
+  PRESET_AMOUNTS,
 } from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
 import React, { useEffect, useState } from "react";
@@ -20,8 +21,6 @@ interface DonationAmountSelectorProps {
   isLoading?: boolean;
   shortLink?: string;
 }
-
-const PRESET_AMOUNTS = [10, 20, 50];
 
 export default function DonationAmountSelector({
   onAmountSelected,
@@ -74,8 +73,14 @@ export default function DonationAmountSelector({
         if (selectedPresetAmount !== null) {
           const amount =
             originalAmounts[selectedPresetAmount] || selectedPresetAmount;
+          const feePercentage = getFeePercentage();
+          // Use the constant FIXED_FEE
           const newAmount = coverFee
-            ? (amount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2)
+            ? (
+                amount +
+                amount * feePercentage +
+                STRIPE_DONATION_FEE_FIXED
+              ).toFixed(2)
             : amount.toString();
           setCustomAmount(newAmount);
         }
@@ -104,10 +109,14 @@ export default function DonationAmountSelector({
         // Update the custom amount if a preset amount is selected
         if (selectedPresetAmount !== null) {
           const convertedAmount = newAmounts[selectedPresetAmount];
+          const feePercentage = getFeePercentage();
+          // Use the constant FIXED_FEE
           const newAmount = coverFee
-            ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(
-                2
-              )
+            ? (
+                convertedAmount +
+                convertedAmount * feePercentage +
+                STRIPE_DONATION_FEE_FIXED
+              ).toFixed(2)
             : convertedAmount.toString();
           setCustomAmount(newAmount);
         }
@@ -133,8 +142,18 @@ export default function DonationAmountSelector({
     coverFee,
   ]);
 
+  const getFeePercentage = () => {
+    // Use domestic fee if selected currency matches masjid's local currency, otherwise use international fee
+    return selectedCurrency === masjid?.local_currency
+      ? STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC
+      : STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL;
+  };
+
   const calculateProcessingFee = (amount: number) => {
-    return Math.round(amount * STRIPE_DONATION_FEE_PERCENTAGE * 100) / 100; // Round to 2 decimal places
+    const feePercentage = getFeePercentage();
+    // Calculate percentage-based fee and add fixed fee
+    const percentageFee = amount * feePercentage;
+    return Math.round((percentageFee + STRIPE_DONATION_FEE_FIXED) * 100) / 100; // Round to 2 decimal places
   };
 
   const handleInputChange = (
@@ -146,12 +165,15 @@ export default function DonationAmountSelector({
       setCustomAmount(newAmount);
 
       // Clear selected preset amount if user manually changes the amount
+      const feePercentage = getFeePercentage();
+      // Use the constant FIXED_FEE
       const matchesPreset =
         selectedPresetAmount !== null &&
         parseFloat(newAmount) ===
           (coverFee
-            ? convertedAmounts[selectedPresetAmount] *
-              (1 + STRIPE_DONATION_FEE_PERCENTAGE)
+            ? convertedAmounts[selectedPresetAmount] +
+              convertedAmounts[selectedPresetAmount] * feePercentage +
+              STRIPE_DONATION_FEE_FIXED
             : convertedAmounts[selectedPresetAmount]);
 
       if (!matchesPreset) {
@@ -172,8 +194,14 @@ export default function DonationAmountSelector({
     setSelectedPresetAmount(amount);
 
     const convertedAmount = convertedAmounts[amount];
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
     const newAmount = coverFee
-      ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee if checkbox is checked
+      ? (
+          convertedAmount +
+          convertedAmount * feePercentage +
+          STRIPE_DONATION_FEE_FIXED
+        ).toFixed(2) // Add fee if checkbox is checked
       : convertedAmount.toString();
     setCustomAmount(newAmount);
     setErrors((prev) => ({ ...prev, amount: undefined }));
@@ -185,8 +213,14 @@ export default function DonationAmountSelector({
     // If a preset amount is selected, update the amount with or without fee
     if (selectedPresetAmount !== null) {
       const convertedAmount = convertedAmounts[selectedPresetAmount];
+      const feePercentage = getFeePercentage();
+      // Use the constant FIXED_FEE
       const newAmount = checked
-        ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
+        ? (
+            convertedAmount +
+            convertedAmount * feePercentage +
+            STRIPE_DONATION_FEE_FIXED
+          ).toFixed(2) // Add fee
         : convertedAmount.toString(); // Original amount without fee
 
       setCustomAmount(newAmount);
@@ -198,9 +232,20 @@ export default function DonationAmountSelector({
     const baseAmount = parseFloat(customAmount);
     if (isNaN(baseAmount)) return;
 
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
+
+    // For adding fee: add percentage fee and fixed fee
+    // For removing fee: need to solve for original amount when we know the total with fees
     const newAmount = checked
-      ? (baseAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
-      : (baseAmount / (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2); // Remove fee if it was included
+      ? (
+          baseAmount +
+          baseAmount * feePercentage +
+          STRIPE_DONATION_FEE_FIXED
+        ).toFixed(2) // Add fee
+      : (baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage) > 0
+      ? ((baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage)).toFixed(2) // Remove fee if it was included
+      : "0.00"; // Prevent negative amounts
 
     setCustomAmount(newAmount);
   };
@@ -260,7 +305,18 @@ export default function DonationAmountSelector({
   const getBaseAmount = () => {
     const amount = parseFloat(customAmount);
     if (isNaN(amount)) return 0;
-    return coverFee ? amount / (1 + STRIPE_DONATION_FEE_PERCENTAGE) : amount; // Get base amount by removing fee if it's included
+
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
+
+    // If covering fee, we need to remove both percentage and fixed fee to get base amount
+    if (coverFee) {
+      const baseAmount =
+        (amount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage);
+      return baseAmount > 0 ? baseAmount : 0; // Prevent negative amounts
+    }
+
+    return amount; // If not covering fee, amount is already the base amount
   };
 
   if (!masjid) return null;
@@ -365,7 +421,7 @@ export default function DonationAmountSelector({
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">
-                  {selectedCurrency}
+                  {selectedCurrency.toUpperCase()}
                 </span>
               </div>
             </div>

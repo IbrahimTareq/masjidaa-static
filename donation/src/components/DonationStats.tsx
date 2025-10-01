@@ -8,16 +8,6 @@ import React from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-const formatAmountToShortFormat = ({ amount }: { amount: number }) => {
-  if (amount >= 1_000_000) {
-    return (amount / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
-  }
-  if (amount >= 1_000) {
-    return (amount / 1_000).toFixed(1).replace(/\.0$/, "") + "k";
-  }
-  return amount.toString();
-};
-
 interface DonationStatsProps {
   campaign: Tables<"donation_campaigns">;
   masjid: Tables<"masjids">;
@@ -101,12 +91,17 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
 
       {/* Action Buttons */}
       <div className="space-y-2.5 pt-1">
-        <button
+        {campaign.active ? <button
           onClick={handleDonateClick}
           className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
           Donate now
-        </button>
+        </button> : <button
+          disabled
+          className="w-full py-3 bg-theme disabled:bg-theme-accent text-white font-medium rounded-lg"
+        >
+          Campaign closed
+        </button>}
       </div>
     </div>
   );
