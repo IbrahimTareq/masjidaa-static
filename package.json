@@ -13,7 +13,7 @@
     "generate-types": "npx supabase gen types typescript --project-id faazxeuamqxggkviyhnd --schema public > database.types.ts"
   },
   "dependencies": {
-	"@fullcalendar/core": "^6.1.19",
+    "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@opennextjs/cloudflare": "^1.6.5",

@@ -23,9 +23,10 @@ export type FormattedData = Omit<PrayerSchedule, "dailyPrayers" | "jummah"> & {
 };
 
 export async function getServerPrayerData(
-  masjidId: string
+  masjidId: string,
+  date?: string
 ): Promise<FormattedData> {
-  const prayerData: PrayerSchedule | null = await getMasjidPrayers(masjidId);
+  const prayerData: PrayerSchedule | null = await getMasjidPrayers(masjidId, date);
   if (!prayerData) {
     throw new Error("Prayer data not found");
   }

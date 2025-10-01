@@ -58,10 +58,10 @@ export type PrayerSchedule = {
   lastUpdated: string | undefined;
 };
 
-export async function getMasjidPrayers(masjidId: string) {
+export async function getMasjidPrayers(masjidId: string, date?: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.functions.invoke(
-    `masjid-prayers/${masjidId}`,
+    `masjid-prayers/${masjidId}${date ? `?date=${date}` : ""}`,
     {
       method: "GET",
     }
