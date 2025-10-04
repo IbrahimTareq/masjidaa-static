@@ -3,22 +3,10 @@
 import { Tables } from "@/database.types";
 import { useDonation } from "@/donation/src/context/DonationContext";
 import { formatCurrency } from "@/utils/currency";
-import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { Target, TrendingUp, Users } from "lucide-react";
 import React from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useRandomHadith } from "../hooks/useRandomHadith";
-
-const formatAmountToShortFormat = ({ amount }: { amount: number }) => {
-  if (amount >= 1_000_000) {
-    return (amount / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
-  }
-  if (amount >= 1_000) {
-    return (amount / 1_000).toFixed(1).replace(/\.0$/, "") + "k";
-  }
-  return amount.toString();
-};
 
 interface DonationStatsProps {
   campaign: Tables<"donation_campaigns">;
@@ -26,7 +14,6 @@ interface DonationStatsProps {
   monthlyDonorCount: number;
   totalDonorCount: number;
   loadingCount: boolean;
-  setIsShareModalOpen: (isOpen: boolean) => void;
 }
 
 export const DonationStats: React.FC<DonationStatsProps> = ({
@@ -35,10 +22,8 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
   monthlyDonorCount,
   totalDonorCount,
   loadingCount,
-  setIsShareModalOpen,
 }) => {
   const { progressPercentage, handleDonateClick } = useDonation();
-  const { hadith } = useRandomHadith();
 
   return (
     <div className="p-5 space-y-4">
@@ -58,8 +43,8 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
               {formatCurrency({
                 amount: Number(campaign.target_amount),
                 currency: masjid.local_currency,
-              })}{" "}
-              target
+              })}
+              &nbsp;goal
             </span>
             <span className="mx-1">|</span>
             <Users className="w-3 h-3 text-gray-500" />
@@ -93,7 +78,7 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
       {/* Recent Activity */}
       <div className="flex items-center gap-2">
         <TrendingUp className="w-4 h-4 text-gray-500" />
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 tracking-tight">
           {loadingCount
             ? "People have donated this month"
             : monthlyDonorCount === 0
@@ -104,36 +89,19 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
         </span>
       </div>
 
-      <div className="text-sm text-gray-500 italic border-t border-gray-200 pt-4">
-        {hadith.text} - {hadith.source}
-      </div>
-
       {/* Action Buttons */}
       <div className="space-y-2.5 pt-1">
-        <button
+        {campaign.active ? <button
           onClick={handleDonateClick}
           className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
           Donate now
-        </button>
-        <button
-          onClick={() => setIsShareModalOpen(true)}
-          className="w-full py-3 bg-gray-500 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors cursor-pointer"
+        </button> : <button
+          disabled
+          className="w-full py-3 bg-theme disabled:bg-theme-accent text-white font-medium rounded-lg"
         >
-          Share
-        </button>
-      </div>
-
-      <div className="text-center pt-4">
-        <span className="text-xs text-gray-500">Powered by </span>
-        <a
-          href={`${DOMAIN_NAME}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-black transition-colors"
-        >
-          {BRAND_NAME}
-        </a>
+          Campaign closed
+        </button>}
       </div>
     </div>
   );

@@ -1,15 +1,21 @@
 "use client";
 
 import { Tables } from "@/database.types";
+import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { Heart } from "lucide-react";
 import React from "react";
 
 interface DonationsProps {
+  masjid: Tables<"masjids">;
   campaigns: Tables<"donation_campaigns">[];
   slug: string;
 }
 
-export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {  
+export const Donations: React.FC<DonationsProps> = ({
+  masjid,
+  campaigns,
+  slug,
+}) => {
   return (
     <>
       {campaigns.length > 0 ? (
@@ -54,8 +60,15 @@ export const Donations: React.FC<DonationsProps> = ({ campaigns, slug }) => {
                   </div>
 
                   <p className="font-medium text-lg truncate">
-                    ${campaign.amount_raised} donated of $
-                    {campaign.target_amount}
+                    {formatCurrencyWithSymbol({
+                      amount: campaign.amount_raised,
+                      currency: masjid?.local_currency || "AUD",
+                    })}
+                    &nbsp;donated of&nbsp;
+                    {formatCurrencyWithSymbol({
+                      amount: campaign.target_amount,
+                      currency: masjid?.local_currency || "AUD",
+                    })}
                   </p>
                 </div>
               </div>

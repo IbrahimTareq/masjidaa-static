@@ -4,8 +4,9 @@ import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerD
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 export async function getPrayerData(
-  masjidId: string
+  masjidId: string,
+  date?: string
 ): Promise<FormattedData | null> {
-  const prayerData = await getServerPrayerData(masjidId);
+  const prayerData = await getServerPrayerData(masjidId, date);
   return prayerData;
 }

@@ -34,3 +34,17 @@ export async function getMasjidBySlug(
   }
   return data;
 }
+
+export async function getMasjids(): Promise<Tables<"masjids">[] | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("masjids")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching masjids", error);
+    return null;
+  }
+  return data;
+}

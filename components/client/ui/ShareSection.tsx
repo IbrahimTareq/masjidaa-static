@@ -1,8 +1,7 @@
 "use client";
 
 import { Copy } from "lucide-react";
-import React, { useState } from "react";
-import { SocialIcon } from "react-social-icons";
+import { useState } from "react";
 
 // Props for the ShareSection component
 export interface ShareSectionProps {
@@ -19,32 +18,19 @@ export interface ShareSectionProps {
 export const getSocialLinks = (entityName: string, url: string) => [
   {
     name: "Facebook",
-    network: "facebook",
-    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    network: "/social-icons/Facebook.svg",
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      url
+    )}`,
   },
   {
     name: "WhatsApp",
-    network: "whatsapp",
+    network: "/social-icons/WhatsApp.svg",
     href: `https://wa.me/?text=${encodeURIComponent(url)}`,
   },
   {
-    name: "Messenger",
-    network: "facebook",
-    href: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}`,
-  },
-  {
-    name: "Email",
-    network: "email",
-    href: `mailto:?subject=Support ${entityName}&body=${encodeURIComponent(url)}`,
-  },
-  {
-    name: "LinkedIn",
-    network: "linkedin",
-    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-  },
-  {
     name: "X",
-    network: "x",
+    network: "/social-icons/X.svg",
     href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`,
   },
 ];
@@ -52,7 +38,7 @@ export const getSocialLinks = (entityName: string, url: string) => [
 // Copy link hook
 export const useCopyLink = () => {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = async (url: string) => {
     try {
       await navigator.clipboard.writeText(url);
@@ -62,7 +48,7 @@ export const useCopyLink = () => {
       console.error("Failed to copy:", err);
     }
   };
-  
+
   return { copied, handleCopy };
 };
 
@@ -74,35 +60,27 @@ export default function ShareSection({
   showQuote = true,
   containerClassName = "bg-white rounded-2xl shadow-sm p-8",
   iconSize = "medium",
-  gridCols = 4,
+  gridCols = 3,
 }: ShareSectionProps) {
   const { copied, handleCopy } = useCopyLink();
   const socialLinks = getSocialLinks(entityName, shareUrl);
-  
+
   // Determine icon size
   const iconSizeClass = {
     small: "w-6 h-6",
     medium: "w-8 h-8",
     large: "w-12 h-12",
   }[iconSize];
-  
+
   return (
     <div className={containerClassName}>
-      {title && <h3 className="text-xl font-bold text-gray-900 mb-4">
-        {title}
-      </h3>}
-      <p className="mb-6">
-        By simply sharing this cause, you could help someone donate and
-        you'll share in every reward that follows.
-      </p>
-      
-      {showQuote && (
-        <div className="mb-6">
-          <p className="text-gray-500 text-sm italic">
-            "Whoever guides someone to goodness will have a reward like the
-            one who does it." — Sahih Muslim</p>
-        </div>
+      {title && (
+        <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
       )}
+      <p className="mb-6">
+        By simply sharing this cause, you could help someone donate and you'll
+        share in every reward that follows.
+      </p>
 
       {/* Copy Link */}
       <div className="flex gap-3 mb-8">
@@ -115,12 +93,16 @@ export default function ShareSection({
         <button
           onClick={() => handleCopy(shareUrl)}
           className={`px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 cursor-pointer ${
-            copied 
-              ? "bg-theme-gradient text-white" 
+            copied
+              ? "bg-theme-gradient text-white"
               : "bg-theme text-white hover:bg-theme-gradient"
           }`}
         >
-          <Copy className={`w-4 h-4 transition-transform duration-300 ${copied ? "scale-110" : ""}`} />
+          <Copy
+            className={`w-4 h-4 transition-transform duration-300 ${
+              copied ? "scale-110" : ""
+            }`}
+          />
           {copied ? "Copied!" : "Copy link"}
         </button>
       </div>
@@ -130,18 +112,28 @@ export default function ShareSection({
         {socialLinks.map((link) => (
           <div
             key={link.name}
-            onClick={() => window.open(link.href, '_blank', 'noopener,noreferrer')}
+            onClick={() =>
+              window.open(link.href, "_blank", "noopener,noreferrer")
+            }
             className="flex flex-col items-center gap-2 p-4 hover:bg-[#F8F9FA] rounded-lg transition-colors cursor-pointer"
           >
             <div className={iconSizeClass}>
-              <SocialIcon
-                network={link.network}
-                style={{ width: "100%", height: "100%" }}
+              <img
+                src={link.network}
+                alt={link.name}
+                className="w-full h-full"
               />
             </div>
             <span className="text-sm text-gray-600">{link.name}</span>
           </div>
         ))}
+      </div>
+
+      <div className="mt-5">
+        <p className="text-gray-500 text-sm max-w-md mx-auto text-center">
+          "Whoever guides someone to goodness will have a reward like the one
+          who does it." — Sahih Muslim
+        </p>
       </div>
     </div>
   );

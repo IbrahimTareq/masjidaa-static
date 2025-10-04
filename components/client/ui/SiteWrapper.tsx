@@ -46,9 +46,7 @@ export default function SiteWrapper({
                 Announcements
               </NavLink>
               <NavLink href={`/${masjid.slug}/services`}>Services</NavLink>
-              <NavLink href={`/${masjid.slug}/donations`}>
-                Donations
-              </NavLink>
+              <NavLink href={`/${masjid.slug}/donations`}>Donations</NavLink>
               <NavLink href={`/${masjid.slug}/contact`}>Contact</NavLink>
               <NavLink
                 href={`/${masjid.slug}/app-download`}
@@ -240,20 +238,24 @@ export default function SiteWrapper({
           </div>
 
           {/* Bottom Bar */}
-          <div className="mt-10 pt-8 border-t border-gray-200">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-gray-600">
+          <div className="mt-10 border-t border-gray-200">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6">
+              <p className="text-gray-600 leading-none">
                 © {new Date().getFullYear()} {masjid.name}. All rights reserved.
               </p>
-              <p className="text-gray-600">
-                <span>Powered by </span>
+              <div className="flex items-center text-gray-600">
                 <a
-                  href={`${DOMAIN_NAME}`}
-                  className="text-black hover:text-gray-600 transition-colors"
+                  href={DOMAIN_NAME}
+                  className="flex items-center text-black hover:text-gray-600 transition-colors"
                 >
-                  Masjidaa
+                  <span className="mr-2 leading-none">Powered by</span>
+                  <img
+                    src="https://images.masjidaa.com/assets/brand/logo-secondary.svg"
+                    alt="Masjidaa"
+                    className="h-6 w-auto block" // fixes height while preserving aspect ratio
+                  />
                 </a>
-              </p>
+              </div>
             </div>
           </div>
         </div>

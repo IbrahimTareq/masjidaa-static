@@ -47,6 +47,19 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
           {campaign.description}
         </div>
       </div>
+
+      {campaign.video && (
+        <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 cursor-pointer transition-transform hover:scale-[1.02] mb-8">
+          <iframe
+            src={campaign.video}
+            title={campaign.name}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        </div>
+      )}
     </div>
   );
 };

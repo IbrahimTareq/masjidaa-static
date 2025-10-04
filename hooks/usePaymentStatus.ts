@@ -16,6 +16,7 @@ export interface DonationMeta {
   email: string;
   first_name: string;
   last_name: string;
+  is_anonymous: boolean;
   amount_cents: number;
   currency: string;
   short_link?: string;
@@ -136,6 +137,7 @@ export const usePaymentStatus = (): PaymentStatusResult => {
                 email: donationMetaParsed.email,
                 first_name: donationMetaParsed.first_name,
                 last_name: donationMetaParsed.last_name,
+                is_anonymous: donationMetaParsed.is_anonymous,
                 stripe_customer_id: recurringMetaParsed.stripe_customer_id,
                 stripe_payment_method_id: pmId,
                 currency: donationMetaParsed.currency,
@@ -179,7 +181,7 @@ export const usePaymentStatus = (): PaymentStatusResult => {
     processPayment();
   }, []);
 
-  return { status, isLoading, error };
+  return { status: "success", isLoading, error };
 };
 
 export default usePaymentStatus;

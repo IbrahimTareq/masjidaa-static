@@ -2,7 +2,6 @@
 
 import { PaymentMode, RecurringMeta } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
-import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import {
   Elements,
   PaymentElement,
@@ -23,7 +22,6 @@ interface DonationFormProps {
   clientSecret?: string;
   mode: PaymentMode;
   stripeAccountId?: string;
-  shortLink?: string;
   recurringMeta?: RecurringMeta;
   onSuccess: () => void;
   onCancel: () => void;
@@ -151,23 +149,6 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
   );
 
   /**
-   * Form footer with powered by link
-   */
-  const FormFooter = () => (
-    <div className="text-center pb-4">
-      <span className="text-xs text-gray-500">Powered by </span>
-      <a
-        href={`${DOMAIN_NAME}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs text-gray-500 hover:text-black transition-colors"
-      >
-        {BRAND_NAME}
-      </a>
-    </div>
-  );
-
-  /**
    * Submit button with loading state
    */
   const SubmitButton = () => (
@@ -194,7 +175,6 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
 
         <SubmitButton />
       </div>
-      <FormFooter />
     </form>
   );
 };

@@ -55,7 +55,6 @@ export function DonationProvider({
   campaign, 
   bankAccount, 
   masjid,
-  monthlyDonorCount = 10
 }: DonationProviderProps) {
   // Step management
   const [currentStep, setCurrentStep] = useState<DonationStep>("initial");
@@ -112,6 +111,7 @@ export function DonationProvider({
         email: info.email,
         first_name: info.firstName,
         last_name: info.lastName,
+        is_anonymous: info.isAnonymous,
         amount_cents: amount,
         currency: info.currency.toLowerCase(),
       };
@@ -130,7 +130,8 @@ export function DonationProvider({
           bankAccount.stripe_account_id,
           info.email,
           info.firstName,
-          info.lastName
+          info.lastName,
+          info.isAnonymous
         );
         
         setClientSecret(data.client_secret);

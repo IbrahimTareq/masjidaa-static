@@ -4,9 +4,10 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { DonorInfo, PaymentFrequency } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
 import {
-  BRAND_NAME,
-  DOMAIN_NAME,
-  STRIPE_DONATION_FEE_PERCENTAGE,
+  STRIPE_DONATION_FEE_FIXED,
+  STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC,
+  STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL,
+  PRESET_AMOUNTS,
 } from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
 import React, { useEffect, useState } from "react";
@@ -21,8 +22,6 @@ interface DonationAmountSelectorProps {
   shortLink?: string;
 }
 
-const PRESET_AMOUNTS = [10, 20, 50];
-
 export default function DonationAmountSelector({
   onAmountSelected,
   onBack,
@@ -31,16 +30,17 @@ export default function DonationAmountSelector({
 }: DonationAmountSelectorProps) {
   const masjid = useMasjidContext();
   const [customAmount, setCustomAmount] = useState("");
-  const [coverFee, setCoverFee] = useState(false);
+  const [coverFee, setCoverFee] = useState(true);
   const [donorInfo, setDonorInfo] = useState<DonorInfo>({
     firstName: "",
     lastName: "",
     email: "",
-    currency: masjid?.local_currency || "AUD",
+    currency: masjid?.local_currency || "aud",
+    isAnonymous: false,
   });
   const [frequency, setFrequency] = useState<PaymentFrequency>("once");
   const [selectedCurrency, setSelectedCurrency] = useState(
-    masjid?.local_currency || "AUD"
+    masjid?.local_currency || "aud"
   );
   const [convertedAmounts, setConvertedAmounts] = useState<
     Record<number, number>
@@ -73,8 +73,14 @@ export default function DonationAmountSelector({
         if (selectedPresetAmount !== null) {
           const amount =
             originalAmounts[selectedPresetAmount] || selectedPresetAmount;
+          const feePercentage = getFeePercentage();
+          // Use the constant FIXED_FEE
           const newAmount = coverFee
-            ? (amount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2)
+            ? (
+                amount +
+                amount * feePercentage +
+                STRIPE_DONATION_FEE_FIXED
+              ).toFixed(2)
             : amount.toString();
           setCustomAmount(newAmount);
         }
@@ -103,10 +109,14 @@ export default function DonationAmountSelector({
         // Update the custom amount if a preset amount is selected
         if (selectedPresetAmount !== null) {
           const convertedAmount = newAmounts[selectedPresetAmount];
+          const feePercentage = getFeePercentage();
+          // Use the constant FIXED_FEE
           const newAmount = coverFee
-            ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(
-                2
-              )
+            ? (
+                convertedAmount +
+                convertedAmount * feePercentage +
+                STRIPE_DONATION_FEE_FIXED
+              ).toFixed(2)
             : convertedAmount.toString();
           setCustomAmount(newAmount);
         }
@@ -132,8 +142,18 @@ export default function DonationAmountSelector({
     coverFee,
   ]);
 
+  const getFeePercentage = () => {
+    // Use domestic fee if selected currency matches masjid's local currency, otherwise use international fee
+    return selectedCurrency === masjid?.local_currency
+      ? STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC
+      : STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL;
+  };
+
   const calculateProcessingFee = (amount: number) => {
-    return Math.round(amount * STRIPE_DONATION_FEE_PERCENTAGE * 100) / 100; // Round to 2 decimal places
+    const feePercentage = getFeePercentage();
+    // Calculate percentage-based fee and add fixed fee
+    const percentageFee = amount * feePercentage;
+    return Math.round((percentageFee + STRIPE_DONATION_FEE_FIXED) * 100) / 100; // Round to 2 decimal places
   };
 
   const handleInputChange = (
@@ -145,12 +165,15 @@ export default function DonationAmountSelector({
       setCustomAmount(newAmount);
 
       // Clear selected preset amount if user manually changes the amount
+      const feePercentage = getFeePercentage();
+      // Use the constant FIXED_FEE
       const matchesPreset =
         selectedPresetAmount !== null &&
         parseFloat(newAmount) ===
           (coverFee
-            ? convertedAmounts[selectedPresetAmount] *
-              (1 + STRIPE_DONATION_FEE_PERCENTAGE)
+            ? convertedAmounts[selectedPresetAmount] +
+              convertedAmounts[selectedPresetAmount] * feePercentage +
+              STRIPE_DONATION_FEE_FIXED
             : convertedAmounts[selectedPresetAmount]);
 
       if (!matchesPreset) {
@@ -159,7 +182,9 @@ export default function DonationAmountSelector({
 
       setErrors((prev) => ({ ...prev, amount: undefined }));
     } else {
-      setDonorInfo((prev: DonorInfo) => ({ ...prev, [field]: e.target.value }));
+      const value =
+        e.target.type === "checkbox" ? e.target.checked : e.target.value;
+      setDonorInfo((prev: DonorInfo) => ({ ...prev, [field]: value }));
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
@@ -169,8 +194,14 @@ export default function DonationAmountSelector({
     setSelectedPresetAmount(amount);
 
     const convertedAmount = convertedAmounts[amount];
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
     const newAmount = coverFee
-      ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee if checkbox is checked
+      ? (
+          convertedAmount +
+          convertedAmount * feePercentage +
+          STRIPE_DONATION_FEE_FIXED
+        ).toFixed(2) // Add fee if checkbox is checked
       : convertedAmount.toString();
     setCustomAmount(newAmount);
     setErrors((prev) => ({ ...prev, amount: undefined }));
@@ -182,8 +213,14 @@ export default function DonationAmountSelector({
     // If a preset amount is selected, update the amount with or without fee
     if (selectedPresetAmount !== null) {
       const convertedAmount = convertedAmounts[selectedPresetAmount];
+      const feePercentage = getFeePercentage();
+      // Use the constant FIXED_FEE
       const newAmount = checked
-        ? (convertedAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
+        ? (
+            convertedAmount +
+            convertedAmount * feePercentage +
+            STRIPE_DONATION_FEE_FIXED
+          ).toFixed(2) // Add fee
         : convertedAmount.toString(); // Original amount without fee
 
       setCustomAmount(newAmount);
@@ -195,9 +232,20 @@ export default function DonationAmountSelector({
     const baseAmount = parseFloat(customAmount);
     if (isNaN(baseAmount)) return;
 
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
+
+    // For adding fee: add percentage fee and fixed fee
+    // For removing fee: need to solve for original amount when we know the total with fees
     const newAmount = checked
-      ? (baseAmount * (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2) // Add fee
-      : (baseAmount / (1 + STRIPE_DONATION_FEE_PERCENTAGE)).toFixed(2); // Remove fee if it was included
+      ? (
+          baseAmount +
+          baseAmount * feePercentage +
+          STRIPE_DONATION_FEE_FIXED
+        ).toFixed(2) // Add fee
+      : (baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage) > 0
+      ? ((baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage)).toFixed(2) // Remove fee if it was included
+      : "0.00"; // Prevent negative amounts
 
     setCustomAmount(newAmount);
   };
@@ -257,7 +305,18 @@ export default function DonationAmountSelector({
   const getBaseAmount = () => {
     const amount = parseFloat(customAmount);
     if (isNaN(amount)) return 0;
-    return coverFee ? amount / (1 + STRIPE_DONATION_FEE_PERCENTAGE) : amount; // Get base amount by removing fee if it's included
+
+    const feePercentage = getFeePercentage();
+    // Use the constant FIXED_FEE
+
+    // If covering fee, we need to remove both percentage and fixed fee to get base amount
+    if (coverFee) {
+      const baseAmount =
+        (amount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage);
+      return baseAmount > 0 ? baseAmount : 0; // Prevent negative amounts
+    }
+
+    return amount; // If not covering fee, amount is already the base amount
   };
 
   if (!masjid) return null;
@@ -362,7 +421,7 @@ export default function DonationAmountSelector({
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">
-                  {selectedCurrency}
+                  {selectedCurrency.toUpperCase()}
                 </span>
               </div>
             </div>
@@ -382,15 +441,14 @@ export default function DonationAmountSelector({
                     className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
                   />
                 </div>
-                <span>
-                  I would like to cover the payment processing fee of{" "}
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency({
-                      amount: calculateProcessingFee(getBaseAmount()),
-                      currency: selectedCurrency,
-                      decimals: 2,
-                    })}
-                  </span>
+                <span className="text-xs">
+                  Yes, I want 100% of my donation to reach the cause (adds&nbsp;
+                  {formatCurrency({
+                    amount: calculateProcessingFee(getBaseAmount()),
+                    currency: selectedCurrency,
+                    decimals: 2,
+                  })}
+                  )
                 </span>
               </label>
             </div>
@@ -459,6 +517,23 @@ export default function DonationAmountSelector({
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
+
+          <div className="pt-2">
+            <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+              <div className="flex-shrink-0">
+                <input
+                  type="checkbox"
+                  id="isAnonymous"
+                  checked={donorInfo.isAnonymous}
+                  onChange={(e) => handleInputChange(e, "isAnonymous")}
+                  className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
+                />
+              </div>
+              <span>
+                Don't display my name publicly on this donation campaign
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Currency Dropdown */}
@@ -472,16 +547,16 @@ export default function DonationAmountSelector({
                 onChange={(e) => setSelectedCurrency(e.target.value)}
                 disabled={conversionLoading}
               >
-                <option value="AUD">Australian Dollars</option>
-                <option value="USD">US Dollars</option>
-                <option value="EUR">Euros</option>
-                <option value="GBP">British Pounds</option>
-                <option value="CAD">Canadian Dollars</option>
-                <option value="JPY">Japanese Yen</option>
-                <option value="CNY">Chinese Yuan</option>
-                <option value="INR">Indian Rupees</option>
-                <option value="SGD">Singapore Dollars</option>
-                <option value="MYR">Malaysian Ringgit</option>
+                <option value="aud">Australian Dollars</option>
+                <option value="usd">US Dollars</option>
+                <option value="eur">Euros</option>
+                <option value="gbp">British Pounds</option>
+                <option value="cad">Canadian Dollars</option>
+                <option value="jpy">Japanese Yen</option>
+                <option value="cny">Chinese Yuan</option>
+                <option value="inr">Indian Rupees</option>
+                <option value="sgd">Singapore Dollars</option>
+                <option value="myr">Malaysian Ringgit</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
                 <svg
@@ -511,17 +586,6 @@ export default function DonationAmountSelector({
           {isLoading ? "Processing..." : "Continue to Payment"}
         </button>
       </form>
-      <div className="text-center pt-4">
-        <span className="text-xs text-gray-500">Powered by </span>
-        <a
-          href={`${DOMAIN_NAME}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-black transition-colors"
-        >
-          {BRAND_NAME}
-        </a>
-      </div>
     </div>
   );
 }

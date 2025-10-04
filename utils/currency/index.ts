@@ -1,3 +1,5 @@
+import getSymbolFromCurrency from "currency-symbol-map";
+
 export const formatCurrency = ({
   amount,
   currency,
@@ -8,6 +10,18 @@ export const formatCurrency = ({
   decimals?: number;
 }) => {
   return `${currency.toUpperCase()} ${amount.toFixed(decimals)}`;
+};
+
+export const formatCurrencyWithSymbol = ({
+  amount,
+  currency,
+  decimals = 0,
+}: {
+  amount: number;
+  currency: string;
+  decimals?: number;
+}) => {
+  return `${getSymbolFromCurrency(currency) || ""}${amount.toFixed(decimals)}`;
 };
 
 export const formatAmountToShortFormat = ({ amount }: { amount: number }) => {
