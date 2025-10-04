@@ -97,53 +97,55 @@ export default function PrayerClient({
             {/* Content Cards Section */}
             <section className="grid grid-cols-1 lg:grid-cols-5 gap-3 sm:gap-4 mt-auto flex-shrink-0">
               {/* Jumaah Card */}
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6 lg:p-8 xl:p-4 order-2 lg:order-1 lg:col-span-1 flex flex-col">
-                <div className="flex-1">
-                  <Swiper
-                    spaceBetween={30}
-                    centeredSlides={true}
-                    autoplay={{
-                      delay: 5000,
-                      disableOnInteraction: false,
-                    }}
-                    navigation={false}
-                    modules={[Autoplay]}
-                    className="mySwiper"
-                  >
-                    {jummahPrayerTimes?.map((session, index) => (
-                      <SwiperSlide key={index}>
-                        <div className="flex flex-col justify-between space-y-10">
-                          <div className="text-center">
-                            <h2 className="text-sm sm:text-base lg:text-lg xl:text-2xl font-bold">
-                              {jummahPrayerTimes.length > 1
-                                ? `Jumaah Session ${index + 1} `
-                                : "Jumaah جمعة"}
-                            </h2>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-center">
-                            <div>
-                              <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
-                                Starts
+              {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6 lg:p-8 xl:p-4 order-2 lg:order-1 lg:col-span-1 flex flex-col">
+                  <div className="flex-1">
+                    <Swiper
+                      spaceBetween={30}
+                      centeredSlides={true}
+                      autoplay={{
+                        delay: 5000,
+                        disableOnInteraction: false,
+                      }}
+                      navigation={false}
+                      modules={[Autoplay]}
+                      className="mySwiper"
+                    >
+                      {jummahPrayerTimes?.map((session, index) => (
+                        <SwiperSlide key={index}>
+                          <div className="flex flex-col justify-between space-y-10">
+                            <div className="text-center">
+                              <h2 className="text-sm sm:text-base lg:text-lg xl:text-2xl font-bold">
+                                {jummahPrayerTimes.length > 1
+                                  ? `Jumaah Session ${index + 1} `
+                                  : "Jumaah جمعة"}
+                              </h2>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-center">
+                              <div>
+                                <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
+                                  Starts
+                                </div>
+                                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
+                                  {session.start}
+                                </div>
                               </div>
-                              <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
-                                {session.start}
+                              <div>
+                                <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
+                                  Khutbah
+                                </div>
+                                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
+                                  {session.khutbah}
+                                </div>
                               </div>
                             </div>
-                            <div>
-                              <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
-                                Khutbah
-                              </div>
-                              <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold">
-                                {session.khutbah}
-                              </div>
-                            </div>
                           </div>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Sunrise/Duha Card */}
               <div className="flex flex-col items-center justify-center text-center space-y-4 sm:space-y-6 order-1 lg:order-2 lg:col-span-1 lg:col-start-5">

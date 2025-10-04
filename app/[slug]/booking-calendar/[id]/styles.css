@@ -1,0 +1,178 @@
+/* Custom Calendar Styles */
+
+/* Make calendar more compact */
+.compact-calendar .fc .fc-daygrid-day-frame {
+  padding: 2px;
+  min-height: 40px;
+}
+
+.fc .fc-daygrid-day-frame {
+  padding: 4px;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.fc .fc-col-header-cell {
+  padding: 4px 0;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.fc .fc-day-today {
+  background-color: transparent !important;
+}
+
+.fc .selected-day .fc-daygrid-day-number {
+  background-color: #1a202c;
+  color: white;
+  border-radius: 50%;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  position: relative;
+}
+
+/* Style the dot for today */
+.fc .fc-day-today .fc-daygrid-day-number::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Remove borders */
+.fc th, .fc td {
+  border: 1px solid #f3f4f6 !important;
+}
+
+.fc .fc-scrollgrid {
+  border: none !important;
+}
+
+/* Time slot styles */
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar for time slots */
+.time-slots-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.time-slots-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.time-slots-grid::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.time-slots-grid::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+/* Single container with dividers */
+.booking-container {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+  .booking-container {
+    flex-direction: row;
+  }
+  
+  .booking-section {
+    padding: 1.5rem;
+  }
+  
+  .booking-section:not(:last-child) {
+    border-right: 1px solid #f3f4f6;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .booking-section {
+    padding: 1rem;
+  }
+  
+  .booking-section:not(:last-child) {
+    border-bottom: 1px solid #f3f4f6;
+  }
+}
+
+/* Make the calendar more compact */
+.compact-calendar .fc-header-toolbar {
+  margin-bottom: 0.5em !important;
+}
+
+.compact-calendar .fc-daygrid-body {
+  font-size: 0.9em;
+}
+
+/* Make the time slots more compact */
+.time-slot-compact {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Subtle dividers */
+.vertical-divider {
+  width: 1px;
+  background-color: #f3f4f6;
+}
+
+/* Container styling */
+.single-row-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .single-row-container {
+    flex-direction: row;
+  }
+}
