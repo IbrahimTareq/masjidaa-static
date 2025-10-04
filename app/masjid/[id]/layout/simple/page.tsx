@@ -124,7 +124,7 @@ export default async function SimpleLayoutPage({
           id: slide.id,
           slide_type: slide.slide_type,
           props: {
-            type: (slideProps as { type?: string }).type || "Parking", // Default to Parking if not specified
+            type: (slideProps as { type?: string }).type || "parking", // Default to Parking if not specified
           },
         };
       }

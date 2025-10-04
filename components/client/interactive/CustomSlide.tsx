@@ -38,8 +38,6 @@ export default function CustomSlide({ customSlideId }: CustomSlideProps) {
     fetchMasjidCustomSlide();
   }, [customSlideId]);
 
-  console.log("customSlide:", customSlide);
-
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-white overflow-hidden"

@@ -47,7 +47,7 @@ export const enrichPrayerTimes = ({
       icon: prayerIcons[prayer],
       arabic: getPrayerArabicName(prayer as PrayerName),
       start: data[prayer as keyof DailyPrayers].start,
-      iqamah: data[prayer as keyof DailyPrayers].iqamah,
+      iqamah: data[prayer as keyof DailyPrayers].iqamah || "-",
       isActive: isCurrentPrayer === prayer,
     };
   });
