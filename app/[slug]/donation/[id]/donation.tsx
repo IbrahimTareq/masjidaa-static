@@ -15,6 +15,7 @@ import { useRandomHadith } from "@/hooks/useRandomHadith";
 import { formatCurrency, formatCurrencyWithSymbol } from "@/utils/currency";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { HeartHandshake } from "lucide-react";
+import { Tooltip } from "react-tooltip";
 
 interface DonationDisplayProps {
   campaign: Tables<"donation_campaigns">;
@@ -69,42 +70,15 @@ export default function DonationDisplay({
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row lg:gap-12">
-            <CampaignDetails
-              campaign={campaign}
-              onImageClick={() => setIsImagePreviewOpen(true)}
-            />
-
-            <div className="flex flex-col gap-4">
-              <DonationStepManager
+            <div className="flex flex-col">
+              <CampaignDetails
                 campaign={campaign}
-                masjid={masjid}
-                bankAccount={bankAccount}
-                shortLink={shortLink as unknown as DonationShortLink}
-                monthlyDonorCount={donationCountMonthly}
-                totalDonorCount={donationCount}
+                onImageClick={() => setIsImagePreviewOpen(true)}
               />
-              <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-5">
-                  <h3 className="text-lg font-semibold mb-4">
-                    The reward of charity
-                  </h3>
-                  <div className="text-gray-500">
-                    "{hadith.text}"
-                    <br />- {hadith.source}
-                  </div>
-                </div>
-              </div>
-              <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
+              <div className="w-full flex flex-col">
                 {/* Recent Supporters Section */}
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-5">
-                  <button
-                    onClick={() => setIsShareModalOpen(true)}
-                    className="w-full py-3 bg-gray-500 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors cursor-pointer"
-                  >
-                    Share
-                  </button>
-                  <div className="h-px bg-gray-200 my-4" />
-                  <h3 className="text-lg font-semibold mb-4">Recent donors</h3>
+                  <h3 className="text-md font-semibold mb-4">Recent donors</h3>
                   <div className="space-y-4">
                     {donations.length > 0 ? (
                       donations.map((donation, index) => {
@@ -160,6 +134,76 @@ export default function DonationDisplay({
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <DonationStepManager
+                campaign={campaign}
+                masjid={masjid}
+                bankAccount={bankAccount}
+                shortLink={shortLink as unknown as DonationShortLink}
+                monthlyDonorCount={donationCountMonthly}
+                totalDonorCount={donationCount}
+              />
+
+              <div className="flex flex-row gap-2 justify-between">
+                <a
+                  data-tooltip-id="secure-donation-tooltip"
+                  className="text-gray-500 text-sm underline cursor-pointer"
+                >
+                  Is my donation secure?
+                </a>
+                <Tooltip 
+                  id="secure-donation-tooltip"
+                  place="top"
+                  className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
+                  style={{
+                    fontWeight: 500,
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                  }}
+                >
+                  <div className="space-y-2 text-xs">
+                    <h2 className="text-sm font-semibold">Is my donation secure?</h2>
+                    <p>Yes, your donation is secure and encrypted.</p>
+                    <p>We partner with Stripe, the industry's established payment processor trusted by some of the world's largest companies.</p>
+                    <p>Your sensitive financial information never touches our servers. We send all data directly to Stripe's PCI-compliant servers through SSL.</p>
+                  </div>
+                </Tooltip>
+                <a
+                  data-tooltip-id="cancel-recurring-donation-tooltip"
+                  className="text-gray-500 text-sm underline cursor-pointer"
+                >
+                  Can I cancel my recurring donation?
+                </a>
+                <Tooltip 
+                  id="cancel-recurring-donation-tooltip"
+                  place="top"
+                  className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
+                  style={{
+                    fontWeight: 500,
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                  }}
+                >
+                  <div className="space-y-2 text-xs">
+                    <h2 className="text-sm font-semibold">Can I cancel my recurring donation?</h2>
+                    <p>Of course. You always remain in full control of your recurring donation, and you’re free to change or cancel it at any time. You can do this via the donor portal details in your receipt email.</p>
+                  </div>
+                </Tooltip>
+              </div>
+
+              <div className="h-px bg-gray-200 my-4" />
+
+              <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
+                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-5">
+                  <h3 className="text-lg font-semibold mb-4">
+                    The reward of charity
+                  </h3>
+                  <div className="text-gray-500">
+                    "{hadith.text}"
+                    <br />- {hadith.source}
                   </div>
                 </div>
               </div>

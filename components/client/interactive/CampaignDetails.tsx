@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Tables } from "@/database.types";
-import { Calendar, Heart } from "lucide-react";
+import { Calendar, Heart, Share2 } from "lucide-react";
 
 interface CampaignDetailsProps {
   campaign: Tables<"donation_campaigns">;
@@ -16,9 +16,14 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   return (
     <div className="flex-1 mb-8 lg:mb-0">
       {/* Title */}
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-8">
-        {campaign.name}
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
+          {campaign.name}
+        </h1>
+        <button className="p-2 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ml-4">
+          <Share2 className="w-8 h-8 text-theme" />
+        </button>
+      </div>
 
       {/* Campaign Image */}
       <div

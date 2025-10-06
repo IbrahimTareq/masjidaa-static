@@ -145,6 +145,8 @@ export function DonationProvider({
         
         setClientSecret(setupJson.client_secret);
 
+        console.log("setupJson", setupJson);
+
         // Create recurring metadata
         const newRecurringMeta: RecurringMeta = {
           frequency,

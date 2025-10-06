@@ -3,10 +3,8 @@
 import { Tables } from "@/database.types";
 import { useDonation } from "@/donation/src/context/DonationContext";
 import { formatCurrency } from "@/utils/currency";
-import { Target, TrendingUp, Users } from "lucide-react";
+import { Share2, Target, TrendingUp, Users } from "lucide-react";
 import React from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 
 interface DonationStatsProps {
   campaign: Tables<"donation_campaigns">;
@@ -51,28 +49,19 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
             <span>{totalDonorCount} donations</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-14 h-14">
-            <CircularProgressbar
-              value={progressPercentage}
-              text={`${progressPercentage}%`}
-              styles={buildStyles({
-                pathColor: "var(--theme-color-gradient, #e4ede7)",
-                textColor: "var(--theme-color-gradient, #e4ede7)",
-                trailColor: "var(--theme-color-accent, #e4ede7)",
-                textSize: "24px",
-              })}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-theme rounded-full"
-          style={{ width: `${progressPercentage}%` }}
-        />
+      <div className="relative w-full">
+        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-theme rounded-full"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+        <div className="absolute -top-5 right-0 text-xs font-medium text-theme">
+          {progressPercentage}%
+        </div>
       </div>
 
       {/* Recent Activity */}

@@ -10,7 +10,9 @@ import {
   PRESET_AMOUNTS,
 } from "@/utils/shared/constants";
 import { Convert } from "easy-currencies";
+import { Info } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Tooltip } from "react-tooltip";
 interface DonationAmountSelectorProps {
   onAmountSelected: (
     amount: number,
@@ -244,7 +246,10 @@ export default function DonationAmountSelector({
           STRIPE_DONATION_FEE_FIXED
         ).toFixed(2) // Add fee
       : (baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage) > 0
-      ? ((baseAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage)).toFixed(2) // Remove fee if it was included
+      ? (
+          (baseAmount - STRIPE_DONATION_FEE_FIXED) /
+          (1 + feePercentage)
+        ).toFixed(2) // Remove fee if it was included
       : "0.00"; // Prevent negative amounts
 
     setCustomAmount(newAmount);
@@ -441,15 +446,41 @@ export default function DonationAmountSelector({
                     className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
                   />
                 </div>
-                <span className="text-xs">
-                  Yes, I want 100% of my donation to reach the cause (adds&nbsp;
-                  {formatCurrency({
-                    amount: calculateProcessingFee(getBaseAmount()),
-                    currency: selectedCurrency,
-                    decimals: 2,
-                  })}
-                  )
+                <span className="text-xs flex items-center justify-between">
+                  <span>
+                    I want 100% of my donation to reach the cause (adds&nbsp;
+                    {formatCurrency({
+                      amount: calculateProcessingFee(getBaseAmount()),
+                      currency: selectedCurrency,
+                      decimals: 2,
+                    })}
+                    )
+                  </span>
+                  <Info
+                    className="w-4 h-4 ml-2 text-gray-500 cursor-help flex-shrink-0"
+                    data-tooltip-id="cover-fees-tooltip"
+                  />
                 </span>
+                <Tooltip
+                  id="cover-fees-tooltip"
+                  place="top"
+                  className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
+                  style={{
+                    fontWeight: 500,
+                    boxShadow:
+                      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                  }}
+                >
+                  <div className="space-y-2 text-xs">
+                    <h2 className="text-sm font-semibold">Cover Processing Fees</h2>
+                    <p>
+                      When checked, you'll cover the payment processing fees so that 100% of your intended donation amount reaches the cause.
+                    </p>
+                    <p>
+                      This small additional amount helps cover the fees charged by the platform and payment processors for handling the transaction.
+                    </p>
+                  </div>
+                </Tooltip>
               </label>
             </div>
           )}
@@ -529,9 +560,33 @@ export default function DonationAmountSelector({
                   className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
                 />
               </div>
-              <span>
-                Don't display my name publicly on this donation campaign
+              <span className="flex items-center justify-between">
+                <span>
+                  Don't display my name publicly on this donation campaign
+                </span>
+                <Info
+                  className="w-4 h-4 ml-2 text-gray-500 cursor-help flex-shrink-0"
+                  data-tooltip-id="anonymous-donation-tooltip"
+                />
               </span>
+              <Tooltip
+                id="anonymous-donation-tooltip"
+                place="top"
+                className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
+                style={{
+                  fontWeight: 500,
+                  boxShadow:
+                    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                }}
+              >
+                <div className="space-y-2 text-xs">
+                  <h2 className="text-sm font-semibold">Anonymous Donation</h2>
+                  <p>
+                    When checked, your name will not be displayed publicly in
+                    the list of donors for this campaign.
+                  </p>
+                </div>
+              </Tooltip>
             </label>
           </div>
         </div>
@@ -552,11 +607,7 @@ export default function DonationAmountSelector({
                 <option value="eur">Euros</option>
                 <option value="gbp">British Pounds</option>
                 <option value="cad">Canadian Dollars</option>
-                <option value="jpy">Japanese Yen</option>
-                <option value="cny">Chinese Yuan</option>
-                <option value="inr">Indian Rupees</option>
                 <option value="sgd">Singapore Dollars</option>
-                <option value="myr">Malaysian Ringgit</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
                 <svg
