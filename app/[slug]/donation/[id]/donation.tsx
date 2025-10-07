@@ -84,8 +84,7 @@ export default function DonationDisplay({
                       donations.map((donation, index) => {
                         const displayName = donation.is_anonymous
                           ? "Anonymous"
-                          : donation.donor_first_name &&
-                            donation.donor_last_name;
+                          : `${donation.donor_first_name} ${donation.donor_last_name}`;
 
                         const donationDate = donation.created_at
                           ? new Date(donation.created_at)
@@ -152,44 +151,68 @@ export default function DonationDisplay({
               <div className="flex flex-row gap-2 justify-between">
                 <a
                   data-tooltip-id="secure-donation-tooltip"
-                  className="text-gray-500 text-sm underline cursor-pointer"
+                  className="text-gray-500 text-xs underline cursor-pointer"
                 >
                   Is my donation secure?
                 </a>
-                <Tooltip 
+                <Tooltip
                   id="secure-donation-tooltip"
                   place="top"
                   className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
                   style={{
                     fontWeight: 500,
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                    boxShadow:
+                      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                   }}
                 >
                   <div className="space-y-2 text-xs">
-                    <h2 className="text-sm font-semibold">Is my donation secure?</h2>
-                    <p>Yes, your donation is secure and encrypted.</p>
-                    <p>We partner with Stripe, the industry's established payment processor trusted by some of the world's largest companies.</p>
-                    <p>Your sensitive financial information never touches our servers. We send all data directly to Stripe's PCI-compliant servers through SSL.</p>
+                    <h2 className="text-sm font-semibold">
+                      Is my donation secure?
+                    </h2>
+                    <p>Yes, your donation is safe and fully encrypted.</p>
+                    <p>
+                      We use Stripe, a trusted global payment processor, to
+                      handle all transactions securely.
+                    </p>
+                    <p>
+                      Your financial information never touches our servers and
+                      is transmitted directly to Stripe using PCI-compliant,
+                      SSL-encrypted systems.
+                    </p>
+                    <p>
+                      Your trust is important to us, and we take every step to
+                      keep your information secure.
+                    </p>
                   </div>
                 </Tooltip>
                 <a
                   data-tooltip-id="cancel-recurring-donation-tooltip"
-                  className="text-gray-500 text-sm underline cursor-pointer"
+                  className="text-gray-500 text-xs underline cursor-pointer"
                 >
                   Can I cancel my recurring donation?
                 </a>
-                <Tooltip 
+                <Tooltip
                   id="cancel-recurring-donation-tooltip"
                   place="top"
                   className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
                   style={{
                     fontWeight: 500,
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                    boxShadow:
+                      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                   }}
                 >
                   <div className="space-y-2 text-xs">
-                    <h2 className="text-sm font-semibold">Can I cancel my recurring donation?</h2>
-                    <p>Of course. You always remain in full control of your recurring donation, and you’re free to change or cancel it at any time. You can do this via the donor portal details in your receipt email.</p>
+                    <h2 className="text-sm font-semibold">
+                      Can I cancel my recurring donation?
+                    </h2>
+                    <p>
+                      Absolutely. You’re always in full control and can update
+                      or cancel your recurring donation anytime.
+                    </p>
+                    <p>
+                      Just use the donor portal link in your receipt email,
+                      it's quick and easy.
+                    </p>
                   </div>
                 </Tooltip>
               </div>

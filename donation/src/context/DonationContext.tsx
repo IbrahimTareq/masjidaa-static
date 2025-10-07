@@ -11,6 +11,9 @@ import {
   Masjid,
   BankAccount
 } from "../types";
+
+// Extended step type to include user details and recurring upsell steps
+export type ExtendedDonationStep = DonationStep | "user_details" | "recurring_upsell";
 import { 
   createRecurringSetupIntent, 
   createSinglePaymentIntent,
@@ -20,7 +23,7 @@ import {
 
 interface DonationContextType {
   // State
-  currentStep: DonationStep;
+  currentStep: ExtendedDonationStep;
   selectedAmount: number | undefined;
   donorInfo: DonorInfo | undefined;
   clientSecret: string | undefined;
@@ -29,12 +32,22 @@ interface DonationContextType {
   isImagePreviewOpen: boolean;
   isShareModalOpen: boolean;
   progressPercentage: number;
+  tempDonationData: {
+    amount: string;
+    coverFee: boolean;
+    frequency: PaymentFrequency;
+    selectedCurrency: string;
+    sawUpsellScreen?: boolean;
+  } | undefined;
   
   // Actions
-  setCurrentStep: (step: DonationStep) => void;
+  setCurrentStep: (step: ExtendedDonationStep) => void;
   handleDonateClick: () => void;
   handleBack: () => void;
-  handleAmountSelected: (amount: number, info: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
+  handleAmountSelected: (amount: string, coverFee: boolean, frequency: PaymentFrequency, selectedCurrency: string) => void;
+  handleUserDetailsSubmit: (info: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
+  handleRecurringUpsellSelected: (amount: string, frequency: PaymentFrequency) => void;
+  handleKeepOneTime: () => void;
   handleDonationSuccess: () => void;
   toggleImagePreview: (isOpen?: boolean) => void;
   toggleShareModal: (isOpen?: boolean) => void;
@@ -57,13 +70,22 @@ export function DonationProvider({
   masjid,
 }: DonationProviderProps) {
   // Step management
-  const [currentStep, setCurrentStep] = useState<DonationStep>("initial");
+  const [currentStep, setCurrentStep] = useState<ExtendedDonationStep>("initial");
   
   // Payment data
   const [selectedAmount, setSelectedAmount] = useState<number>();
   const [donorInfo, setDonorInfo] = useState<DonorInfo>();
   const [clientSecret, setClientSecret] = useState<string>();
   const [recurringMeta, setRecurringMeta] = useState<RecurringMeta>();
+  
+  // Temporary storage for donation data between steps
+  const [tempDonationData, setTempDonationData] = useState<{
+    amount: string;
+    coverFee: boolean;
+    frequency: PaymentFrequency;
+    selectedCurrency: string;
+    sawUpsellScreen?: boolean;
+  }>();
   
   // UI state
   const [isLoading, setIsLoading] = useState(false);
@@ -85,24 +107,111 @@ export function DonationProvider({
   
   const handleBack = () => {
     if (currentStep === "payment") {
+      setCurrentStep("user_details");
+    } else if (currentStep === "user_details") {
+      // If we came from recurring upsell, go back to that step
+      if (tempDonationData?.sawUpsellScreen) {
+        setCurrentStep("recurring_upsell");
+      } else {
+        setCurrentStep("amount");
+      }
+    } else if (currentStep === "recurring_upsell") {
       setCurrentStep("amount");
     } else {
       setCurrentStep("initial");
       setSelectedAmount(undefined);
       setDonorInfo(undefined);
+      setTempDonationData(undefined);
     }
   };
   
-  const handleAmountSelected = async (
-    amount: number,
+  // Step 1: Handle amount selection
+  const handleAmountSelected = (
+    amount: string,
+    coverFee: boolean,
+    frequency: PaymentFrequency,
+    selectedCurrency: string
+  ) => {
+    // Check if we should show the recurring upsell step
+    // Only show upsell if:
+    // 1. It's a one-time payment
+    // 2. Amount is less than $100
+    const parsedAmount = parseFloat(amount);
+    const shouldShowUpsell = frequency === "once" && parsedAmount < 100;
+    
+    // Store the amount data temporarily
+    setTempDonationData({
+      amount,
+      coverFee,
+      frequency,
+      selectedCurrency,
+      sawUpsellScreen: shouldShowUpsell
+    });
+    
+    if (shouldShowUpsell) {
+      // Show the upsell step before user details
+      setCurrentStep("recurring_upsell");
+    } else {
+      // Skip upsell and move directly to user details
+      setCurrentStep("user_details");
+    }
+  };
+  
+  // Step 3: Handle user details submission
+  const handleUserDetailsSubmit = async (
     info: DonorInfo,
     frequency: PaymentFrequency
   ) => {
-    setSelectedAmount(amount);
+    if (!tempDonationData) return;
+    
     setDonorInfo(info);
+    
+    // Proceed directly with payment processing
+    await processPayment(info, frequency);
+  };
+  
+  // Handle when user selects a monthly amount from the upsell screen
+  const handleRecurringUpsellSelected = (amount: string, frequency: PaymentFrequency) => {
+    if (!tempDonationData) return;
+    
+    // Update the temporary donation data with the new amount and frequency
+    // Keep the sawUpsellScreen flag as true
+    setTempDonationData({
+      ...tempDonationData,
+      amount,
+      frequency,
+      sawUpsellScreen: true
+    });
+    
+    // Move to user details step
+    setCurrentStep("user_details");
+  };
+  
+  // Handle when user chooses to keep the one-time donation
+  const handleKeepOneTime = () => {
+    if (!tempDonationData) return;
+    
+    // Make sure the sawUpsellScreen flag remains true
+    setTempDonationData({
+      ...tempDonationData,
+      sawUpsellScreen: true
+    });
+    
+    // Keep the original frequency as "once" and move to user details
+    setCurrentStep("user_details");
+  };
+  
+  // Common payment processing function
+  const processPayment = async (info: DonorInfo, frequency: PaymentFrequency) => {
+    if (!tempDonationData) return;
+    
     setIsLoading(true);
-
+    
     try {
+      // Convert to cents/pence for Stripe
+      const amountInCents = Math.round(parseFloat(tempDonationData.amount) * 100);
+      setSelectedAmount(amountInCents);
+      
       // Create common donation metadata
       const donationMeta: DonationMeta = {
         masjid_id: masjid.id,
@@ -112,7 +221,7 @@ export function DonationProvider({
         first_name: info.firstName,
         last_name: info.lastName,
         is_anonymous: info.isAnonymous,
-        amount_cents: amount,
+        amount_cents: amountInCents,
         currency: info.currency.toLowerCase(),
       };
       
@@ -122,7 +231,7 @@ export function DonationProvider({
       if (frequency === "once") {
         // Handle one-time payment
         const data = await createSinglePaymentIntent(
-          amount,
+          amountInCents,
           info.currency.toLowerCase(),
           campaign.id,
           campaign.name,
@@ -144,8 +253,6 @@ export function DonationProvider({
         );
         
         setClientSecret(setupJson.client_secret);
-
-        console.log("setupJson", setupJson);
 
         // Create recurring metadata
         const newRecurringMeta: RecurringMeta = {
@@ -193,12 +300,16 @@ export function DonationProvider({
     isImagePreviewOpen,
     isShareModalOpen,
     progressPercentage,
+    tempDonationData,
     
     // Actions
     setCurrentStep,
     handleDonateClick,
     handleBack,
     handleAmountSelected,
+    handleUserDetailsSubmit,
+    handleRecurringUpsellSelected,
+    handleKeepOneTime,
     handleDonationSuccess,
     toggleImagePreview,
     toggleShareModal,

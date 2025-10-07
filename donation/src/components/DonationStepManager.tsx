@@ -2,7 +2,9 @@
 
 import React from "react";
 import { DonationProvider, useDonation } from "../context/DonationContext";
-import DonationAmountSelector from "./DonationAmountSelector";
+import DonationAmountStep from "./DonationAmountStep";
+import DonationUserDetailsStep from "./DonationUserDetailsStep";
+import RecurringDonationUpsellStep from "./RecurringDonationUpsellStep";
 import DonationForm from "./DonationForm";
 import { DonationStats } from "./DonationStats";
 import { Campaign, ShortLink, Masjid, BankAccount } from "../types";
@@ -59,7 +61,11 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
     clientSecret,
     recurringMeta,
     isLoading,
+    tempDonationData,
     handleAmountSelected,
+    handleUserDetailsSubmit,
+    handleRecurringUpsellSelected,
+    handleKeepOneTime,
     handleBack,
     handleDonationSuccess,
   } = useDonation();
@@ -84,7 +90,7 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
           />
         </div>
 
-        {/* Amount Selection Panel */}
+        {/* Amount Selection Panel - Step 1 */}
         <div
           className={`transition-all duration-300 ${
             currentStep === "amount"
@@ -92,15 +98,53 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
               : "opacity-0 invisible h-0"
           }`}
         >
-          <DonationAmountSelector
-            onAmountSelected={handleAmountSelected}
+          <DonationAmountStep
+            onNext={handleAmountSelected}
             onBack={handleBack}
             isLoading={isLoading}
-            shortLink={shortLink?.short_code || ""}
           />
         </div>
 
-        {/* Payment Form Panel */}
+        {/* User Details Panel - Step 2 */}
+        <div
+          className={`transition-all duration-300 ${
+            currentStep === "user_details"
+              ? "opacity-100 visible"
+              : "opacity-0 invisible h-0"
+          }`}
+        >
+          {tempDonationData && (
+            <DonationUserDetailsStep
+              onSubmit={handleUserDetailsSubmit}
+              onBack={handleBack}
+              isLoading={isLoading}
+              shortLink={shortLink?.short_code || ""}
+              initialCurrency={tempDonationData.selectedCurrency}
+              frequency={tempDonationData.frequency}
+            />
+          )}
+        </div>
+
+        {/* Recurring Donation Upsell Panel - Step 3 (conditional) */}
+        <div
+          className={`transition-all duration-300 ${
+            currentStep === "recurring_upsell"
+              ? "opacity-100 visible"
+              : "opacity-0 invisible h-0"
+          }`}
+        >
+          {tempDonationData && (
+            <RecurringDonationUpsellStep
+              amount={tempDonationData.amount}
+              currency={tempDonationData.selectedCurrency}
+              onSelectMonthlyAmount={handleRecurringUpsellSelected}
+              onKeepOneTime={handleKeepOneTime}
+              onBack={handleBack}
+            />
+          )}
+        </div>
+
+        {/* Payment Form Panel - Step 4 */}
         <div
           className={`transition-all duration-300 ${
             currentStep === "payment"
