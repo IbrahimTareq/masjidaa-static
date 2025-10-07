@@ -57,30 +57,13 @@ const SuccessMessage: React.FC<{
 );
 
 // Processing message component
-const ProcessingMessage: React.FC<{
-  masjidName: string;
-  masjidLogo?: string;
-  amount?: string | null;
-  currency: string;
-}> = ({ masjidName, masjidLogo, amount, currency }) => (
-  <div className="bg-white rounded-2xl shadow-sm p-8 text-center mb-6">
-    <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden">
-      <img
-        src={masjidLogo || ""}
-        alt={masjidName}
-        className="w-full h-full object-contain border-2 border-theme rounded-full"
-      />
-    </div>
+const ProcessingMessage = () => (
+  <div className="bg-white rounded-2xl py-20 text-center mb-6">
     <div className="flex justify-center mb-4">
       <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-theme animate-spin"></div>
     </div>
     <h2 className="text-2xl font-bold text-gray-900 mb-2">
-      Your donation of&nbsp;
-      {formatCurrency({
-        amount: Number(amount),
-        currency: currency,
-      })}
-      &nbsp;is being processed
+      Your donation is being processed
     </h2>
     <p className="text-sm text-gray-500">
       This may take a few moments. You'll receive an email confirmation once the
@@ -136,7 +119,7 @@ export default function DonationResult() {
   const { status, isLoading, error } = usePaymentStatus();
 
   // Show loading state while determining payment status
-  if (isLoading || !masjid) {
+  if (!masjid) {
     return <LoadingPage />;
   }
 
@@ -158,6 +141,12 @@ export default function DonationResult() {
   const amount = donationMeta?.amount_cents
     ? String(Math.round(Number(donationMeta.amount_cents) / 100))
     : null;
+
+  if (isLoading) {
+    return (
+      <ProcessingMessage />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-black">
@@ -195,12 +184,7 @@ export default function DonationResult() {
         )}
 
         {status === "processing" && (
-          <ProcessingMessage
-            masjidName={masjid.name}
-            masjidLogo={masjid.logo || undefined}
-            amount={amount || undefined}
-            currency={masjid.local_currency}
-          />
+          <ProcessingMessage />
         )}
 
         {status === "failed" && (

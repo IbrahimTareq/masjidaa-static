@@ -14,6 +14,7 @@ import "react-circular-progressbar/dist/styles.css";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import IqamahTimesChangeSlide from "./IqamahTimesChangeSlide";
 
 // Define slide types
 interface SlideBase {
@@ -58,6 +59,13 @@ interface PrayerScreenSlide extends SlideBase {
   };
 }
 
+interface IqamahTimesChangeSlide extends SlideBase {
+  slide_type: "iqamah-times-change";
+  props: {
+    iqamahTimeChange: any;
+  };
+}
+
 interface StaticSlide extends SlideBase {
   slide_type: "static";
   props: {
@@ -71,6 +79,7 @@ export type Slide =
   | PrayerScreenSlide
   | DonationSlide
   | CustomSlide
+  | IqamahTimesChangeSlide
   | StaticSlide
   | SlideBase;
 
@@ -80,6 +89,9 @@ const slideComponents: Record<string, React.ComponentType<any>> = {
   announcement: AnnouncementSlide,
   donation: DonationSlide,
   custom: CustomSlide,
+  "iqamah-times-change": (props: { iqamahTimeChange: any }) => (
+    <IqamahTimesChangeSlide iqamahTimeChange={props.iqamahTimeChange} />
+  ),
   "prayer-screen": (props: { theme: number; type?: string }) => (
     <PrayerScreenSlide theme={props.theme} type={props.type} />
   ),

@@ -1,6 +1,7 @@
 import AdvancedSlideshow from "@/app/masjid/[id]/layout/advanced/AdvancedSlideshow";
-import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
 import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
+import { getUpcomingIqamahTimeChanges } from "@/lib/server/services/masjidIqamahTimes";
+import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
 
 export default async function AdvancedLayoutPage({
   params,
@@ -27,8 +28,10 @@ export default async function AdvancedLayoutPage({
     );
   }
 
+  const upcomingIqamahTimeChanges = await getUpcomingIqamahTimeChanges(id);
+
   // Process slides and fetch additional data as needed
-  const processedSlides = await Promise.all(
+  let processedSlides = await Promise.all(
     slidesData.map(async (slide) => {
       // Handle props based on its type - could be string, object, or null
       let slideProps = {};
@@ -107,6 +110,18 @@ export default async function AdvancedLayoutPage({
       };
     })
   );
+
+  if (upcomingIqamahTimeChanges) {
+    const iqamahTimeChangeSlide = {
+      id: "iqamah-times-change",
+      slide_type: "iqamah-times-change",
+      props: {
+        iqamahTimeChange: upcomingIqamahTimeChanges,
+      },
+    };
+
+    processedSlides = [iqamahTimeChangeSlide, ...processedSlides];
+  }
 
   return (
     <div className="h-screen bg-black font-montserrat">

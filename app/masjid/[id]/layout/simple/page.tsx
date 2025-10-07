@@ -1,5 +1,6 @@
 import Slideshow from "@/components/client/interactive/Slideshow";
 import { Ticker } from "@/components/client/interactive/Ticker";
+import { getUpcomingIqamahTimeChanges } from "@/lib/server/services/masjidIqamahTimes";
 import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
 
 export default async function SimpleLayoutPage({
@@ -11,6 +12,9 @@ export default async function SimpleLayoutPage({
 
   // Fetch slides for this masjid with layout type "simple"
   const slidesData = await getMasjidSlidesById(id, "simple");
+
+  // Check for upcoming iqamah time changes
+  const upcomingIqamahTimeChanges = await getUpcomingIqamahTimeChanges(id);
 
   if (!slidesData || slidesData.length === 0) {
     return (
@@ -28,7 +32,7 @@ export default async function SimpleLayoutPage({
   }
 
   // Process slides and fetch additional data as needed
-  const processedSlides = await Promise.all(
+  let processedSlides = await Promise.all(
     slidesData.map(async (slide) => {
       // Handle props based on its type - could be string, object, or null
       let slideProps = {};
@@ -137,6 +141,20 @@ export default async function SimpleLayoutPage({
       };
     })
   );
+
+  // If there are upcoming iqamah time changes, add a special slide for it
+  if (upcomingIqamahTimeChanges) {
+    const iqamahTimeChangeSlide = {
+      id: "iqamah-times-change",
+      slide_type: "iqamah-times-change",
+      props: {
+        iqamahTimeChange: upcomingIqamahTimeChanges,
+      },
+    };
+
+    // Add the iqamah time change slide to the beginning for visibility
+    processedSlides = [iqamahTimeChangeSlide, ...processedSlides];
+  }
 
   return (
     <div className="h-screen p-2 sm:p-4 lg:p-5 bg-gradient-to-br from-theme to-theme flex flex-col">
