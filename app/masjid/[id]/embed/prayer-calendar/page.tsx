@@ -1,5 +1,5 @@
 import { getMonthlyPrayerData } from "@/lib/server/domain/prayer/getMonthlyPrayerData";
-import PrayersCalendar from "./prayers-calendar";
+import PrayersCalendar from "./prayer-calendar";
 
 export default async function CalendarPage({
   params,
