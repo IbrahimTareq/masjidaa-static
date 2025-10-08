@@ -137,7 +137,7 @@ export function DonationProvider({
     // 1. It's a one-time payment
     // 2. Amount is less than $100
     const parsedAmount = parseFloat(amount);
-    const shouldShowUpsell = frequency === "once" && parsedAmount < 100;
+    const shouldShowUpsell = frequency === "once" && parsedAmount > 15 && parsedAmount < 100;
     
     // Store the amount data temporarily
     setTempDonationData({
