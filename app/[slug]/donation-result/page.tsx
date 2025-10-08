@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useMasjidContext } from "@/context/masjidContext";
 import { DonationMeta, usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { DotLoader } from "react-spinners";
 
 // Success message component
 const SuccessMessage: React.FC<{
@@ -60,7 +61,7 @@ const SuccessMessage: React.FC<{
 const ProcessingMessage = () => (
   <div className="bg-white rounded-2xl py-20 text-center mb-6">
     <div className="flex justify-center mb-4">
-      <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-theme animate-spin"></div>
+      <DotLoader color="var(--theme-color)" size={50} />
     </div>
     <h2 className="text-2xl font-bold text-gray-900 mb-2">
       Your donation is being processed

@@ -9,6 +9,7 @@ export async function getMasjidDonationCampaignsByMasjidId(
     .from("donation_campaigns")
     .select("*")
     .eq("masjid_id", masjidId)
+    .eq("active", true)
 
   if (error) {
     console.error("Error fetching masjid donation campaigns", error);

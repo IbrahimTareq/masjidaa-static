@@ -4,6 +4,7 @@ import { DonorInfo, PaymentFrequency } from "../types";
 import React, { useState } from "react";
 import { Info } from "lucide-react";
 import { Tooltip } from "react-tooltip";
+import { BeatLoader } from "react-spinners";
 
 interface DonationUserDetailsStepProps {
   onSubmit: (donorInfo: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
@@ -206,7 +207,7 @@ export default function DonationUserDetailsStep({
           disabled={isLoading}
           className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
-          {isLoading ? "Processing..." : "Continue to Payment"}
+          {isLoading ? <BeatLoader color="#fff" size={8} /> : "Continue to Payment"}
         </button>
       </form>
     </div>
