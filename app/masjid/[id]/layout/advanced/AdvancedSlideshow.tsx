@@ -220,7 +220,7 @@ export default function AdvancedSlideshow({
         </div>
 
         {/* Mobile Jummah Times - Only visible on mobile if there are sessions */}
-        {jummahPrayerTimes?.length && jummahPrayerTimes?.length > 0 && (
+        {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
           <div className="lg:hidden bg-theme text-white p-3 flex-shrink-0">
             <h3 className="text-sm font-bold text-center mb-2">JUMU'AH</h3>
             <div className="flex gap-2 justify-center">
