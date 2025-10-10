@@ -37,9 +37,9 @@ const SuccessMessage: React.FC<{
     {amount && (
       <p className="text-gray-600 flex items-center justify-center gap-2 text-lg mb-2">
         <Check className="w-5 h-5 text-green-500" />
-        You donated{" "}
+        You donated&nbsp;
         {formatCurrency({
-          amount: Number(amount),
+          amount: parseFloat(amount),
           currency: currency,
         })}
       </p>
@@ -140,13 +140,11 @@ export default function DonationResult() {
 
   // Format amount for display
   const amount = donationMeta?.amount_cents
-    ? String(Math.round(Number(donationMeta.amount_cents) / 100))
+    ? String(Number(donationMeta.amount_cents) / 100)
     : null;
 
   if (isLoading) {
-    return (
-      <ProcessingMessage />
-    );
+    return <ProcessingMessage />;
   }
 
   return (
@@ -184,9 +182,7 @@ export default function DonationResult() {
           </>
         )}
 
-        {status === "processing" && (
-          <ProcessingMessage />
-        )}
+        {status === "processing" && <ProcessingMessage />}
 
         {status === "failed" && (
           <FailedMessage
