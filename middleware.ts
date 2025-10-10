@@ -9,9 +9,7 @@ export async function middleware(req: NextRequest) {
   // Check if this is a paid feature path
   const isPaidFeature =
     pathname.includes("/embed/") ||
-    !pathname.includes("/prayer-screens/theme1") ||
-    pathname.includes("/layout/advanced") ||
-    pathname.includes("/layout/simple");
+    pathname.includes("/layout/");
 
   if (pathname.startsWith("/masjid/") && isPaidFeature) {
     const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
@@ -31,7 +29,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/masjid/:id/embed/:path*",
-    "/masjid/:id/prayer-screens/:path*",
     "/masjid/:id/layout/:path*",
   ],
 };
