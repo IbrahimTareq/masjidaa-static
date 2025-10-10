@@ -1,5 +1,6 @@
 import YoutubeFeed from "./youtube-feed";
 import { getMasjidById } from "@/lib/server/services/masjid";
+import { getMasjidSocialsByMasjidId } from "@/lib/server/services/masjidSocials";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -11,7 +12,7 @@ async function getYouTubeChannelInfo(channelId: string) {
 
   try {
     const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${channelId}&key=${YOUTUBE_API_KEY}`,
+      `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails,brandingSettings&id=${channelId}&key=${YOUTUBE_API_KEY}`,
       { next: { revalidate: 3600 } } // cache for 1 hour
     );
 
@@ -20,7 +21,7 @@ async function getYouTubeChannelInfo(channelId: string) {
       return null;
     }
 
-    const data = await res.json();
+    const data: any = await res.json();
     const item = data.items?.[0];
     if (!item) return null;
 
@@ -31,6 +32,7 @@ async function getYouTubeChannelInfo(channelId: string) {
       videoCount: item.statistics?.videoCount,
       viewCount: item.statistics?.viewCount,
       uploadsPlaylistId: item.contentDetails?.relatedPlaylists?.uploads,
+      bannerUrl: item.brandingSettings?.image?.bannerExternalUrl || null,
     };
   } catch (error) {
     console.error("Error fetching YouTube channel info:", error);
@@ -49,7 +51,7 @@ async function getYouTubeVideosFromPlaylist(uploadsPlaylistId: string) {
     let nextPageToken: string | undefined = undefined;
 
     do {
-      const playlistRes = await fetch(
+      const playlistRes: Response = await fetch(
         `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${YOUTUBE_API_KEY}${
           nextPageToken ? `&pageToken=${nextPageToken}` : ""
         }`,
@@ -61,7 +63,7 @@ async function getYouTubeVideosFromPlaylist(uploadsPlaylistId: string) {
         break;
       }
 
-      const playlistData = await playlistRes.json();
+      const playlistData: any = await playlistRes.json();
       const pageVideos =
         playlistData.items?.map((item: any) => ({
           id: item.snippet.resourceId.videoId,
@@ -83,20 +85,33 @@ async function getYouTubeVideosFromPlaylist(uploadsPlaylistId: string) {
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
   const masjid = await getMasjidById(id);
 
-  // Replace with actual DB value later
-  const channelId = "UCCuJMwoUc-tMXhT-ASOm5qg";
+  const masjidSocials = await getMasjidSocialsByMasjidId(id);
+
+  const channelId = masjidSocials?.youtube_channel_id;
+
+  if (!channelId) {
+    return <div>YouTube channel not found</div>;
+  }
 
   const channelInfo = await getYouTubeChannelInfo(channelId);
 
   const videos = channelInfo?.uploadsPlaylistId
     ? await getYouTubeVideosFromPlaylist(channelInfo.uploadsPlaylistId)
     : [];
+
+  // Check if hero image should be shown
+  const showHeroImg = (await searchParams).showHeroImg === "true";
+
+  // Get banner image from channel info (if available)
+  const bannerImage = channelInfo?.bannerUrl || null;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -108,6 +123,8 @@ export default async function Page({
         videoCount={channelInfo?.videoCount || "—"}
         viewCount={channelInfo?.viewCount || "—"}
         videos={videos}
+        showHeroImg={showHeroImg}
+        heroImg={bannerImage}
       />
     </main>
   );

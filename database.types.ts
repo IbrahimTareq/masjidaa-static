@@ -355,48 +355,6 @@ export type Database = {
         }
         Relationships: []
       }
-      masjid_admins: {
-        Row: {
-          masjid_id: string | null
-          requested_at: string | null
-          role: string
-          status: string
-          user_id: string
-          verified_at: string | null
-        }
-        Insert: {
-          masjid_id?: string | null
-          requested_at?: string | null
-          role?: string
-          status?: string
-          user_id: string
-          verified_at?: string | null
-        }
-        Update: {
-          masjid_id?: string | null
-          requested_at?: string | null
-          role?: string
-          status?: string
-          user_id?: string
-          verified_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "masjid_admins_masjid_id_fkey"
-            columns: ["masjid_id"]
-            isOneToOne: false
-            referencedRelation: "masjids"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "masjid_admins_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       masjid_bank_accounts: {
         Row: {
           created_at: string | null
@@ -850,6 +808,59 @@ export type Database = {
           },
         ]
       }
+      masjid_socials: {
+        Row: {
+          created_at: string
+          facebook_url: string | null
+          id: string
+          instagram_url: string | null
+          linkedin_url: string | null
+          masjid_id: string
+          tiktok_url: string | null
+          twitter_url: string | null
+          updated_at: string
+          whatsapp_url: string | null
+          youtube_channel_id: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          linkedin_url?: string | null
+          masjid_id: string
+          tiktok_url?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          whatsapp_url?: string | null
+          youtube_channel_id?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          linkedin_url?: string | null
+          masjid_id?: string
+          tiktok_url?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          whatsapp_url?: string | null
+          youtube_channel_id?: string | null
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_socials_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masjid_subscriptions: {
         Row: {
           canceled_at: string | null
@@ -858,9 +869,10 @@ export type Database = {
           current_period_start: string | null
           id: string
           masjid_id: string
-          status: string
-          stripe_customer_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
           tier: Database["public"]["Enums"]["subscription_type"]
+          tier_id: string
           updated_at: string | null
         }
         Insert: {
@@ -870,9 +882,10 @@ export type Database = {
           current_period_start?: string | null
           id?: string
           masjid_id: string
-          status: string
-          stripe_customer_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
           tier: Database["public"]["Enums"]["subscription_type"]
+          tier_id: string
           updated_at?: string | null
         }
         Update: {
@@ -882,9 +895,10 @@ export type Database = {
           current_period_start?: string | null
           id?: string
           masjid_id?: string
-          status?: string
-          stripe_customer_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
           tier?: Database["public"]["Enums"]["subscription_type"]
+          tier_id?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -893,6 +907,13 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masjid_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
             referencedColumns: ["id"]
           },
         ]
@@ -944,6 +965,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           email: string | null
+          fts: unknown | null
           hijri_date_adjustment: number
           id: string
           is_non_profit: boolean
@@ -976,6 +998,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           email?: string | null
+          fts?: unknown | null
           hijri_date_adjustment: number
           id?: string
           is_non_profit?: boolean
@@ -1008,6 +1031,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           email?: string | null
+          fts?: unknown | null
           hijri_date_adjustment?: number
           id?: string
           is_non_profit?: boolean
@@ -1060,18 +1084,16 @@ export type Database = {
           created_at: string | null
           currency: string
           email: string
-          fail_count: string | null
-          first_name: string | null
+          first_name: string
           frequency: string
           id: string
-          last_name: string | null
+          last_name: string
           masjid_id: string
-          next_charge: string
-          start_date: string | null
           status: string
           stripe_account_id: string
           stripe_customer_id: string
           stripe_payment_method_id: string
+          stripe_subscription_id: string
           updated_at: string | null
         }
         Insert: {
@@ -1080,18 +1102,16 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email: string
-          fail_count?: string | null
-          first_name?: string | null
+          first_name: string
           frequency: string
           id?: string
-          last_name?: string | null
+          last_name: string
           masjid_id: string
-          next_charge: string
-          start_date?: string | null
           status?: string
           stripe_account_id: string
           stripe_customer_id: string
           stripe_payment_method_id: string
+          stripe_subscription_id: string
           updated_at?: string | null
         }
         Update: {
@@ -1100,18 +1120,16 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email?: string
-          fail_count?: string | null
-          first_name?: string | null
+          first_name?: string
           frequency?: string
           id?: string
-          last_name?: string | null
+          last_name?: string
           masjid_id?: string
-          next_charge?: string
-          start_date?: string | null
           status?: string
           stripe_account_id?: string
           stripe_customer_id?: string
           stripe_payment_method_id?: string
+          stripe_subscription_id?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1227,27 +1245,21 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          monthly_price: number
           name: string
-          support_level: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
-          monthly_price?: number
           name: string
-          support_level?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
-          monthly_price?: number
           name?: string
-          support_level?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -1257,21 +1269,30 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          image: string | null
+          is_active: boolean | null
           name: string
+          slug: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
+          image?: string | null
+          is_active?: boolean | null
           name: string
+          slug?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
+          image?: string | null
+          is_active?: boolean | null
           name?: string
+          slug?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -1284,7 +1305,7 @@ export type Database = {
           id: string
           is_featured: boolean | null
           name: string
-          preview_url: string
+          preview_url: string | null
           tags: string[] | null
           template_url: string
           updated_at: string | null
@@ -1296,7 +1317,7 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           name: string
-          preview_url: string
+          preview_url?: string | null
           tags?: string[] | null
           template_url: string
           updated_at?: string | null
@@ -1308,7 +1329,7 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           name?: string
-          preview_url?: string
+          preview_url?: string | null
           tags?: string[] | null
           template_url?: string
           updated_at?: string | null
@@ -1485,7 +1506,7 @@ export type Database = {
           },
         ]
       }
-      user_profiles: {
+      users: {
         Row: {
           created_at: string | null
           email: string | null
@@ -1494,12 +1515,49 @@ export type Database = {
           last_name: string | null
           masjid_id: string | null
           masjid_name: string | null
+          type: string[] | null
           updated_at: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      search_masjids: {
+        Args: { search: string }
+        Returns: {
+          active: boolean
+          address_label: string
+          bg_image: string | null
+          city: string
+          claimed: boolean
+          contact_number: string | null
+          country: string
+          created_at: string | null
+          description: string | null
+          email: string | null
+          fts: unknown | null
+          hijri_date_adjustment: number
+          id: string
+          is_non_profit: boolean
+          local_currency: string
+          logo: string | null
+          name: string
+          org_tax_id: string | null
+          postcode: string | null
+          region: string | null
+          short_link_id: string | null
+          slug: string
+          state: string | null
+          statement_descriptor: string | null
+          street: string | null
+          subscription_id: string | null
+          suburb: string | null
+          theme_color_id: string | null
+          updated_at: string | null
+          verified: boolean
+          website: string | null
+        }[]
+      }
       update_user_metadata: {
         Args: { metadata: Json; user_id: string }
         Returns: undefined
@@ -1529,7 +1587,6 @@ export type Database = {
         | "TwilightAngle"
       layout_type: "simple" | "advanced"
       madhab: "Shafi" | "Hanafi"
-      recurrence: "none" | "daily" | "week" | "month"
       short_link_type:
         | "event"
         | "announcement"
@@ -1543,13 +1600,8 @@ export type Database = {
         | "prayer-screen-4"
         | "prayer-screen-5"
         | "other"
-      slide_reference_type:
-        | "announcement"
-        | "event"
-        | "custom"
-        | "other"
-        | "donation"
-      subscription_type: "free" | "standard" | "pro"
+      subscription_status: "active" | "inactive" | "canceled"
+      subscription_type: "starter" | "community" | "hub"
       time_format: "12" | "24"
       volunteer_interest:
         | "Cleaning"
@@ -1711,7 +1763,6 @@ export const Constants = {
       ],
       layout_type: ["simple", "advanced"],
       madhab: ["Shafi", "Hanafi"],
-      recurrence: ["none", "daily", "week", "month"],
       short_link_type: [
         "event",
         "announcement",
@@ -1726,14 +1777,8 @@ export const Constants = {
         "prayer-screen-5",
         "other",
       ],
-      slide_reference_type: [
-        "announcement",
-        "event",
-        "custom",
-        "other",
-        "donation",
-      ],
-      subscription_type: ["free", "standard", "pro"],
+      subscription_status: ["active", "inactive", "canceled"],
+      subscription_type: ["starter", "community", "hub"],
       time_format: ["12", "24"],
       volunteer_interest: [
         "Cleaning",

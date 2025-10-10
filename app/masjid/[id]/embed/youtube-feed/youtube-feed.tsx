@@ -18,6 +18,8 @@ export default function YoutubeFeed({
   videoCount,
   viewCount,
   videos,
+  showHeroImg = false,
+  heroImg,
 }: {
   channelId: string;
   channelName?: string;
@@ -26,6 +28,8 @@ export default function YoutubeFeed({
   videoCount?: string;
   viewCount?: string;
   videos: VideoItem[];
+  showHeroImg?: boolean;
+  heroImg?: string | null;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +60,17 @@ export default function YoutubeFeed({
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-4 w-full max-w-6xl mx-auto relative">
+      {/* Hero Image */}
+      {showHeroImg && heroImg && (
+        <div className="w-full mb-4 overflow-hidden rounded-xl">
+          <img 
+            src={heroImg} 
+            alt={`${channelName} banner`} 
+            className="w-full h-48 object-cover"
+          />
+        </div>
+      )}
+      
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 pb-4">
         <div className="flex items-center gap-3 mb-4 sm:mb-0">
@@ -124,7 +139,11 @@ export default function YoutubeFeed({
               <div className="p-2">
                 <h3 className="text-sm font-medium line-clamp-2">{v.title}</h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {new Date(v.published).toLocaleDateString()}
+                  {new Date(v.published).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                  })}
                 </p>
               </div>
             </a>
