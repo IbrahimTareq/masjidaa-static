@@ -142,10 +142,13 @@ export default function AdvancedSlideshow({
               {time}
             </div>
             <div className="text-base xl:text-lg opacity-90 font-medium">
-              <span className="font-bold uppercase">{prayerInfo?.next?.name}</span> begins
-              in&nbsp;
               <span className="font-bold uppercase">
-                {prayerInfo?.timeUntilNext?.hours}hr {prayerInfo?.timeUntilNext?.minutes}min
+                {prayerInfo?.next?.name}
+              </span>{" "}
+              begins in&nbsp;
+              <span className="font-bold uppercase">
+                {prayerInfo?.timeUntilNext?.hours}hr{" "}
+                {prayerInfo?.timeUntilNext?.minutes}min
               </span>
             </div>
           </div>
@@ -161,40 +164,42 @@ export default function AdvancedSlideshow({
           </div>
 
           {/* Jummah Times Section */}
-          <div className="p-6 xl:p-8 border-b border-white/20">
-            <Swiper {...SWIPER_SETTINGS}>
-              {jummahPrayerTimes?.map((session, index) => (
-                <SwiperSlide key={index}>
-                  <div className="bg-white/5 bg-opacity-5 rounded-xl p-6 xl:p-6 backdrop-blur-sm shadow-lg">
-                    <div className="text-center font-semibold mb-4 xl:mb-6 text-lg xl:text-2xl uppercase">
-                      {jummahPrayerTimes.length === 1
-                        ? "Jumaah"
-                        : `Jumaah ${index + 1}`}
-                    </div>
-                    <div className="flex gap-6 xl:gap-8 justify-center items-center">
-                      <div className="text-center">
-                        <div className="opacity-70 text-base xl:text-md font-medium mb-2">
-                          Starts
+          {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
+            <div className="p-6 xl:p-8 border-b border-white/20">
+              <Swiper {...SWIPER_SETTINGS}>
+                {jummahPrayerTimes?.map((session, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="bg-white/5 bg-opacity-5 rounded-xl p-6 xl:p-6 backdrop-blur-sm shadow-lg">
+                      <div className="text-center font-semibold mb-4 xl:mb-6 text-lg xl:text-2xl uppercase">
+                        {jummahPrayerTimes.length === 1
+                          ? "Jumaah"
+                          : `Jumaah ${index + 1}`}
+                      </div>
+                      <div className="flex gap-6 xl:gap-8 justify-center items-center">
+                        <div className="text-center">
+                          <div className="opacity-70 text-base xl:text-md font-medium mb-2">
+                            Starts
+                          </div>
+                          <div className="text-3xl xl:text-4xl font-semibold">
+                            {session.start}
+                          </div>
                         </div>
-                        <div className="text-3xl xl:text-4xl font-semibold">
-                          {session.start}
+                        <div className="w-px bg-white opacity-20 h-16 xl:h-20"></div>
+                        <div className="text-center">
+                          <div className="opacity-70 text-base xl:text-md font-medium mb-2">
+                            Khutbah
+                          </div>
+                          <div className="text-3xl xl:text-4xl font-bold">
+                            {session.khutbah}
+                          </div>
                         </div>
                       </div>
-                      <div className="w-px bg-white opacity-20 h-16 xl:h-20"></div>
-                      <div className="text-center">
-                        <div className="opacity-70 text-base xl:text-md font-medium mb-2">
-                          Khutbah
-                        </div>
-                        <div className="text-3xl xl:text-4xl font-bold">
-                          {session.khutbah}
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          )}
 
           {/* Logo Section - Takes remaining space */}
           <div className="flex-1 flex flex-col justify-end p-6 xl:p-8">
