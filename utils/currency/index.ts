@@ -3,7 +3,7 @@ import getSymbolFromCurrency from "currency-symbol-map";
 export const formatCurrency = ({
   amount,
   currency,
-  decimals = 0,
+  decimals = 2,
 }: {
   amount: number;
   currency: string;

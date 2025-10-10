@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     masjids
       ?.filter((masjid) => !excludedMasjids.includes(masjid.slug))
       .map((masjid) => ({
-        url: `${DOMAIN_NAME}/${masjid.slug}/*`,
+        url: `${DOMAIN_NAME}/${masjid.slug}`,
         lastModified: new Date(),
       })) ?? [];
 
