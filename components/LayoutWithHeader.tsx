@@ -31,7 +31,7 @@ const Header = ({ title }: { title: string }) => {
             <img
               src={masjid?.logo || "/logo.png"}
               alt="Masjid Logo"
-              className="logo-image w-full h-full object-contain drop-shadow-sm"
+              className="logo-image w-full h-full object-contain"
             />
           </div>
         </div>

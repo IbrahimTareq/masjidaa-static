@@ -3,6 +3,8 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { useQRCode } from "@/hooks/useQRCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 import { useRef } from "react";
 
 export default function DownloadApp() {
@@ -40,8 +42,30 @@ export default function DownloadApp() {
               securely, helping it continue to serve you and others.
             </p>
 
-            <div className="w-48 h-48 bg-white border-1 border-gray-200 rounded-xl overflow-hidden flex items-center justify-center p-1">
-              <div ref={qrRef} className="qr-code-container w-full h-full" />
+            <div className="flex items-center justify-center gap-4 bg-white rounded-xl w-fit">
+              {/* QR Code */}
+              <div
+                ref={qrRef}
+                className="qr-code-container w-48 h-48 flex items-center justify-center border border-gray-100 rounded-lg overflow-hidden mr-4"
+              />
+
+              {/* App Store buttons stacked */}
+              <div className="flex flex-col items-center justify-center gap-3">
+                <Image
+                  src="/appstore.png"
+                  alt="App Store"
+                  width={150}
+                  height={45}
+                  className="object-contain"
+                />
+                <Image
+                  src="/playstore.png"
+                  alt="Google Play"
+                  width={150}
+                  height={45}
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
 

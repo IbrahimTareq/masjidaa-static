@@ -5,7 +5,7 @@ export default function PostAdhanDua() {
     <PrayerLayout headerTitle="Supplication After Adhan">
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-4">
-        <div className="max-w-3xl space-y-8 lg:space-y-12">
+        <div className="max-w-3xl space-y-8 lg:space-y-8">
           <div className="space-y-4">
             <p className="text-2xl sm:text-3xl lg:text-4xl font-serif leading-normal text-gray-800">
               اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلاَةِ
@@ -26,7 +26,7 @@ export default function PostAdhanDua() {
 
           <div className="border-t border-gray-300 flex-shrink-0"></div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-800">
               The Prophet ﷺ said: "Whoever says this dua after hearing the
               adhan, my intercession will be permissible for him on the Day of

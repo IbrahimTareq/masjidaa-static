@@ -28,7 +28,7 @@ export default function Parking() {
         {/* Hadith Section - Centered */}
         <div className="text-center mb-8">
           <div className="text-theme-gradient px-6 py-4 rounded-lg inline-block">
-            <p className="text-sm sm:text-base lg:text-3xl font-medium leading-relaxed max-w-6xl">
+            <p className="text-sm sm:text-base lg:text-2xl font-medium leading-relaxed max-w-6xl">
               It is narrated on the authority of Abu Huraira that the Messenger
               of Allah ﷺ said:
               <br />
@@ -46,7 +46,7 @@ export default function Parking() {
 
         {/* Parking Guidelines */}
         <div className="w-full mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             {parkingGuidelines.map((guideline, index) => (
               <div key={index} className="flex gap-4 p-4">
                 {/* Bullet Point */}

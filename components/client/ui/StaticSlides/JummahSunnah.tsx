@@ -42,7 +42,7 @@ export default function JummahSunnah() {
         {/* Hadiths Grid */}
         <div className="w-full mx-auto space-y-2">
           {sunnahPoints.map((point) => (
-            <div key={point.number} className="flex gap-4 p-4">
+            <div key={point.number} className="flex gap-4 p-2">
               {/* Number Circle */}
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-theme text-white rounded-full flex items-center justify-center font-bold text-xl sm:text-2xl">

@@ -28,7 +28,7 @@ export default function MasjidEtiquette() {
   return (
     <PrayerLayout headerTitle="Masjid Etiquette">
       <main className="px-4 py-6">
-        <div className="w-full mx-auto space-y-4">
+        <div className="w-full mx-auto space-y-2">
           {etiquettePoints.map((point, index) => (
             <div key={index} className="flex gap-4 p-4">
               {/* Bullet Point */}
@@ -38,7 +38,7 @@ export default function MasjidEtiquette() {
 
               {/* Content */}
               <div className="flex-1">
-                <p className="text-sm sm:text-base lg:text-3xl text-gray-700 font-medium leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-xl text-gray-700 font-medium leading-relaxed">
                   {point.text}
                 </p>
               </div>

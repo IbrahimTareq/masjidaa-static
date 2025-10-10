@@ -5,12 +5,12 @@ export default function PostPrayerDuas() {
     <PrayerLayout headerTitle="Supplication After Prayer">
       {/* Main Content */}
       <main className="flex-1 flex flex-col px-4">
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Astaghfirullah */}
           <div className="border-b border-gray-100 pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
+              <div className="flex-[1.5] pr-8">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
                   Astaghfirullaaha, Astaghfirullaaha, Astaghfirullaaha
                   <span className="text-theme font-medium ml-2">
                     (3 times)
@@ -31,8 +31,8 @@ export default function PostPrayerDuas() {
           {/* Allahumma antas-salam */}
           <div className="border-b border-gray-100 pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
+              <div className="flex-[1.5] pr-4">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
                   Allahumma Antas-Salam wa minkas-salam Tabarakta ya Dhal-jalali wal-ikram
                 </p>
                 <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
@@ -50,8 +50,8 @@ export default function PostPrayerDuas() {
           {/* Allahumma a'inni */}
           <div className="border-b border-gray-100 pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
+              <div className="flex-[1.5] pr-8">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
                   Allahumma a'inni alaa dhikrika, wa shukrika, wa husni 'ibaadatik
                 </p>
                 <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
@@ -69,9 +69,9 @@ export default function PostPrayerDuas() {
           {/* Subhanallah */}
           <div className="border-b border-gray-100 pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
-                  SubhaanAllah, Alhamdu lillah, AllahuAkbar
+              <div className="flex-[1.5] pr-8">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
+                  SubhaanAllah, Alhamdulillah, AllahuAkbar
                   <span className="text-theme font-medium ml-2">
                     (33 times each)
                   </span>
@@ -91,8 +91,8 @@ export default function PostPrayerDuas() {
           {/* La ilaha illallah */}
           <div className="border-b border-gray-100 pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
+              <div className="flex-[1.5] pr-8">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
                   Laa ilaaha illal-laahu wahdahu laa shareeka lah, lahul-mulku wa lahul-hamdu wa Huwa alaa kulli shay in Qadeer
                 </p>
                 <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
@@ -110,8 +110,8 @@ export default function PostPrayerDuas() {
           {/* Ayatul Kursi */}
           <div className="pb-3">
             <div className="flex">
-              <div className="flex-1 pr-8">
-                <p className="text-base sm:text-lg lg:text-xl text-gray-800 font-medium whitespace-pre-line">
+              <div className="flex-[1.5] pr-8">
+                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
                   Recite Ayatul Kursi
                 </p>
                 <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">

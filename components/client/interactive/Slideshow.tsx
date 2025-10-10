@@ -95,9 +95,7 @@ const slideComponents: Record<string, React.ComponentType<any>> = {
   "prayer-screen": (props: { theme: number; type?: string }) => (
     <PrayerScreenSlide theme={props.theme} type={props.type} />
   ),
-  static: (props: { type: string }) => (
-    <StaticScreenSlide type={props.type} />
-  ),
+  static: (props: { type: string }) => <StaticScreenSlide type={props.type} />,
 };
 
 export interface SlideshowProps {
@@ -143,7 +141,7 @@ export default function Slideshow({ slides }: SlideshowProps) {
   );
 
   return (
-    <div className="w-full h-full flex bg-white">
+    <div className="w-full h-full flex items-center justify-center">
       <Swiper
         modules={[Autoplay]}
         autoplay={{
