@@ -32,6 +32,7 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
             {formatCurrency({
               amount: Number(campaign.amount_raised),
               currency: masjid.local_currency,
+              roundDownToWhole: true,
             })}
             &nbsp;donated
           </h2>

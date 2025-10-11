@@ -124,7 +124,7 @@ export default function EventClient({
                       <h3 className="font-semibold text-gray-900 mb-1">
                         Location
                       </h3>
-                      <p className="text-lg text-gray-800">{event.location}</p>
+                      <p className="text-lg text-gray-800">{event.location || "To be confirmed"}</p>
                     </div>
                   </div>
                 </div>

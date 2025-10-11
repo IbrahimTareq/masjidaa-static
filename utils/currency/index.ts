@@ -3,13 +3,26 @@ import getSymbolFromCurrency from "currency-symbol-map";
 export const formatCurrency = ({
   amount,
   currency,
-  decimals = 2,
+  locale = "en-US",
+  decimals,
+  roundDownToWhole = false,
 }: {
   amount: number;
   currency: string;
+  locale?: string;
   decimals?: number;
+  roundDownToWhole?: boolean;
 }) => {
-  return `${currency.toUpperCase()} ${amount.toFixed(decimals)}`;
+  const value = roundDownToWhole ? Math.floor(amount) : amount;
+
+  const options: Intl.NumberFormatOptions = {
+    style: "currency",
+    currency,
+    minimumFractionDigits: roundDownToWhole ? 0 : decimals ?? 2,
+    maximumFractionDigits: roundDownToWhole ? 0 : decimals ?? 2,
+  };
+
+  return new Intl.NumberFormat(locale, options).format(value);
 };
 
 export const formatCurrencyWithSymbol = ({

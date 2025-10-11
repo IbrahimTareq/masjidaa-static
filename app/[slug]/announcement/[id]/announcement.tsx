@@ -3,6 +3,7 @@
 import { WavyBackground } from "@/components/client/ui/WavyBackground";
 import { Tables } from "@/database.types";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import Linkify from "linkify-react";
 import { Calendar, X } from "lucide-react";
 import { useState } from "react";
 
@@ -54,7 +55,14 @@ export default function AnnouncementClient({
                   About this Announcement
                 </h3>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {announcement.description}
+                  <Linkify
+                    options={{
+                      target: "_blank",
+                      className: "text-blue-600 hover:underline",
+                    }}
+                  >
+                    {announcement.description}
+                  </Linkify>
                 </div>
               </div>
             </div>
