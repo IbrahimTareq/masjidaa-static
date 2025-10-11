@@ -18,8 +18,8 @@ export default function YoutubeFeedComponent({
   videoCount,
   viewCount,
   videos,
-  showHeroImg = false,
-  heroImg,
+  showCoverImage = false,
+  coverImage,
 }: {
   channelId: string;
   channelName?: string;
@@ -28,8 +28,8 @@ export default function YoutubeFeedComponent({
   videoCount?: string;
   viewCount?: string;
   videos: VideoItem[];
-  showHeroImg?: boolean;
-  heroImg?: string | null;
+  showCoverImage?: boolean;
+  coverImage?: string | null;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -61,10 +61,10 @@ export default function YoutubeFeedComponent({
   return (
     <div className="bg-white shadow-md rounded-2xl p-4 w-full max-w-6xl mx-auto relative">
       {/* Hero Image */}
-      {showHeroImg && heroImg && (
+      {showCoverImage && coverImage && (
         <div className="w-full mb-4 overflow-hidden rounded-xl">
           <img 
-            src={heroImg} 
+            src={coverImage} 
             alt={`${channelName} banner`} 
             className="w-full h-48 object-cover"
           />

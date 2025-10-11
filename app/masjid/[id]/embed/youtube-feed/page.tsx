@@ -91,6 +91,7 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
+  const showCoverImage = (await searchParams).showcoverimage;
   const masjid = await getMasjidById(id);
 
   const masjidSocials = await getMasjidSocialsByMasjidId(id);
@@ -107,11 +108,9 @@ export default async function Page({
     ? await getYouTubeVideosFromPlaylist(channelInfo.uploadsPlaylistId)
     : [];
 
-  // Check if hero image should be shown
-  const showHeroImg = (await searchParams).showHeroImg === "true";
-
   // Get banner image from channel info (if available)
-  const bannerImage = channelInfo?.bannerUrl || null;
+  const coverImage = channelInfo?.bannerUrl || null;
+  console.log(coverImage);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -123,8 +122,8 @@ export default async function Page({
         videoCount={channelInfo?.videoCount || "—"}
         viewCount={channelInfo?.viewCount || "—"}
         videos={videos}
-        showHeroImg={showHeroImg}
-        heroImg={bannerImage}
+        showCoverImage={!!showCoverImage}
+        coverImage={coverImage}
       />
     </main>
   );

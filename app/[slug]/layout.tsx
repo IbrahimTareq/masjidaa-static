@@ -6,6 +6,7 @@ import { MasjidSiteSettingsProvider } from "@/context/masjidSiteSettingsContext"
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getPrayerSettingsByMasjidId } from "@/lib/server/services/masjidPrayerSettings";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
+import { getMasjidSocialsByMasjidId } from "@/lib/server/services/masjidSocials";
 import React from "react";
 
 export default async function MasjidLayout({
@@ -24,13 +25,16 @@ export default async function MasjidLayout({
   const siteSettings = masjid
     ? await getMasjidSiteSettingsByMasjidId(masjid.id)
     : null;
+  const socials = masjid
+    ? await getMasjidSocialsByMasjidId(masjid.id)
+    : null;
 
   return (
     <MasjidProvider masjid={masjid}>
       <MasjidSiteSettingsProvider siteSettings={siteSettings}>
         <DateTimeProvider settings={prayerSettings}>
           <ThemeWrapper id={masjid?.id || ""}>
-            <SiteWrapper siteSettings={siteSettings}>{children}</SiteWrapper>
+            <SiteWrapper socials={socials}>{children}</SiteWrapper>
           </ThemeWrapper>
         </DateTimeProvider>
       </MasjidSiteSettingsProvider>

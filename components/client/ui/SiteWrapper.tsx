@@ -8,10 +8,10 @@ import { SocialIcon } from "react-social-icons";
 
 export default function SiteWrapper({
   children,
-  siteSettings,
+  socials,
 }: {
   children: React.ReactNode;
-  siteSettings: Tables<"masjid_site_settings"> | null;
+  socials: Tables<"masjid_socials"> | null;
 }) {
   const masjid = useMasjidContext();
 
@@ -194,41 +194,41 @@ export default function SiteWrapper({
             </div>
 
             {/* Social Links */}
-            {(siteSettings?.facebook_url ||
-              siteSettings?.twitter_url ||
-              siteSettings?.instagram_url ||
-              siteSettings?.youtube_url ||
-              siteSettings?.tiktok_url) && (
+            {(socials?.facebook_url ||
+              socials?.twitter_url ||
+              socials?.instagram_url ||
+              socials?.youtube_url ||
+              socials?.tiktok_url) && (
               <div>
                 <h2 className="text-2xl font-bold mb-4">Follow Us</h2>
                 <div className="flex gap-4">
-                  {siteSettings?.facebook_url && (
+                  {socials?.facebook_url && (
                     <SocialLink
-                      href={siteSettings?.facebook_url || ""}
+                      href={socials?.facebook_url || ""}
                       icon="facebook"
                     />
                   )}
-                  {siteSettings?.twitter_url && (
+                  {socials?.twitter_url && (
                     <SocialLink
-                      href={siteSettings?.twitter_url || ""}
+                      href={socials?.twitter_url || ""}
                       icon="twitter"
                     />
                   )}
-                  {siteSettings?.instagram_url && (
+                  {socials?.instagram_url && (
                     <SocialLink
-                      href={siteSettings?.instagram_url || ""}
+                      href={socials?.instagram_url || ""}
                       icon="instagram"
                     />
                   )}
-                  {siteSettings?.youtube_url && (
+                  {socials?.youtube_url && (
                     <SocialLink
-                      href={siteSettings?.youtube_url || ""}
+                      href={socials?.youtube_url || ""}
                       icon="youtube"
                     />
                   )}
-                  {siteSettings?.tiktok_url && (
+                  {socials?.tiktok_url && (
                     <SocialLink
-                      href={siteSettings?.tiktok_url || ""}
+                      href={socials?.tiktok_url || ""}
                       icon="tiktok"
                     />
                   )}
