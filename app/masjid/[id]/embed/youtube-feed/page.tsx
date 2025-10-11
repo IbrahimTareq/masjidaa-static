@@ -76,10 +76,59 @@ async function getYouTubeVideosFromPlaylist(uploadsPlaylistId: string) {
       nextPageToken = playlistData.nextPageToken;
     } while (nextPageToken);
 
-    return videos;
+    // Fetch video statistics in batches
+    const videosWithStats = await getVideoStatistics(videos);
+    
+    return videosWithStats;
   } catch (error) {
     console.error("Error fetching YouTube videos:", error);
     return [];
+  }
+}
+
+async function getVideoStatistics(videos: any[]) {
+  if (!videos.length || !YOUTUBE_API_KEY) return videos;
+
+  try {
+    // Process videos in batches of 50 (YouTube API limit)
+    const batchSize = 50;
+    const enhancedVideos = [...videos];
+    
+    for (let i = 0; i < videos.length; i += batchSize) {
+      const batch = videos.slice(i, i + batchSize);
+      const videoIds = batch.map(video => video.id).join(',');
+      
+      const statsRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`,
+        { next: { revalidate: 3600 } } // cache for 1 hour
+      );
+      
+      if (!statsRes.ok) {
+        console.error("Failed to fetch video statistics:", statsRes.status);
+        continue;
+      }
+      
+      const statsData: any = await statsRes.json();
+      
+      if (statsData.items) {
+        statsData.items.forEach((item: any) => {
+          const videoIndex = enhancedVideos.findIndex(v => v.id === item.id);
+          if (videoIndex !== -1) {
+            enhancedVideos[videoIndex] = {
+              ...enhancedVideos[videoIndex],
+              viewCount: item.statistics?.viewCount,
+              likeCount: item.statistics?.likeCount,
+              commentCount: item.statistics?.commentCount
+            };
+          }
+        });
+      }
+    }
+    
+    return enhancedVideos;
+  } catch (error) {
+    console.error("Error fetching video statistics:", error);
+    return videos;
   }
 }
 

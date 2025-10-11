@@ -8,6 +8,9 @@ type VideoItem = {
   title: string;
   published: string;
   thumbnail: string;
+  viewCount?: string;
+  likeCount?: string;
+  commentCount?: string;
 };
 
 export default function YoutubeFeedComponent({
@@ -63,14 +66,14 @@ export default function YoutubeFeedComponent({
       {/* Hero Image */}
       {showCoverImage && coverImage && (
         <div className="w-full mb-4 overflow-hidden rounded-xl">
-          <img 
-            src={coverImage} 
-            alt={`${channelName} banner`} 
+          <img
+            src={coverImage}
+            alt={`${channelName} banner`}
             className="w-full h-48 object-cover"
           />
         </div>
       )}
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 pb-4">
         <div className="flex items-center gap-3 mb-4 sm:mb-0">
@@ -136,15 +139,30 @@ export default function YoutubeFeedComponent({
                   className="w-full aspect-video object-cover border-b border-gray-200"
                 />
               </div>
-              <div className="p-2">
+              <div className="p-2 pb-0">
                 <h3 className="text-sm font-medium line-clamp-2">{v.title}</h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {new Date(v.published).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
+                  {new Date(v.published).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
                   })}
                 </p>
+                {(v.viewCount || v.likeCount || v.commentCount) && (
+                  <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+                    {v.viewCount && (
+                      <span>{formatCount(v.viewCount)} Views</span>
+                    )}
+                    <span className="text-black">•</span>
+                    {v.likeCount && (
+                      <span>{formatCount(v.likeCount)} Likes</span>
+                    )}
+                    <span className="text-black">•</span>
+                    {v.commentCount && (
+                      <span>{formatCount(v.commentCount)} Comments</span>
+                    )}
+                  </div>
+                )}
               </div>
             </a>
           ))}
