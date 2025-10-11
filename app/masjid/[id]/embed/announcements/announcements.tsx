@@ -3,7 +3,7 @@
 import { Tables } from "@/database.types";
 import { Announcements as AnnouncementsComponent } from "@/components/client/interactive/Announcements";
 
-export default function Donations({
+export default function Announcements({
   announcements,
   slug,
 }: {

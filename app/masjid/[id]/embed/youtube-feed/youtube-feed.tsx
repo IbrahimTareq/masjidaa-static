@@ -10,7 +10,7 @@ type VideoItem = {
   thumbnail: string;
 };
 
-export default function YoutubeFeed({
+export default function YoutubeFeedComponent({
   channelId,
   channelName,
   logo,

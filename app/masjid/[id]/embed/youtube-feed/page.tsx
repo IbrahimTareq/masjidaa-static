@@ -1,4 +1,4 @@
-import YoutubeFeed from "./youtube-feed";
+import YoutubeFeedComponent from "./youtube-feed";
 import { getMasjidById } from "@/lib/server/services/masjid";
 import { getMasjidSocialsByMasjidId } from "@/lib/server/services/masjidSocials";
 
@@ -115,7 +115,7 @@ export default async function Page({
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <YoutubeFeed
+      <YoutubeFeedComponent
         channelId={channelId}
         channelName={channelInfo?.title || masjid?.name || "YouTube Channel"}
         logo={channelInfo?.logo || masjid?.logo || ""}
