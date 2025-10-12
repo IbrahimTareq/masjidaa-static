@@ -41,6 +41,9 @@ importers:
       easy-currencies:
         specifier: ^1.8.3
         version: 1.8.3
+      fast-average-color:
+        specifier: ^9.5.0
+        version: 9.5.0
       fast-xml-parser:
         specifier: ^5.3.0
         version: 5.3.0
@@ -1891,6 +1894,10 @@ packages:
 
   exsolve@1.0.7:
     resolution: {integrity: sha512-VO5fQUzZtI6C+vx4w/4BWJpg3s/5l+6pRQEHzFRM8WFi4XffSP1Z+4qi7GbjWbvRQEbdIco5mIMq+zX4rPuLrw==}
+
+  fast-average-color@9.5.0:
+    resolution: {integrity: sha512-nC6x2YIlJ9xxgkMFMd1BNoM1ctMjNoRKfRliPmiEWW3S6rLTHiQcy9g3pt/xiKv/D0NAAkhb9VyV+WJFvTqMGg==}
+    engines: {node: '>= 12'}
 
   fast-xml-parser@4.2.5:
     resolution: {integrity: sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==}
@@ -5343,6 +5350,8 @@ snapshots:
       - supports-color
 
   exsolve@1.0.7: {}
+
+  fast-average-color@9.5.0: {}
 
   fast-xml-parser@4.2.5:
     dependencies:

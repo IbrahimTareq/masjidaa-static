@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_requests: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          image: string | null
+          masjid_id: string
+          message: string | null
+          rejected_reason: string | null
+          status: Database["public"]["Enums"]["status_type"]
+          stripe_payment_intent_id: string | null
+          title: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          image?: string | null
+          masjid_id: string
+          message?: string | null
+          rejected_reason?: string | null
+          status?: Database["public"]["Enums"]["status_type"]
+          stripe_payment_intent_id?: string | null
+          title?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          image?: string | null
+          masjid_id?: string
+          message?: string | null
+          rejected_reason?: string | null
+          status?: Database["public"]["Enums"]["status_type"]
+          stripe_payment_intent_id?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_requests_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           created_at: string | null
@@ -109,6 +163,50 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      businesses: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_number: string | null
+          created_at: string
+          description: string
+          id: string
+          name: string
+          user_id: string | null
+          website: string
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_number?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          user_id?: string | null
+          website: string
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_number?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          user_id?: string | null
+          website?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_user_id_users_id_fk"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       donation_campaigns: {
         Row: {
@@ -354,6 +452,35 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      masjid_ads: {
+        Row: {
+          ad_price: number
+          allow_ads: boolean
+          id: string
+          masjid_id: string
+        }
+        Insert: {
+          ad_price?: number
+          allow_ads?: boolean
+          id?: string
+          masjid_id: string
+        }
+        Update: {
+          ad_price?: number
+          allow_ads?: boolean
+          id?: string
+          masjid_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_ads_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       masjid_bank_accounts: {
         Row: {
@@ -710,48 +837,33 @@ export type Database = {
       masjid_site_settings: {
         Row: {
           created_at: string | null
-          facebook_url: string | null
           featured_campaign_id: string | null
           id: string
-          instagram_url: string | null
           masjid_id: string
           primary_description: string | null
           primary_title: string | null
           services: Json | null
-          tiktok_url: string | null
-          twitter_url: string | null
           updated_at: string | null
-          youtube_url: string | null
         }
         Insert: {
           created_at?: string | null
-          facebook_url?: string | null
           featured_campaign_id?: string | null
           id?: string
-          instagram_url?: string | null
           masjid_id: string
           primary_description?: string | null
           primary_title?: string | null
           services?: Json | null
-          tiktok_url?: string | null
-          twitter_url?: string | null
           updated_at?: string | null
-          youtube_url?: string | null
         }
         Update: {
           created_at?: string | null
-          facebook_url?: string | null
           featured_campaign_id?: string | null
           id?: string
-          instagram_url?: string | null
           masjid_id?: string
           primary_description?: string | null
           primary_title?: string | null
           services?: Json | null
-          tiktok_url?: string | null
-          twitter_url?: string | null
           updated_at?: string | null
-          youtube_url?: string | null
         }
         Relationships: [
           {
@@ -1600,6 +1712,7 @@ export type Database = {
         | "prayer-screen-4"
         | "prayer-screen-5"
         | "other"
+      status_type: "pending" | "approved" | "rejected" | "paid" | "active"
       subscription_status: "active" | "inactive" | "canceled"
       subscription_type: "starter" | "community" | "hub"
       time_format: "12" | "24"
@@ -1777,6 +1890,7 @@ export const Constants = {
         "prayer-screen-5",
         "other",
       ],
+      status_type: ["pending", "approved", "rejected", "paid", "active"],
       subscription_status: ["active", "inactive", "canceled"],
       subscription_type: ["starter", "community", "hub"],
       time_format: ["12", "24"],

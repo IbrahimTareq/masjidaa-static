@@ -15,6 +15,7 @@ import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import IqamahTimesChangeSlide from "./IqamahTimesChangeSlide";
+import BusinessSlide from "./BusinessSlide";
 
 // Define slide types
 interface SlideBase {
@@ -66,6 +67,13 @@ interface IqamahTimesChangeSlide extends SlideBase {
   };
 }
 
+interface BusinessSlide extends SlideBase {
+  slide_type: "business-ad";
+  props: {
+    businessAdId: string;
+  };
+}
+
 interface StaticSlide extends SlideBase {
   slide_type: "static";
   props: {
@@ -81,6 +89,7 @@ export type Slide =
   | CustomSlide
   | IqamahTimesChangeSlide
   | StaticSlide
+  | BusinessSlide
   | SlideBase;
 
 // Component mapping
@@ -94,6 +103,9 @@ const slideComponents: Record<string, React.ComponentType<any>> = {
   ),
   "prayer-screen": (props: { theme: number; type?: string }) => (
     <PrayerScreenSlide theme={props.theme} type={props.type} />
+  ),
+  "business-ad": (props: { businessAdId: string }) => (
+    <BusinessSlide businessAdId={props.businessAdId} />
   ),
   static: (props: { type: string }) => <StaticScreenSlide type={props.type} />,
 };

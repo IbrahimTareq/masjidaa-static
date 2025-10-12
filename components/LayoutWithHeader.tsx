@@ -46,7 +46,7 @@ const LayoutWithHeader = ({
   showHeader = true,
 }: LayoutWithHeaderProps) => {
   return (
-    <div className="font-montserrat h-full overflow-hidden rounded-2xl sm:rounded-3xl">
+    <div className="font-montserrat h-full overflow-hidden">
       <div className="w-full mx-auto h-full relative overflow-hidden">
         <div className="bg-white h-full flex flex-col overflow-hidden">
           <div className={showHeader ? "mb-6 sm:mb-8 flex-shrink-0" : "pt-8 flex-shrink-0"}>

@@ -102,6 +102,17 @@ export default async function AdvancedLayoutPage({
         };
       }
 
+      // For business ad slides, we need to pass the component name
+      if (slide.slide_type === "business-ad") {
+        return {
+          id: slide.id,
+          slide_type: slide.slide_type,
+          props: {
+            businessAdId: (slideProps as { businessAdId: string }).businessAdId,
+          },
+        };
+      }
+
       // Return other slide types as is
       return {
         id: slide.id,
