@@ -90,77 +90,76 @@ export default function BusinessSlide({ businessAdId }: BusinessSlideProps) {
 
   // Render the business ad
   return (
-    <PrayerLayout headerTitle="Sponsored Business Ad">
-      <section className="relative h-full w-full bg-white text-black">
-        {/* Hero Section */}
-        <div className="w-full">
-          <div className="flex flex-col md:flex-row items-start justify-between w-full px-15 py-5 mx-auto">
-            {/* Business Info */}
-            <div className="w-full md:w-1/2 mb-8 md:mb-0">
-              <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
-                {businessAd.name}
-              </p>
+    <section className="relative h-full w-full bg-white text-black font-montserrat py-10">
+      {/* Hero Section */}
+      <div className="w-full">
+        <div className="flex flex-col md:flex-row items-start justify-between w-full px-15 py-5 mx-auto">
+          {/* Business Info */}
+          <div className="w-full md:w-1/2 mb-8 md:mb-0">
+            <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
+              {businessAd.name}{" "}
+              <span className="text-gray-500 text-sm">(Sponsored Ad)</span>
+            </p>
 
-              {/* Contact Details */}
-              <div className="text-gray-700 text-sm md:text-lg leading-relaxed space-y-2">
-                {/* Row 1: Website + Phone */}
-                <div className="flex flex-wrap items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-theme" />
-                    {businessAd.website}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-theme" />
-                    {businessAd.contact_number}
-                  </div>
+            {/* Contact Details */}
+            <div className="text-gray-700 text-sm md:text-lg leading-relaxed space-y-2">
+              {/* Row 1: Website + Phone */}
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-theme" />
+                  {businessAd.website}
                 </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-theme" />
+                  {businessAd.contact_number}
+                </div>
+              </div>
 
-                {/* Row 2: Email + Address */}
-                <div className="flex flex-wrap items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-theme" />
-                    {businessAd.contact_email}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-theme" />
-                    <span>{businessAd.address}</span>
-                  </div>
+              {/* Row 2: Email + Address */}
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-theme" />
+                  {businessAd.contact_email}
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-theme" />
+                  <span>{businessAd.address}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Ad Message */}
-            <div className="w-full md:w-2/3 md:pl-8 text-right max-w-4xl">
-              <p className="text-3xl text-gray-500">{businessAd.message}</p>
-            </div>
+          {/* Ad Message */}
+          <div className="w-full md:w-2/3 md:pl-8 text-right max-w-3xl">
+            <p className="text-3xl text-gray-500">{businessAd.message}</p>
           </div>
         </div>
+      </div>
 
-        {/* Image Section */}
-        <div className="w-full">
-          <div className="w-full mx-auto px-15">
-            <div
-              className="w-full rounded-2xl overflow-hidden flex items-center justify-center transition-colors duration-500"
-              style={{ backgroundColor: bgColor }}
-            >
-              {businessAd.image ? (
-                <Image
-                  src={businessAd.image}
-                  alt={businessAd.name || "Business Ad"}
-                  className="w-full h-auto object-contain"
-                  width={1200}
-                  height={600}
-                  style={{ maxHeight: "500px", objectFit: "contain" }}
-                />
-              ) : (
-                <div className="w-full h-[500px] bg-gray-100 flex items-center justify-center">
-                  <Bell className="w-16 h-16 text-gray-300" />
-                </div>
-              )}
-            </div>
+      {/* Image Section */}
+      <div className="w-full">
+        <div className="w-full mx-auto px-15">
+          <div
+            className="w-full rounded-2xl overflow-hidden flex items-center justify-center transition-colors duration-500"
+            style={{ backgroundColor: bgColor }}
+          >
+            {businessAd.image ? (
+              <Image
+                src={businessAd.image}
+                alt={businessAd.name || "Business Ad"}
+                className="w-full h-auto object-contain"
+                width={1200}
+                height={600}
+                style={{ maxHeight: "600px", objectFit: "contain" }}
+              />
+            ) : (
+              <div className="w-full h-[600px] bg-gray-100 flex items-center justify-center">
+                <Bell className="w-16 h-16 text-gray-300" />
+              </div>
+            )}
           </div>
         </div>
-      </section>
-    </PrayerLayout>
+      </div>
+    </section>
   );
 }

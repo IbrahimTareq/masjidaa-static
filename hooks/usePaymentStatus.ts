@@ -132,6 +132,7 @@ export const usePaymentStatus = (): PaymentStatusResult => {
               body: JSON.stringify({
                 action: "recurring.start",
                 masjid_id: donationMetaParsed.masjid_id,
+                campaign_title: donationMetaParsed.campaign_title,
                 campaign_id: donationMetaParsed.campaign_id,
                 stripe_account_id: recurringMetaParsed.stripe_account_id,
                 email: donationMetaParsed.email,
