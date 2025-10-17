@@ -31,6 +31,26 @@ export default function EventClient({
 
   const [copied, setCopied] = useState(false);
 
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const element = document.querySelector(hash);
+        if (element) {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 200);
+          });
+        }
+      }
+    };
+  
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, []);  
+
   const searchParams = useSearchParams();
   const eventDateParam = searchParams.get("eventDate");
 
@@ -79,8 +99,6 @@ export default function EventClient({
   };
 
   const { colorVariations } = useThemeColors();
-
-  console.log("event.type", event.type);
 
   return (
     <div className="bg-white/80 relative overflow-hidden my-6 sm:my-10">

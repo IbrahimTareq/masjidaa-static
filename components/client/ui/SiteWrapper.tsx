@@ -124,11 +124,8 @@ export default function SiteWrapper({
         </div>
       </nav>
 
-      {/* Content Spacer */}
-      <div className="h-24" />
-
       {/* Main Content */}
-      <main>{children}</main>
+      <main className="pt-24">{children}</main>
 
       {/* Footer */}
       <footer className="bg-white text-black pb-8">

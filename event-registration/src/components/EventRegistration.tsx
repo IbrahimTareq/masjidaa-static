@@ -465,7 +465,7 @@ export default function EventRegistration({
   };
 
   return (
-    <div className="w-full flex flex-col gap-6 mt-2">
+    <div id="event-registration" className="w-full flex flex-col gap-6 mt-2">
       <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden">
         {renderStep()}
       </div>
