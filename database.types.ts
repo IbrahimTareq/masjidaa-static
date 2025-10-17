@@ -18,38 +18,41 @@ export type Database = {
         Row: {
           business_id: string
           created_at: string
+          expires_at: string | null
           id: string
-          image: string | null
+          image: string
           masjid_id: string
           message: string | null
           rejected_reason: string | null
           status: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id: string | null
-          title: string | null
+          title: string
         }
         Insert: {
           business_id: string
           created_at?: string
+          expires_at?: string | null
           id?: string
-          image?: string | null
+          image: string
           masjid_id: string
           message?: string | null
           rejected_reason?: string | null
           status?: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id?: string | null
-          title?: string | null
+          title: string
         }
         Update: {
           business_id?: string
           created_at?: string
+          expires_at?: string | null
           id?: string
-          image?: string | null
+          image?: string
           masjid_id?: string
           message?: string | null
           rejected_reason?: string | null
           status?: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id?: string | null
-          title?: string | null
+          title?: string
         }
         Relationships: [
           {
@@ -347,6 +350,165 @@ export type Database = {
           },
         ]
       }
+      event_form_submissions: {
+        Row: {
+          data: Json
+          email: string
+          event_id: string
+          first_name: string
+          form_id: string
+          id: string
+          last_name: string
+          masjid_id: string
+          submitted_at: string | null
+        }
+        Insert: {
+          data: Json
+          email: string
+          event_id: string
+          first_name: string
+          form_id: string
+          id?: string
+          last_name: string
+          masjid_id: string
+          submitted_at?: string | null
+        }
+        Update: {
+          data?: Json
+          email?: string
+          event_id?: string
+          first_name?: string
+          form_id?: string
+          id?: string
+          last_name?: string
+          masjid_id?: string
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_form_submissions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_form_submissions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "event_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_form_submissions_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_forms: {
+        Row: {
+          created_at: string | null
+          id: string
+          masjid_id: string
+          name: string
+          schema: Json
+          ui_schema: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          masjid_id: string
+          name: string
+          schema: Json
+          ui_schema?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          masjid_id?: string
+          name?: string
+          schema?: Json
+          ui_schema?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forms_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          email: string
+          event_id: string
+          first_name: string
+          id: string
+          last_name: string
+          masjid_id: string
+          receipt_id: string | null
+          resend_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_receipt_url: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string
+          email: string
+          event_id: string
+          first_name: string
+          id?: string
+          last_name: string
+          masjid_id: string
+          receipt_id?: string | null
+          resend_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          email?: string
+          event_id?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          masjid_id?: string
+          receipt_id?: string | null
+          resend_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_payments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_payments_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           bank_account_id: string | null
@@ -354,9 +516,8 @@ export type Database = {
           date: string
           description: string | null
           enrolment_fee: number | null
-          enrolment_form: Json | null
           enrolment_limit: number | null
-          enrolment_type: string
+          event_form_id: string | null
           id: string
           image: string | null
           is_public: boolean
@@ -366,7 +527,9 @@ export type Database = {
           recurrence: string | null
           short_link_id: string
           start_time: string | null
+          status: Database["public"]["Enums"]["event_status"]
           title: string
+          type: Database["public"]["Enums"]["event_type"]
           updated_at: string | null
         }
         Insert: {
@@ -375,9 +538,8 @@ export type Database = {
           date: string
           description?: string | null
           enrolment_fee?: number | null
-          enrolment_form?: Json | null
           enrolment_limit?: number | null
-          enrolment_type?: string
+          event_form_id?: string | null
           id?: string
           image?: string | null
           is_public?: boolean
@@ -387,7 +549,9 @@ export type Database = {
           recurrence?: string | null
           short_link_id: string
           start_time?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
           title: string
+          type?: Database["public"]["Enums"]["event_type"]
           updated_at?: string | null
         }
         Update: {
@@ -396,9 +560,8 @@ export type Database = {
           date?: string
           description?: string | null
           enrolment_fee?: number | null
-          enrolment_form?: Json | null
           enrolment_limit?: number | null
-          enrolment_type?: string
+          event_form_id?: string | null
           id?: string
           image?: string | null
           is_public?: boolean
@@ -408,7 +571,9 @@ export type Database = {
           recurrence?: string | null
           short_link_id?: string
           start_time?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
           title?: string
+          type?: Database["public"]["Enums"]["event_type"]
           updated_at?: string | null
         }
         Relationships: [
@@ -417,6 +582,13 @@ export type Database = {
             columns: ["bank_account_id"]
             isOneToOne: false
             referencedRelation: "masjid_bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_event_form_id_fkey"
+            columns: ["event_form_id"]
+            isOneToOne: false
+            referencedRelation: "event_forms"
             referencedColumns: ["id"]
           },
           {
@@ -1090,7 +1262,6 @@ export type Database = {
           short_link_id: string | null
           slug: string
           state: string | null
-          statement_descriptor: string | null
           street: string | null
           subscription_id: string | null
           suburb: string | null
@@ -1123,7 +1294,6 @@ export type Database = {
           short_link_id?: string | null
           slug: string
           state?: string | null
-          statement_descriptor?: string | null
           street?: string | null
           subscription_id?: string | null
           suburb?: string | null
@@ -1156,7 +1326,6 @@ export type Database = {
           short_link_id?: string | null
           slug?: string
           state?: string | null
-          statement_descriptor?: string | null
           street?: string | null
           subscription_id?: string | null
           suburb?: string | null
@@ -1660,7 +1829,6 @@ export type Database = {
           short_link_id: string | null
           slug: string
           state: string | null
-          statement_descriptor: string | null
           street: string | null
           subscription_id: string | null
           suburb: string | null
@@ -1693,6 +1861,8 @@ export type Database = {
         | "Other"
       contact_method: "email" | "phone"
       donation_type: "one-off" | "recurring"
+      event_status: "active" | "draft"
+      event_type: "none" | "free" | "paid"
       high_latitude_rule:
         | "MiddleOfTheNight"
         | "SeventhOfTheNight"
@@ -1712,7 +1882,13 @@ export type Database = {
         | "prayer-screen-4"
         | "prayer-screen-5"
         | "other"
-      status_type: "pending" | "approved" | "rejected" | "paid" | "active"
+      status_type:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "payment_failed"
+        | "paid"
+        | "live"
       subscription_status: "active" | "inactive" | "canceled"
       subscription_type: "starter" | "community" | "hub"
       time_format: "12" | "24"
@@ -1869,6 +2045,8 @@ export const Constants = {
       ],
       contact_method: ["email", "phone"],
       donation_type: ["one-off", "recurring"],
+      event_status: ["active", "draft"],
+      event_type: ["none", "free", "paid"],
       high_latitude_rule: [
         "MiddleOfTheNight",
         "SeventhOfTheNight",
@@ -1890,7 +2068,14 @@ export const Constants = {
         "prayer-screen-5",
         "other",
       ],
-      status_type: ["pending", "approved", "rejected", "paid", "active"],
+      status_type: [
+        "pending",
+        "approved",
+        "rejected",
+        "payment_failed",
+        "paid",
+        "live",
+      ],
       subscription_status: ["active", "inactive", "canceled"],
       subscription_type: ["starter", "community", "hub"],
       time_format: ["12", "24"],
