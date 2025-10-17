@@ -14,7 +14,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, TicketIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 
@@ -302,18 +302,19 @@ export default function EventRegistration({
       case "initial":
         return (
           <div className="p-5">
-            <button
-              onClick={handleRegisterClick}
-              className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer"
-            >
-              {isPaid
-                ? `Register (${formatAmount(
-                    event.enrolment_fee!,
-                    masjid.local_currency
-                  )})`
-                : "Register for this Event"}
-            </button>
-          </div>
+          <button
+            onClick={handleRegisterClick}
+            className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center"
+          >
+            <TicketIcon className="w-5 h-5 mr-2 text-white" />
+            {isPaid
+              ? `Register (${formatAmount(
+                  event.enrolment_fee!,
+                  masjid.local_currency
+                )})`
+              : "Register for this Event"}
+          </button>
+        </div>
         );
 
       case "form":

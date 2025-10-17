@@ -4,51 +4,53 @@ import { getMasjidSubscriptionByMasjidId } from "./lib/server/services/masjidSub
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const masjidId = req.nextUrl.pathname.split("/")[2];
+  const masjidId = pathname.split("/")[2];
 
-  // Skip static and Next.js build assets
+  // Skip static assets
   if (/\.(js|css|png|jpg|jpeg|svg|ico)$/.test(pathname)) {
     return NextResponse.next();
   }
 
+  const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
+  const tier = subscription?.tier;
+
   const isCommunityFeature =
-    pathname.includes("/embed/") || pathname.includes("/layout/");
-  const isHubFeature = pathname.includes("/embed/youtube-feed/");
+    pathname.includes("/embed/") ||
+    pathname.includes("/layout/simple") ||
+    pathname.includes("/layout/advanced");
 
-  if (pathname.startsWith("/masjid/") && isCommunityFeature) {
-    const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
-
-    if (subscription?.tier === "starter") {
-      return new NextResponse(
-        "<html><body><h1>Access Denied</h1><p>Please upgrade to the Community plan.</p></body></html>",
-        {
-          status: 403,
-          headers: { "content-type": "text/html" },
-        }
-      );
-    }
+  // 🚫 Restrict community-only access
+  if (
+    pathname.startsWith("/masjid/") &&
+    isCommunityFeature &&
+    tier === "starter"
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/access-denied";
+    url.searchParams.set("plan", "starter");
+    return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/masjid/") && isHubFeature) {
-    const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
+  const isHubFeature =
+  pathname.includes("/embed/youtube-feed") ||
+  pathname.includes("/embed/donation/") ||
+  pathname.includes("/embed/donations");
 
-    if (subscription?.tier === "community") {
-      return new NextResponse(
-        "<html><body><h1>Access Denied</h1><p>Please upgrade to the Hub plan.</p></body></html>",
-        {
-          status: 403,
-          headers: { "content-type": "text/html" },
-        }
-      );
-    }
+  // 🚫 Restrict hub-only access
+  if (
+    pathname.startsWith("/masjid/") &&
+    isHubFeature &&
+    (tier === "community" || tier === "starter")
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/access-denied";
+    url.searchParams.set("plan", tier);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/masjid/:id/embed/:path*",
-    "/masjid/:id/layout/:path*",
-  ],
+  matcher: ["/masjid/:id/embed/:path*", "/masjid/:id/layout/:path*"],
 };
