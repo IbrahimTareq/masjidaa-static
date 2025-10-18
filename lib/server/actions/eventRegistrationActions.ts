@@ -1,9 +1,12 @@
 "use server";
 
-import { submitEventFormSubmission } from "@/lib/server/services/eventFormSubmission";
 import { getEventFormById } from "@/lib/server/services/eventForm";
+import {
+  createEventPaymentIntent,
+  submitEventRegistration,
+} from "@/lib/server/services/eventFormSubmission";
 
-export async function submitEventRegistration({
+export async function submitEventRegistrationAction({
   formId,
   eventId,
   masjidId,
@@ -20,14 +23,22 @@ export async function submitEventRegistration({
   email: string;
   data: Record<string, any>;
 }) {
-  return submitEventFormSubmission(formId, eventId, masjidId, firstName, lastName, email, data);
+  return submitEventRegistration(
+    formId,
+    eventId,
+    masjidId,
+    firstName,
+    lastName,
+    email,
+    data
+  );
 }
 
 export async function getEventForm(formId: string) {
   return getEventFormById(formId);
 }
 
-export async function createEventPaymentIntent({
+export async function createEventPaymentIntentAction({
   amount,
   currency,
   eventId,
@@ -48,28 +59,15 @@ export async function createEventPaymentIntent({
   firstName: string;
   lastName: string;
 }): Promise<{ client_secret: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-event-payment`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount,
-        currency,
-        event_id: eventId,
-        event_title: eventTitle,
-        masjid_id: masjidId,
-        stripe_account_id: stripeAccountId,
-        email,
-        first_name: firstName,
-        last_name: lastName,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to create payment intent");
-  }
-
-  return response.json();
+  return createEventPaymentIntent({
+    amount,
+    currency,
+    eventId,
+    eventTitle,
+    masjidId,
+    stripeAccountId,
+    email,
+    firstName,
+    lastName,
+  });
 }

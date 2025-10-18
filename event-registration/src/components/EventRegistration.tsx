@@ -2,8 +2,8 @@
 
 import { Tables } from "@/database.types";
 import {
-  createEventPaymentIntent,
-  submitEventRegistration,
+  createEventPaymentIntentAction,
+  submitEventRegistrationAction,
 } from "@/lib/server/actions/eventRegistrationActions";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
@@ -238,15 +238,15 @@ export default function EventRegistration({
       const lastName = data.formData.lastName || "";
       const email = data.formData.email || "";
 
-      // If there's an event form, submit the form data
-      if (event.event_form_id && eventForm?.schema) {
+      // For free events, submit the form data immediately
+      if (!isPaid && event.event_form_id && eventForm?.schema) {
         // Transform the data to use titles as keys
         const transformedData = transformFormData(
           data.formData,
           eventForm.schema
         );
 
-        const result = await submitEventRegistration({
+        const result = await submitEventRegistrationAction({
           formId: eventForm.id,
           eventId: event.id,
           masjidId: masjid.id,
@@ -259,13 +259,16 @@ export default function EventRegistration({
         if (!result.success) {
           throw new Error(result.error || "Failed to submit registration");
         }
-      }
-
-      // If it's a paid event, proceed to payment
-      if (isPaid && event.enrolment_fee && bankAccount) {
+        
+        // For free events, show success immediately
+        setFormData({}); // Reset form data
+        setCurrentStep("success");
+      } 
+      // If it's a paid event, proceed to payment without submitting form yet
+      else if (isPaid && event.enrolment_fee && bankAccount) {
         const amountInCents = Math.round(event.enrolment_fee * 100);
 
-        const paymentData = await createEventPaymentIntent({
+        const paymentData = await createEventPaymentIntentAction({
           amount: amountInCents,
           currency: masjid.local_currency.toLowerCase(),
           eventId: event.id,
@@ -280,7 +283,7 @@ export default function EventRegistration({
         setClientSecret(paymentData.client_secret);
         setCurrentStep("payment");
       } else {
-        // For free events, show success immediately
+        // For events without forms or payments
         setFormData({}); // Reset form data
         setCurrentStep("success");
       }
@@ -292,9 +295,43 @@ export default function EventRegistration({
     }
   };
 
-  const handlePaymentSuccess = () => {
-    setFormData({}); // Reset form data
-    setCurrentStep("success");
+  const handlePaymentSuccess = async () => {
+    try {
+      // After successful payment, submit the form data if there's an event form
+      if (event.event_form_id && eventForm?.schema && formData) {
+        // Extract basic user info from form data
+        const firstName = formData.firstName || "";
+        const lastName = formData.lastName || "";
+        const email = formData.email || "";
+        
+        // Transform the data to use titles as keys
+        const transformedData = transformFormData(
+          formData,
+          eventForm.schema
+        );
+
+        const result = await submitEventRegistrationAction({
+          formId: eventForm.id,
+          eventId: event.id,
+          masjidId: masjid.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          data: transformedData,
+        });
+
+        if (!result.success) {
+          console.error("Failed to submit registration after payment:", result.error);
+        }
+      }
+    } catch (err) {
+      console.error("Error submitting form after payment:", err);
+    } finally {
+      // Reset form data and show success screen regardless of submission result
+      // since payment was successful
+      setFormData({}); // Reset form data
+      setCurrentStep("success");
+    }
   };
 
   const renderStep = () => {
@@ -302,19 +339,19 @@ export default function EventRegistration({
       case "initial":
         return (
           <div className="p-5">
-          <button
-            onClick={handleRegisterClick}
-            className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center"
-          >
-            <TicketIcon className="w-5 h-5 mr-2 text-white" />
-            {isPaid
-              ? `Register (${formatAmount(
-                  event.enrolment_fee!,
-                  masjid.local_currency
-                )})`
-              : "Register for this Event"}
-          </button>
-        </div>
+            <button
+              onClick={handleRegisterClick}
+              className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center"
+            >
+              <TicketIcon className="w-5 h-5 mr-2 text-white" />
+              {isPaid
+                ? `Register (${formatAmount(
+                    event.enrolment_fee!,
+                    masjid.local_currency
+                  )})`
+                : "Register for this Event"}
+            </button>
+          </div>
         );
 
       case "form":
