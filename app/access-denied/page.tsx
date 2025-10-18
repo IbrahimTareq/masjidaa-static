@@ -3,8 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, ArrowRight } from "lucide-react";
+import { Suspense } from "react";
 
-export default function AccessDeniedPage() {
+function AccessDeniedPageContent() {
   const params = useSearchParams();
   const plan = params.get("plan") ?? "starter";
 
@@ -35,5 +36,13 @@ export default function AccessDeniedPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function AccessDeniedPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+      <AccessDeniedPageContent />
+    </Suspense>
   );
 }
