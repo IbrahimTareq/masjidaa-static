@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
 import { formatCurrency } from "@/utils/currency";
-import { PaymentFrequency } from "../types";
 import { Heart } from "lucide-react";
+import { PaymentFrequency } from "../types";
 
 interface RecurringDonationUpsellStepProps {
   amount: string;
@@ -23,9 +22,9 @@ export default function RecurringDonationUpsellStep({
   // Parse the amount and calculate half options
   const parsedAmount = parseFloat(amount);
 
-  // Calculate half and quarter amounts (round up to whole numbers)
+  // Calculate half and third amounts (round up to whole numbers)
   const halfAmount = Math.ceil(parsedAmount / 2);
-  const quarterAmount = Math.ceil(parsedAmount / 4);
+  const thirdAmount = Math.ceil(parsedAmount / 3);
 
   // Format the amounts for display
   const formattedOriginalAmount = formatCurrency({
@@ -38,8 +37,8 @@ export default function RecurringDonationUpsellStep({
     currency,
   });
 
-  const formattedQuarterAmount = formatCurrency({
-    amount: quarterAmount,
+  const formattedThirdAmount = formatCurrency({
+    amount: thirdAmount,
     currency,
   });
 
@@ -79,11 +78,11 @@ export default function RecurringDonationUpsellStep({
           {/* Second option - Quarter amount */}
           <button
             onClick={() =>
-              onSelectMonthlyAmount(quarterAmount.toString(), "monthly")
+              onSelectMonthlyAmount(thirdAmount.toString(), "monthly")
             }
             className="w-full py-3 px-4 border border-theme text-theme font-medium rounded-lg hover:bg-theme-accent transition-colors cursor-pointer"
           >
-            Donate {formattedQuarterAmount}/month
+            Donate {formattedThirdAmount}/month
           </button>
 
           {/* Keep one-time option */}

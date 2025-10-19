@@ -16,7 +16,7 @@ export async function createSinglePaymentIntent(
   isAnonymous: boolean
 ): Promise<{ client_secret: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation-combined`,
+    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ export async function createRecurringSetupIntent(
   stripeAccountId: string
 ): Promise<{ client_secret: string; customer_id: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation-combined`,
+    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

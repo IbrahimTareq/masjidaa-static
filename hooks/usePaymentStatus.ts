@@ -125,7 +125,7 @@ export const usePaymentStatus = (): PaymentStatusResult => {
 
           // Start recurring donation
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation-combined`,
+            `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
