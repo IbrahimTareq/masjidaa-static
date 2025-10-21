@@ -121,7 +121,7 @@ export default function PrayerClient({
                                   : "Jumaah جمعة"}
                               </h2>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 text-center">
+                            <div className="grid grid-cols-2 gap-2 text-center">
                               <div>
                                 <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
                                   Starts
@@ -150,7 +150,7 @@ export default function PrayerClient({
               {/* Sunrise/Duha Card */}
               <div className="flex flex-col items-center justify-center text-center space-y-4 sm:space-y-6 order-1 lg:order-2 lg:col-span-1 lg:col-start-5">
                 <div className="w-full h-full">
-                  <div className="text-center p-2 sm:p-3 lg:p-4 rounded-lg transition-all bg-gray-50 border border-gray-200 text-gray-900 shadow-sm hover:shadow-md h-full">
+                  <div className="text-center p-2 sm:p-3 lg:p-4 rounded-lg transition-all bg-gray-50 border border-gray-200 text-gray-900 h-full">
                     <div className="h-full flex flex-col">
                       <div className="mb-3">
                         <h3 className="text-sm sm:text-base lg:text-lg xl:text-2xl font-bold">
@@ -158,7 +158,7 @@ export default function PrayerClient({
                         </h3>
                       </div>
 
-                      <div className="mt-auto grid grid-cols-2 gap-3">
+                      <div className="mt-auto grid grid-cols-2 gap-2">
                         {/* Sunrise Time */}
                         <div>
                           <div className="text-xs lg:text-sm xl:text-xs font-medium uppercase tracking-wider opacity-70">
