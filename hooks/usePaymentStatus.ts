@@ -20,6 +20,8 @@ export interface DonationMeta {
   amount_cents: number;
   currency: string;
   short_link?: string;
+  address?: string;
+  gift_aid_declared?: boolean;
 }
 
 export type PaymentStatus = "success" | "processing" | "failed" | "loading";
@@ -138,6 +140,8 @@ export const usePaymentStatus = (): PaymentStatusResult => {
                 email: donationMetaParsed.email,
                 first_name: donationMetaParsed.first_name,
                 last_name: donationMetaParsed.last_name,
+                address: donationMetaParsed.address,
+                gift_aid_declared: donationMetaParsed.gift_aid_declared,
                 is_anonymous: donationMetaParsed.is_anonymous,
                 stripe_customer_id: recurringMetaParsed.stripe_customer_id,
                 stripe_payment_method_id: pmId,

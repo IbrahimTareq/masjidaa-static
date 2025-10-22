@@ -5,6 +5,7 @@ import { DonationProvider, useDonation } from "../context/DonationContext";
 import DonationAmountStep from "./DonationAmountStep";
 import DonationUserDetailsStep from "./DonationUserDetailsStep";
 import RecurringDonationUpsellStep from "./RecurringDonationUpsellStep";
+import GiftAidStep from "./GiftAidStep";
 import DonationForm from "./DonationForm";
 import { DonationStats } from "./DonationStats";
 import { Campaign, ShortLink, Masjid, BankAccount } from "../types";
@@ -66,6 +67,7 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
     handleUserDetailsSubmit,
     handleRecurringUpsellSelected,
     handleKeepOneTime,
+    handleGiftAidSubmit,
     handleBack,
     handleDonationSuccess,
   } = useDonation();
@@ -143,8 +145,23 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
             />
           )}
         </div>
+        
+        {/* Gift Aid Declaration Panel - Step 3/4 (conditional for UK) */}
+        <div
+          className={`transition-all duration-300 ${
+            currentStep === "gift_aid"
+              ? "opacity-100 visible"
+              : "opacity-0 invisible h-0"
+          }`}
+        >
+          <GiftAidStep
+            onSubmit={handleGiftAidSubmit}
+            onBack={handleBack}
+            isLoading={isLoading}
+          />
+        </div>
 
-        {/* Payment Form Panel - Step 4 */}
+        {/* Payment Form Panel - Step 4/5 */}
         <div
           className={`transition-all duration-300 ${
             currentStep === "payment"

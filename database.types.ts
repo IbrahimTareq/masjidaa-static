@@ -285,10 +285,12 @@ export type Database = {
           created_at: string | null
           currency: string
           donation_type: Database["public"]["Enums"]["donation_type"]
+          donor_address: string | null
           donor_email: string | null
           donor_first_name: string
           donor_last_name: string
           donor_message: string | null
+          gift_aid_declared: boolean
           id: string
           is_anonymous: boolean
           masjid_id: string
@@ -303,10 +305,12 @@ export type Database = {
           created_at?: string | null
           currency?: string
           donation_type?: Database["public"]["Enums"]["donation_type"]
+          donor_address?: string | null
           donor_email?: string | null
           donor_first_name: string
           donor_last_name: string
           donor_message?: string | null
+          gift_aid_declared?: boolean
           id?: string
           is_anonymous?: boolean
           masjid_id: string
@@ -321,10 +325,12 @@ export type Database = {
           created_at?: string | null
           currency?: string
           donation_type?: Database["public"]["Enums"]["donation_type"]
+          donor_address?: string | null
           donor_email?: string | null
           donor_first_name?: string
           donor_last_name?: string
           donor_message?: string | null
+          gift_aid_declared?: boolean
           id?: string
           is_anonymous?: boolean
           masjid_id?: string
@@ -1202,6 +1208,53 @@ export type Database = {
           },
         ]
       }
+      masjid_tax_info: {
+        Row: {
+          address_required: boolean
+          country_code: Database["public"]["Enums"]["supported_country_code"]
+          created_at: string | null
+          declaration_required: boolean
+          id: string
+          is_tax_deductible: boolean
+          masjid_id: string
+          registration_number: string | null
+          scheme_name: Database["public"]["Enums"]["scheme_types"]
+          updated_at: string | null
+        }
+        Insert: {
+          address_required?: boolean
+          country_code: Database["public"]["Enums"]["supported_country_code"]
+          created_at?: string | null
+          declaration_required?: boolean
+          id?: string
+          is_tax_deductible?: boolean
+          masjid_id: string
+          registration_number?: string | null
+          scheme_name: Database["public"]["Enums"]["scheme_types"]
+          updated_at?: string | null
+        }
+        Update: {
+          address_required?: boolean
+          country_code?: Database["public"]["Enums"]["supported_country_code"]
+          created_at?: string | null
+          declaration_required?: boolean
+          id?: string
+          is_tax_deductible?: boolean
+          masjid_id?: string
+          registration_number?: string | null
+          scheme_name?: Database["public"]["Enums"]["scheme_types"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_tax_info_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: true
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masjid_tickers: {
         Row: {
           created_at: string | null
@@ -1245,21 +1298,19 @@ export type Database = {
           city: string
           claimed: boolean
           contact_number: string | null
-          country: string
+          country: Database["public"]["Enums"]["supported_country_name"]
+          country_code: Database["public"]["Enums"]["supported_country_code"]
           created_at: string | null
           description: string | null
           email: string | null
           fts: unknown | null
           hijri_date_adjustment: number
           id: string
-          is_non_profit: boolean
           local_currency: string
           logo: string | null
           name: string
-          org_tax_id: string | null
           postcode: string | null
           region: string | null
-          short_link_id: string | null
           slug: string
           state: string | null
           street: string | null
@@ -1277,21 +1328,19 @@ export type Database = {
           city?: string
           claimed?: boolean
           contact_number?: string | null
-          country?: string
+          country?: Database["public"]["Enums"]["supported_country_name"]
+          country_code?: Database["public"]["Enums"]["supported_country_code"]
           created_at?: string | null
           description?: string | null
           email?: string | null
           fts?: unknown | null
           hijri_date_adjustment: number
           id?: string
-          is_non_profit?: boolean
           local_currency: string
           logo?: string | null
           name: string
-          org_tax_id?: string | null
           postcode?: string | null
           region?: string | null
-          short_link_id?: string | null
           slug: string
           state?: string | null
           street?: string | null
@@ -1309,21 +1358,19 @@ export type Database = {
           city?: string
           claimed?: boolean
           contact_number?: string | null
-          country?: string
+          country?: Database["public"]["Enums"]["supported_country_name"]
+          country_code?: Database["public"]["Enums"]["supported_country_code"]
           created_at?: string | null
           description?: string | null
           email?: string | null
           fts?: unknown | null
           hijri_date_adjustment?: number
           id?: string
-          is_non_profit?: boolean
           local_currency?: string
           logo?: string | null
           name?: string
-          org_tax_id?: string | null
           postcode?: string | null
           region?: string | null
-          short_link_id?: string | null
           slug?: string
           state?: string | null
           street?: string | null
@@ -1335,13 +1382,6 @@ export type Database = {
           website?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "masjids_short_link_id_fkey"
-            columns: ["short_link_id"]
-            isOneToOne: false
-            referencedRelation: "short_links"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "masjids_subscription_id_fkey"
             columns: ["subscription_id"]
@@ -1812,21 +1852,19 @@ export type Database = {
           city: string
           claimed: boolean
           contact_number: string | null
-          country: string
+          country: Database["public"]["Enums"]["supported_country_name"]
+          country_code: Database["public"]["Enums"]["supported_country_code"]
           created_at: string | null
           description: string | null
           email: string | null
           fts: unknown | null
           hijri_date_adjustment: number
           id: string
-          is_non_profit: boolean
           local_currency: string
           logo: string | null
           name: string
-          org_tax_id: string | null
           postcode: string | null
           region: string | null
-          short_link_id: string | null
           slug: string
           state: string | null
           street: string | null
@@ -1869,6 +1907,12 @@ export type Database = {
         | "TwilightAngle"
       layout_type: "simple" | "advanced"
       madhab: "Shafi" | "Hanafi"
+      scheme_types:
+        | "GIFT_AID"
+        | "IRS_501C3"
+        | "CRA_REGISTERED"
+        | "ATO_DGR"
+        | "IRD_DONEE"
       short_link_type:
         | "event"
         | "announcement"
@@ -1891,6 +1935,13 @@ export type Database = {
         | "live"
       subscription_status: "active" | "inactive" | "canceled"
       subscription_type: "starter" | "community" | "hub"
+      supported_country_code: "US" | "GB" | "CA" | "AU" | "NZ"
+      supported_country_name:
+        | "United States"
+        | "United Kingdom"
+        | "Canada"
+        | "Australia"
+        | "New Zealand"
       time_format: "12" | "24"
       volunteer_interest:
         | "Cleaning"
@@ -2054,6 +2105,13 @@ export const Constants = {
       ],
       layout_type: ["simple", "advanced"],
       madhab: ["Shafi", "Hanafi"],
+      scheme_types: [
+        "GIFT_AID",
+        "IRS_501C3",
+        "CRA_REGISTERED",
+        "ATO_DGR",
+        "IRD_DONEE",
+      ],
       short_link_type: [
         "event",
         "announcement",
@@ -2078,6 +2136,14 @@ export const Constants = {
       ],
       subscription_status: ["active", "inactive", "canceled"],
       subscription_type: ["starter", "community", "hub"],
+      supported_country_code: ["US", "GB", "CA", "AU", "NZ"],
+      supported_country_name: [
+        "United States",
+        "United Kingdom",
+        "Canada",
+        "Australia",
+        "New Zealand",
+      ],
       time_format: ["12", "24"],
       volunteer_interest: [
         "Cleaning",

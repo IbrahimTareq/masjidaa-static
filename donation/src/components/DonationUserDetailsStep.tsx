@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Info } from "lucide-react";
 import { Tooltip } from "react-tooltip";
 import { BeatLoader } from "react-spinners";
+import { useDonation } from "../context/DonationContext";
 
 interface DonationUserDetailsStepProps {
   onSubmit: (donorInfo: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
@@ -23,18 +24,21 @@ export default function DonationUserDetailsStep({
   initialCurrency,
   frequency,
 }: DonationUserDetailsStepProps) {
+  const { giftAidDeclared } = useDonation();
   const [donorInfo, setDonorInfo] = useState<DonorInfo>({
     firstName: "",
     lastName: "",
     email: "",
     currency: initialCurrency,
     isAnonymous: false,
+    address: "",
   });
 
   const [errors, setErrors] = useState<{
     firstName?: string;
     lastName?: string;
     email?: string;
+    address?: string;
   }>({});
 
   const handleInputChange = (
@@ -61,6 +65,11 @@ export default function DonationUserDetailsStep({
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorInfo.email)) {
       newErrors.email = "Please enter a valid email address";
+    }
+    
+    // Validate address if Gift Aid is declared
+    if (giftAidDeclared && !donorInfo.address?.trim()) {
+      newErrors.address = "Address is required for Gift Aid donations";
     }
 
     setErrors(newErrors);
@@ -159,6 +168,32 @@ export default function DonationUserDetailsStep({
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
+          
+          {/* Address field - only shown when Gift Aid is declared */}
+          {giftAidDeclared && (
+            <div>
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Address
+              </label>
+              <textarea
+                id="address"
+                value={donorInfo.address}
+                onChange={(e) => handleInputChange(e as any, "address")}
+                className="block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50"
+                placeholder="Your full address"
+                rows={3}
+              />
+              {errors.address && (
+                <p className="mt-2 text-sm text-red-600">{errors.address}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                Required for Gift Aid declarations.
+              </p>
+            </div>
+          )}
 
           <div className="pt-2">
             <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">

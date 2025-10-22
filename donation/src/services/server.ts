@@ -13,7 +13,9 @@ export async function createSinglePaymentIntent(
   email: string,
   firstName: string,
   lastName: string,
-  isAnonymous: boolean
+  isAnonymous: boolean,
+  giftAidDeclared?: boolean,
+  address?: string
 ): Promise<{ client_secret: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
@@ -31,7 +33,9 @@ export async function createSinglePaymentIntent(
         email,
         first_name: firstName,
         last_name: lastName,
+        address: address,
         is_anonymous: isAnonymous,
+        gift_aid_declared: giftAidDeclared,
       }),
     }
   );

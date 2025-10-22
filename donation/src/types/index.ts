@@ -11,6 +11,8 @@ export interface DonationMeta {
   is_anonymous: boolean;
   amount_cents: number;
   currency: string;
+  gift_aid_declared?: boolean;
+  address?: string;
 }
 
 /**
@@ -33,6 +35,7 @@ export interface DonorInfo {
   email: string;
   currency: string;
   isAnonymous: boolean;
+  address?: string;
 }
 
 /**

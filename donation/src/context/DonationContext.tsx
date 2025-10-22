@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useTaxInfo } from "@/hooks/useTaxInfo";
 import { 
   DonationMeta, 
   DonationStep, 
@@ -12,8 +13,8 @@ import {
   BankAccount
 } from "../types";
 
-// Extended step type to include user details and recurring upsell steps
-export type ExtendedDonationStep = DonationStep | "user_details" | "recurring_upsell";
+// Extended step type to include user details, recurring upsell, and gift aid steps
+export type ExtendedDonationStep = DonationStep | "user_details" | "recurring_upsell" | "gift_aid";
 import { 
   createRecurringSetupIntent, 
   createSinglePaymentIntent,
@@ -32,6 +33,8 @@ interface DonationContextType {
   isImagePreviewOpen: boolean;
   isShareModalOpen: boolean;
   progressPercentage: number;
+  giftAidDeclared: boolean;
+  showGiftAidStep: boolean;
   tempDonationData: {
     amount: string;
     coverFee: boolean;
@@ -48,6 +51,7 @@ interface DonationContextType {
   handleUserDetailsSubmit: (info: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
   handleRecurringUpsellSelected: (amount: string, frequency: PaymentFrequency) => void;
   handleKeepOneTime: () => void;
+  handleGiftAidSubmit: (giftAidDeclared: boolean) => void;
   handleDonationSuccess: () => void;
   toggleImagePreview: (isOpen?: boolean) => void;
   toggleShareModal: (isOpen?: boolean) => void;
@@ -77,6 +81,18 @@ export function DonationProvider({
   const [donorInfo, setDonorInfo] = useState<DonorInfo>();
   const [clientSecret, setClientSecret] = useState<string>();
   const [recurringMeta, setRecurringMeta] = useState<RecurringMeta>();
+  
+  // Gift Aid data
+  const [giftAidDeclared, setGiftAidDeclared] = useState(false);
+  const { showGiftAid, addressRequired, loading: taxInfoLoading } = useTaxInfo(masjid.id);
+  const [showGiftAidStep, setShowGiftAidStep] = useState(false);
+  
+  // Update showGiftAidStep when tax info is loaded
+  useEffect(() => {
+    if (!taxInfoLoading) {
+      setShowGiftAidStep(showGiftAid);
+    }
+  }, [showGiftAid, taxInfoLoading]);
   
   // Temporary storage for donation data between steps
   const [tempDonationData, setTempDonationData] = useState<{
@@ -109,6 +125,17 @@ export function DonationProvider({
     if (currentStep === "payment") {
       setCurrentStep("user_details");
     } else if (currentStep === "user_details") {
+      // If we came from gift aid step, go back to that step
+      if (showGiftAidStep) {
+        setCurrentStep("gift_aid");
+      }
+      // If we came from recurring upsell, go back to that step
+      else if (tempDonationData?.sawUpsellScreen) {
+        setCurrentStep("recurring_upsell");
+      } else {
+        setCurrentStep("amount");
+      }
+    } else if (currentStep === "gift_aid") {
       // If we came from recurring upsell, go back to that step
       if (tempDonationData?.sawUpsellScreen) {
         setCurrentStep("recurring_upsell");
@@ -122,6 +149,7 @@ export function DonationProvider({
       setSelectedAmount(undefined);
       setDonorInfo(undefined);
       setTempDonationData(undefined);
+      setGiftAidDeclared(false);
     }
   };
   
@@ -151,8 +179,11 @@ export function DonationProvider({
     if (shouldShowUpsell) {
       // Show the upsell step before user details
       setCurrentStep("recurring_upsell");
+    } else if (showGiftAidStep) {
+      // Show the Gift Aid step before user details
+      setCurrentStep("gift_aid");
     } else {
-      // Skip upsell and move directly to user details
+      // Skip upsell and Gift Aid, move directly to user details
       setCurrentStep("user_details");
     }
   };
@@ -183,8 +214,12 @@ export function DonationProvider({
       sawUpsellScreen: true
     });
     
-    // Move to user details step
-    setCurrentStep("user_details");
+    // If Gift Aid is applicable, go to that step, otherwise to user details
+    if (showGiftAidStep) {
+      setCurrentStep("gift_aid");
+    } else {
+      setCurrentStep("user_details");
+    }
   };
   
   // Handle when user chooses to keep the one-time donation
@@ -197,7 +232,17 @@ export function DonationProvider({
       sawUpsellScreen: true
     });
     
-    // Keep the original frequency as "once" and move to user details
+    // If Gift Aid is applicable, go to that step, otherwise to user details
+    if (showGiftAidStep) {
+      setCurrentStep("gift_aid");
+    } else {
+      setCurrentStep("user_details");
+    }
+  };
+  
+  // Handle Gift Aid declaration submission
+  const handleGiftAidSubmit = (declared: boolean) => {
+    setGiftAidDeclared(declared);
     setCurrentStep("user_details");
   };
   
@@ -220,9 +265,11 @@ export function DonationProvider({
         email: info.email,
         first_name: info.firstName,
         last_name: info.lastName,
+        address: info.address,
         is_anonymous: info.isAnonymous,
         amount_cents: amountInCents,
         currency: info.currency.toLowerCase(),
+        gift_aid_declared: giftAidDeclared,
       };
       
       // Store donation metadata
@@ -240,7 +287,9 @@ export function DonationProvider({
           info.email,
           info.firstName,
           info.lastName,
-          info.isAnonymous
+          info.isAnonymous,
+          giftAidDeclared,
+          info.address
         );
         
         setClientSecret(data.client_secret);
@@ -279,6 +328,7 @@ export function DonationProvider({
     setClientSecret(undefined);
     setSelectedAmount(undefined);
     setDonorInfo(undefined);
+    setGiftAidDeclared(false);
   };
   
   const toggleImagePreview = (isOpen?: boolean) => {
@@ -301,6 +351,8 @@ export function DonationProvider({
     isShareModalOpen,
     progressPercentage,
     tempDonationData,
+    giftAidDeclared,
+    showGiftAidStep,
     
     // Actions
     setCurrentStep,
@@ -310,6 +362,7 @@ export function DonationProvider({
     handleUserDetailsSubmit,
     handleRecurringUpsellSelected,
     handleKeepOneTime,
+    handleGiftAidSubmit,
     handleDonationSuccess,
     toggleImagePreview,
     toggleShareModal,
