@@ -1,33 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Confetti from "react-confetti";
 
 import LoadingPage from "@/components/client/ui/LoadingPage";
 import ShareSection from "@/components/client/ui/ShareSection";
 import { formatCurrency } from "@/utils/currency";
-import { AlertCircle, Check } from "lucide-react";
+import { AlertCircle, Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 
 import { useMasjidContext } from "@/context/masjidContext";
-import { DonationMeta, usePaymentStatus } from "@/hooks/usePaymentStatus";
+import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { DotLoader } from "react-spinners";
 
 // Success message component
 const SuccessMessage: React.FC<{
-  masjidName: string;
-  masjidLogo?: string;
+  masjid: any;
   donorName?: string | null;
   amount?: string | null;
   currency: string;
-}> = ({ masjidName, masjidLogo, donorName, amount, currency }) => (
+  isRecurring?: boolean;
+}> = ({ masjid, donorName, amount, currency, isRecurring }) => (
   <div className="bg-white rounded-2xl shadow-sm p-8 text-center mb-6">
     <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden">
       <img
-        src={masjidLogo || ""}
-        alt={masjidName}
+        src={masjid.logo || ""}
+        alt={masjid.name}
         className="w-full h-full object-contain border-2 border-theme rounded-full"
       />
     </div>
@@ -75,25 +75,28 @@ const ProcessingMessage = () => (
 
 // Failed message component
 const FailedMessage: React.FC<{
-  masjidName: string;
-  masjidLogo?: string;
+  masjid: any;
   errorMessage?: string;
-}> = ({ masjidName, masjidLogo, errorMessage }) => {
+  errorDetails?: Record<string, any>;
+}> = ({ masjid, errorMessage, errorDetails }) => {
   const router = useRouter();
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-8 text-center mb-6">
       <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden">
         <img
-          src={masjidLogo || ""}
-          alt={masjidName}
+          src={masjid.logo || ""}
+          alt={masjid.name}
           className="w-full h-full object-contain border-2 border-theme rounded-full"
         />
       </div>
       <div className="flex justify-center mb-4">
         <AlertCircle className="w-12 h-12 text-red-500" />
       </div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-4">Donation Failed</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        Donation Failed
+      </h2>
       <p className="text-gray-500 mb-4">
         We encountered an issue processing your donation.
       </p>
@@ -102,6 +105,32 @@ const FailedMessage: React.FC<{
           {errorMessage}
         </p>
       )}
+      
+      {errorDetails && (
+        <div className="mb-4 text-left">
+          <button 
+            onClick={() => setShowDetails(!showDetails)}
+            className="text-sm flex items-center justify-center mx-auto text-gray-500 hover:text-gray-700"
+          >
+            {showDetails ? (
+              <>
+                Hide technical details <ChevronUp className="ml-1 w-4 h-4" />
+              </>
+            ) : (
+              <>
+                Show technical details <ChevronDown className="ml-1 w-4 h-4" />
+              </>
+            )}
+          </button>
+          
+          {showDetails && (
+            <pre className="mt-2 p-3 bg-gray-100 text-xs overflow-auto rounded-lg">
+              {JSON.stringify(errorDetails, null, 2)}
+            </pre>
+          )}
+        </div>
+      )}
+      
       <div className="mt-6">
         <a
           href="#"
@@ -115,21 +144,58 @@ const FailedMessage: React.FC<{
   );
 };
 
+/**
+ * Donation result page - displays the result of a donation payment
+ * This is a purely presentational component that shows success, processing, or error states
+ */
 export default function DonationResult() {
   const masjid = useMasjidContext();
-  const { status, isLoading, error } = usePaymentStatus();
+  const [donationMeta, setDonationMeta] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRecurring, setIsRecurring] = useState(false);
+
+  // Get payment status
+  const { 
+    status: paymentStatus, 
+    isLoading: paymentLoading, 
+    error: paymentError
+  } = usePaymentStatus();
+
+  // Initialize state from session storage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Try to get donation metadata
+    const rawDonationMeta = sessionStorage.getItem("donationMeta");
+    if (rawDonationMeta) {
+      try {
+        const parsedMeta = JSON.parse(rawDonationMeta);
+        setDonationMeta(parsedMeta);
+        
+        // Check if this was a recurring donation from the URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        setIsRecurring(mode === 'recurring');
+      } catch (e) {
+        console.error("Error parsing donation metadata", e);
+      }
+    }
+
+    setIsLoading(false);
+  }, []);
 
   // Show loading state while determining payment status
-  if (!masjid) {
-    return <LoadingPage />;
+  if (!masjid || isLoading || paymentLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] text-black">
+        <div className="max-w-2xl mx-auto px-4 py-12">
+          <ProcessingMessage />
+        </div>
+      </div>
+    );
   }
 
-  // Try to get donation metadata (common to both one-off and recurring)
-  const rawDonationMeta = sessionStorage.getItem("donationMeta");
-  const donationMeta = rawDonationMeta
-    ? (JSON.parse(rawDonationMeta) as DonationMeta)
-    : null;
-
+  // Get donation details for display
   const currency = donationMeta?.currency || masjid.local_currency;
   const name = donationMeta?.first_name || "";
   const shortLink = donationMeta?.short_link || "";
@@ -143,14 +209,10 @@ export default function DonationResult() {
     ? String(Number(donationMeta.amount_cents) / 100)
     : null;
 
-  if (isLoading) {
-    return <ProcessingMessage />;
-  }
-
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-black">
       {/* Confetti overlay on successful donation */}
-      {status === "success" && (
+      {paymentStatus === "success" && (
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -163,14 +225,14 @@ export default function DonationResult() {
 
       <div className="max-w-2xl mx-auto px-4 py-12">
         {/* Render the appropriate component based on status */}
-        {status === "success" && (
+        {paymentStatus === "success" ? (
           <>
             <SuccessMessage
-              masjidName={masjid.name}
-              masjidLogo={masjid.logo || undefined}
+              masjid={masjid}
               donorName={name || undefined}
               amount={amount || undefined}
               currency={currency}
+              isRecurring={isRecurring}
             />
             <ShareSection
               entityName={masjid.name}
@@ -180,15 +242,12 @@ export default function DonationResult() {
               iconSize="medium"
             />
           </>
-        )}
-
-        {status === "processing" && <ProcessingMessage />}
-
-        {status === "failed" && (
+        ) : paymentStatus === "processing" ? (
+          <ProcessingMessage />
+        ) : (
           <FailedMessage
-            masjidName={masjid.name}
-            masjidLogo={masjid.logo || undefined}
-            errorMessage={error}
+            masjid={masjid}
+            errorMessage={paymentError}
           />
         )}
       </div>

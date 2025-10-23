@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
     tier === "starter"
   ) {
     const url = req.nextUrl.clone();
-    url.pathname = "/access-denied";
+    url.pathname = `/${masjidId}/access-denied`;
     url.searchParams.set("plan", "starter");
     return NextResponse.redirect(url);
   }
@@ -43,7 +43,7 @@ export async function middleware(req: NextRequest) {
     (tier === "community" || tier === "starter")
   ) {
     const url = req.nextUrl.clone();
-    url.pathname = "/access-denied";
+    url.pathname = `/${masjidId}/access-denied`;
     url.searchParams.set("plan", tier);
     return NextResponse.redirect(url);
   }

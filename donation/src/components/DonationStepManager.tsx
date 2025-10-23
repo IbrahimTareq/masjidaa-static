@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { DonationProvider, useDonation } from "../context/DonationContext";
+import { Campaign, ShortLink, Masjid, BankAccount } from "../types";
+import { useDonationForm } from "../hooks/useDonationForm";
 import DonationAmountStep from "./DonationAmountStep";
 import DonationUserDetailsStep from "./DonationUserDetailsStep";
 import RecurringDonationUpsellStep from "./RecurringDonationUpsellStep";
 import GiftAidStep from "./GiftAidStep";
 import DonationForm from "./DonationForm";
 import { DonationStats } from "./DonationStats";
-import { Campaign, ShortLink, Masjid, BankAccount } from "../types";
 
 interface DonationStepManagerProps {
   campaign: Campaign;
@@ -19,7 +19,10 @@ interface DonationStepManagerProps {
   totalDonorCount: number;
 }
 
-// This is the main component that gets exported
+/**
+ * Main donation flow manager component
+ * Acts as the single entry point for the donation process
+ */
 export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
   campaign,
   masjid,
@@ -28,34 +31,8 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
   monthlyDonorCount,
   totalDonorCount,
 }) => {
-  return (
-    <DonationProvider
-      campaign={campaign}
-      bankAccount={bankAccount}
-      masjid={masjid}
-      monthlyDonorCount={monthlyDonorCount}
-    >
-      <DonationStepManagerContent
-        campaign={campaign}
-        masjid={masjid}
-        bankAccount={bankAccount}
-        shortLink={shortLink}
-        monthlyDonorCount={monthlyDonorCount}
-        totalDonorCount={totalDonorCount}
-      />
-    </DonationProvider>
-  );
-};
-
-// This is an internal component that uses the context
-const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
-  campaign,
-  masjid,
-  shortLink,
-  monthlyDonorCount,
-  totalDonorCount,
-}) => {
   const {
+    // State
     currentStep,
     selectedAmount,
     donorInfo,
@@ -63,14 +40,26 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
     recurringMeta,
     isLoading,
     tempDonationData,
+    progressPercentage,
+    giftAidDeclared,
+    showGiftAidStep,
+    isRecurring,
+    
+    // Actions
+    handleDonateClick,
+    handleBack,
     handleAmountSelected,
     handleUserDetailsSubmit,
     handleRecurringUpsellSelected,
     handleKeepOneTime,
     handleGiftAidSubmit,
-    handleBack,
     handleDonationSuccess,
-  } = useDonation();
+  } = useDonationForm({
+    campaign,
+    masjid,
+    bankAccount,
+    monthlyDonorCount
+  });
 
   return (
     <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
@@ -89,6 +78,8 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
             monthlyDonorCount={monthlyDonorCount}
             totalDonorCount={totalDonorCount}
             loadingCount={false}
+            progressPercentage={progressPercentage}
+            onDonateClick={handleDonateClick}
           />
         </div>
 
@@ -123,6 +114,7 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
               shortLink={shortLink?.short_code || ""}
               initialCurrency={tempDonationData.selectedCurrency}
               frequency={tempDonationData.frequency}
+              giftAidDeclared={giftAidDeclared}
             />
           )}
         </div>
@@ -181,6 +173,7 @@ const DonationStepManagerContent: React.FC<DonationStepManagerProps> = ({
               recurringMeta={recurringMeta}
               onSuccess={handleDonationSuccess}
               onCancel={handleBack}
+              isRecurring={isRecurring}
             />
           )}
         </div>

@@ -1,3 +1,2 @@
-// Re-export all services
-export * from './client';
-export * from './server';
+// Export payment-related server actions
+export * from './payment';

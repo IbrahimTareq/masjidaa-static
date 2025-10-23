@@ -1,9 +1,8 @@
 "use client";
 
 import { Tables } from "@/database.types";
-import { useDonation } from "@/donation/src/context/DonationContext";
 import { formatCurrency } from "@/utils/currency";
-import { Share2, Target, TrendingUp, Users } from "lucide-react";
+import { Target, TrendingUp, Users } from "lucide-react";
 import React from "react";
 
 interface DonationStatsProps {
@@ -12,6 +11,8 @@ interface DonationStatsProps {
   monthlyDonorCount: number;
   totalDonorCount: number;
   loadingCount: boolean;
+  progressPercentage?: number;
+  onDonateClick?: () => void;
 }
 
 export const DonationStats: React.FC<DonationStatsProps> = ({
@@ -20,8 +21,18 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
   monthlyDonorCount,
   totalDonorCount,
   loadingCount,
+  progressPercentage: propProgressPercentage,
+  onDonateClick,
 }) => {
-  const { progressPercentage, handleDonateClick } = useDonation();
+  // Calculate progress percentage if not provided via props
+  const progressPercentage = propProgressPercentage !== undefined
+    ? propProgressPercentage
+    : Math.min(
+        Math.round(
+          (Number(campaign.amount_raised) / Number(campaign.target_amount)) * 100
+        ),
+        100
+      );
 
   return (
     <div className="p-5 space-y-4">
@@ -82,7 +93,7 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
       {/* Action Buttons */}
       <div className="space-y-2.5 pt-1">
         {campaign.active ? <button
-          onClick={handleDonateClick}
+          onClick={onDonateClick}
           className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
           Donate now

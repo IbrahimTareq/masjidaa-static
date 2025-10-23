@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { BeatLoader } from "react-spinners";
+import React from "react";
+import { useDonationGiftAid } from "../hooks/useDonationGiftAid";
+import { 
+  DonationStepLayout, 
+  DonationButton,
+  DonationCheckbox
+} from "./ui";
 
 interface GiftAidStepProps {
   onSubmit: (giftAidDeclared: boolean) => void;
@@ -14,26 +19,19 @@ export default function GiftAidStep({
   onBack,
   isLoading = false,
 }: GiftAidStepProps) {
-  const [giftAidDeclared, setGiftAidDeclared] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(giftAidDeclared);
-  };
+  const {
+    giftAidDeclared,
+    setGiftAidDeclared,
+    handleSubmit,
+  } = useDonationGiftAid({
+    onSubmit,
+  });
 
   return (
-    <div className="p-5 pb-4">
-      <div className="flex justify-between items-center mb-8">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-gray-600 hover:text-gray-800 cursor-pointer"
-        >
-          ← Back
-        </button>
-        <div className="text-lg font-medium">Gift Aid Declaration</div>
-      </div>
-
+    <DonationStepLayout
+      title="Gift Aid Declaration"
+      onBack={onBack}
+    >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <div className="rounded-lg">
@@ -62,30 +60,24 @@ export default function GiftAidStep({
             <img src="/gift-aid.svg" alt="Gift Aid" className="w-40 h-auto" />
           </div>
 
-          <div className="pt-2">
-            <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
-              <div className="flex-shrink-0 mt-0.5">
-                <input
-                  type="checkbox"
-                  id="giftAidDeclared"
-                  checked={giftAidDeclared}
-                  onChange={(e) => setGiftAidDeclared(e.target.checked)}
-                  className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
-                />
-              </div>
-              <span>Claim Gift Aid on this donation.</span>
-            </label>
-          </div>
+          <DonationCheckbox
+            id="giftAidDeclared"
+            checked={giftAidDeclared}
+            onChange={(e) => setGiftAidDeclared(e.target.checked)}
+            label="Claim Gift Aid on this donation."
+            className="pt-2"
+          />
         </div>
 
-        <button
+        <DonationButton
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
+          isLoading={isLoading}
+          fullWidth
         >
-          {isLoading ? <BeatLoader color="#fff" size={8} /> : "Continue"}
-        </button>
+          Continue
+        </DonationButton>
       </form>
-    </div>
+    </DonationStepLayout>
   );
 }

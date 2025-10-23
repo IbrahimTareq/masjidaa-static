@@ -1,18 +1,18 @@
 "use client";
 
+import React from "react";
 import { useMasjidContext } from "@/context/masjidContext";
 import { formatCurrency } from "@/utils/currency";
-import {
-  STRIPE_DONATION_FEE_FIXED,
-  STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC,
-  STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL,
-  PRESET_AMOUNTS,
-} from "@/utils/shared/constants";
-import { Convert } from "easy-currencies";
+import { PRESET_AMOUNTS } from "@/utils/shared/constants";
 import { Info } from "lucide-react";
-import React, { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { PaymentFrequency } from "../types";
+import { useDonationAmount } from "../hooks/useDonationAmount";
+import { 
+  DonationStepLayout, 
+  DonationButton,
+  DonationFormField
+} from "./ui";
 
 interface DonationAmountStepProps {
   onNext: (
@@ -25,173 +25,42 @@ interface DonationAmountStepProps {
   isLoading?: boolean;
 }
 
-// --- Helper functions ---------------------------------------------------
-
-function calculateTotalWithFee(baseAmount: number, feePercentage: number, coverFee: boolean) {
-  if (!coverFee) return baseAmount;
-  return (baseAmount + STRIPE_DONATION_FEE_FIXED) / (1 - feePercentage);
-}
-
-function calculateBaseAmount(totalAmount: number, feePercentage: number, coverFee: boolean) {
-  if (!coverFee) return totalAmount;
-  const base = (totalAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage);
-  return Math.max(0, base);
-}
-
-// ------------------------------------------------------------------------
-
 export default function DonationAmountStep({
   onNext,
   onBack,
   isLoading = false,
 }: DonationAmountStepProps) {
   const masjid = useMasjidContext();
-  const [customAmount, setCustomAmount] = useState("");
-  const [coverFee, setCoverFee] = useState(true);
-  const [frequency, setFrequency] = useState<PaymentFrequency>("once");
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    masjid?.local_currency || "aud"
-  );
-  const [convertedAmounts, setConvertedAmounts] = useState<Record<number, number>>(
-    PRESET_AMOUNTS.reduce((acc, amount) => ({ ...acc, [amount]: amount }), {})
-  );
-  const [conversionLoading, setConversionLoading] = useState(false);
-  const [selectedPresetAmount, setSelectedPresetAmount] = useState<number | null>(null);
-  const [errors, setErrors] = useState<{ amount?: string }>({});
-
-  // --- Utility: Get correct fee percentage ---------------------------------
-  const getFeePercentage = () =>
-    selectedCurrency === masjid?.local_currency
-      ? STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC
-      : STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL;
-
-  // --- Utility: Displayed processing fee (for tooltip text) ----------------
-  const calculateProcessingFee = (amount: number) => {
-    const feePercentage = getFeePercentage();
-    return Math.round((amount * feePercentage + STRIPE_DONATION_FEE_FIXED) * 100) / 100;
-  };
-
-  // --- Handle preset click -------------------------------------------------
-  const handlePresetClick = (amount: number) => {
-    setSelectedPresetAmount(amount);
-    const feePercentage = getFeePercentage();
-    const convertedAmount = convertedAmounts[amount];
-    const total = calculateTotalWithFee(convertedAmount, feePercentage, coverFee);
-    setCustomAmount(total.toFixed(2));
-    setErrors({});
-  };
-
-  // --- Handle cover fee toggle --------------------------------------------
-  const handleFeeToggle = (checked: boolean) => {
-    setCoverFee(checked);
-
-    if (selectedPresetAmount !== null) {
-      const feePercentage = getFeePercentage();
-      const convertedAmount = convertedAmounts[selectedPresetAmount];
-      const total = calculateTotalWithFee(convertedAmount, feePercentage, checked);
-      setCustomAmount(total.toFixed(2));
-      return;
-    }
-
-    const currentAmount = parseFloat(customAmount);
-    if (!customAmount || isNaN(currentAmount)) return;
-
-    const feePercentage = getFeePercentage();
-    const baseAmount = calculateBaseAmount(currentAmount, feePercentage, coverFee);
-    const total = calculateTotalWithFee(baseAmount, feePercentage, checked);
-    setCustomAmount(total.toFixed(2));
-  };
-
-  // --- Handle custom input -------------------------------------------------
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomAmount(e.target.value);
-    setSelectedPresetAmount(null);
-    setErrors({});
-  };
-
-  // --- Currency conversion -------------------------------------------------
-  useEffect(() => {
-    const convertAmounts = async () => {
-      if (!masjid) return;
-
-      const feePercentage = getFeePercentage();
-
-      try {
-        setConversionLoading(true);
-
-        const newAmounts: Record<number, number> = {};
-
-        for (const amount of PRESET_AMOUNTS) {
-          if (selectedCurrency === masjid.local_currency) {
-            newAmounts[amount] = amount;
-          } else {
-            const converted = await Convert(amount)
-              .from(masjid.local_currency)
-              .to(selectedCurrency);
-            newAmounts[amount] = Math.ceil(converted);
-          }
-        }
-
-        setConvertedAmounts(newAmounts);
-
-        if (selectedPresetAmount !== null) {
-          const convertedAmount = newAmounts[selectedPresetAmount];
-          const total = calculateTotalWithFee(convertedAmount, feePercentage, coverFee);
-          setCustomAmount(total.toFixed(2));
-        }
-      } catch (error) {
-        console.error("Currency conversion error:", error);
-      } finally {
-        setConversionLoading(false);
-      }
-    };
-
-    convertAmounts();
-  }, [selectedCurrency, masjid, selectedPresetAmount, coverFee]);
-
-  // --- Base amount for calculations ---------------------------------------
-  const getBaseAmount = () => {
-    const amount = parseFloat(customAmount);
-    if (isNaN(amount)) return 0;
-    const feePercentage = getFeePercentage();
-    return calculateBaseAmount(amount, feePercentage, coverFee);
-  };
-
-  // --- Validation ----------------------------------------------------------
-  const validateForm = () => {
-    const amount = parseFloat(customAmount);
-    const newErrors: typeof errors = {};
-    if (!customAmount || isNaN(amount)) newErrors.amount = "Please enter a valid amount";
-    else if (amount < 1) newErrors.amount = "Minimum donation amount is 1";
-    else if (amount > 999999) newErrors.amount = "Maximum donation amount is 999,999";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // --- Submit --------------------------------------------------------------
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onNext(customAmount, coverFee, frequency, selectedCurrency);
-  };
+  
+  const {
+    customAmount,
+    coverFee,
+    frequency,
+    selectedCurrency,
+    selectedPresetAmount,
+    errors,
+    convertedAmounts,
+    conversionLoading,
+    getBaseAmount,
+    calculateProcessingFee,
+    setFrequency,
+    setSelectedCurrency,
+    handlePresetClick,
+    handleFeeToggle,
+    handleInputChange,
+    handleSubmit,
+  } = useDonationAmount({
+    masjidCurrency: masjid?.local_currency || "aud",
+    onAmountSelected: onNext,
+  });
 
   if (!masjid) return null;
 
-  // --- UI ------------------------------------------------------------------
   return (
-    <div className="p-5 pb-4">
-      {/* Back + Title */}
-      <div className="flex justify-between items-center mb-8">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-gray-600 hover:text-gray-800 cursor-pointer"
-        >
-          ← Back
-        </button>
-        <div className="text-lg font-medium">Donation Amount</div>
-      </div>
-
+    <DonationStepLayout
+      title="Donation Amount"
+      onBack={onBack}
+    >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Frequency Selection */}
         <div className="space-y-4">
@@ -333,14 +202,15 @@ export default function DonationAmountStep({
         </div>
 
         {/* Submit */}
-        <button
+        <DonationButton
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
+          isLoading={isLoading}
+          fullWidth
         >
-          {isLoading ? "Processing..." : "Next"}
-        </button>
+          Next
+        </DonationButton>
       </form>
-    </div>
+    </DonationStepLayout>
   );
 }
