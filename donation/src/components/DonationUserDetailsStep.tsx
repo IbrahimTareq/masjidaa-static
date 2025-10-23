@@ -13,6 +13,7 @@ import {
   DonationTextarea,
   DonationCheckbox
 } from "./ui";
+import { ExtendedDonationStep } from "../hooks/useDonationForm";
 
 interface DonationUserDetailsStepProps {
   onSubmit: (donorInfo: DonorInfo, frequency: PaymentFrequency) => Promise<void>;
@@ -22,6 +23,7 @@ interface DonationUserDetailsStepProps {
   initialCurrency: string;
   frequency: PaymentFrequency;
   giftAidDeclared?: boolean; // Add this prop
+  currentStep?: ExtendedDonationStep;
 }
 
 export default function DonationUserDetailsStep({
@@ -32,6 +34,7 @@ export default function DonationUserDetailsStep({
   initialCurrency,
   frequency,
   giftAidDeclared = false, // Default to false if not provided
+  currentStep = "user_details",
 }: DonationUserDetailsStepProps) {
   const {
     donorInfo,
@@ -50,6 +53,7 @@ export default function DonationUserDetailsStep({
     <DonationStepLayout
       title="Your Information"
       onBack={onBack}
+      currentStep={currentStep}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Personal Information Section */}

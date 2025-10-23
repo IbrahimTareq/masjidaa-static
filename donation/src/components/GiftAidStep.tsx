@@ -7,17 +7,20 @@ import {
   DonationButton,
   DonationCheckbox
 } from "./ui";
+import { ExtendedDonationStep } from "../hooks/useDonationForm";
 
 interface GiftAidStepProps {
   onSubmit: (giftAidDeclared: boolean) => void;
   onBack: () => void;
   isLoading?: boolean;
+  currentStep?: ExtendedDonationStep;
 }
 
 export default function GiftAidStep({
   onSubmit,
   onBack,
   isLoading = false,
+  currentStep = "gift_aid",
 }: GiftAidStepProps) {
   const {
     giftAidDeclared,
@@ -31,6 +34,7 @@ export default function GiftAidStep({
     <DonationStepLayout
       title="Gift Aid Declaration"
       onBack={onBack}
+      currentStep={currentStep}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">

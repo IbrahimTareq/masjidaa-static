@@ -1,18 +1,14 @@
 "use client";
 
-import React from "react";
 import { useMasjidContext } from "@/context/masjidContext";
 import { formatCurrency } from "@/utils/currency";
 import { PRESET_AMOUNTS } from "@/utils/shared/constants";
 import { Info } from "lucide-react";
 import { Tooltip } from "react-tooltip";
-import { PaymentFrequency } from "../types";
 import { useDonationAmount } from "../hooks/useDonationAmount";
-import { 
-  DonationStepLayout, 
-  DonationButton,
-  DonationFormField
-} from "./ui";
+import { PaymentFrequency } from "../types";
+import { DonationButton, DonationStepLayout } from "./ui";
+import { ExtendedDonationStep } from "../hooks/useDonationForm";
 
 interface DonationAmountStepProps {
   onNext: (
@@ -23,15 +19,17 @@ interface DonationAmountStepProps {
   ) => void;
   onBack: () => void;
   isLoading?: boolean;
+  currentStep?: ExtendedDonationStep;
 }
 
 export default function DonationAmountStep({
   onNext,
   onBack,
   isLoading = false,
+  currentStep = "amount",
 }: DonationAmountStepProps) {
   const masjid = useMasjidContext();
-  
+
   const {
     customAmount,
     coverFee,
@@ -57,27 +55,28 @@ export default function DonationAmountStep({
   if (!masjid) return null;
 
   return (
-    <DonationStepLayout
-      title="Donation Amount"
-      onBack={onBack}
-    >
+    <DonationStepLayout title="Donation Amount" onBack={onBack} currentStep="amount">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Frequency Selection */}
         <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700">Select Frequency</label>
-          <div className="grid grid-cols-3 gap-0 rounded-lg overflow-hidden border-2 border-gray-200">
-            {["once", "weekly", "monthly"].map((freq) => (
+          <label className="block text-sm font-medium text-gray-700">
+            Donation Frequency
+          </label>
+          <div className="grid grid-cols-4 gap-3">
+            {["once", "weekly", "monthly", "daily"].map((freq) => (
               <button
                 key={freq}
                 type="button"
                 onClick={() => setFrequency(freq as PaymentFrequency)}
-                className={`py-3 px-4 transition-colors cursor-pointer ${
+                className={`text-sm py-3 px-4 rounded-lg border-2 transition-colors ${
                   frequency === freq
-                    ? "bg-theme text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
+                    ? "border-[var(--theme-color)] bg-[var(--theme-color-10)] text-[var(--theme-color)]"
+                    : "border-gray-200 hover:border-gray-300 text-gray-700 cursor-pointer"
                 }`}
               >
-                {freq === "once" ? "One-time" : freq.charAt(0).toUpperCase() + freq.slice(1)}
+                {freq === "once"
+                  ? "One-off"
+                  : freq.charAt(0).toUpperCase() + freq.slice(1)}
               </button>
             ))}
           </div>
@@ -85,15 +84,17 @@ export default function DonationAmountStep({
 
         {/* Amount Selection */}
         <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700">Select Amount</label>
-          <div className="grid grid-cols-3 gap-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Suggested Amounts
+          </label>
+          <div className="grid grid-cols-4 gap-3">
             {PRESET_AMOUNTS.map((amount) => (
               <button
                 key={amount}
                 type="button"
                 onClick={() => handlePresetClick(amount)}
                 disabled={conversionLoading}
-                className={`py-3 px-4 rounded-lg border-2 transition-colors ${
+                className={`text-sm py-3 px-4 rounded-lg border-2 transition-colors ${
                   selectedPresetAmount === amount
                     ? "border-[var(--theme-color)] bg-[var(--theme-color-10)] text-[var(--theme-color)]"
                     : "border-gray-200 hover:border-gray-300 text-gray-700 cursor-pointer"
@@ -101,7 +102,10 @@ export default function DonationAmountStep({
               >
                 {conversionLoading
                   ? "..."
-                  : formatCurrency({ amount: convertedAmounts[amount], currency: selectedCurrency })}
+                  : formatCurrency({
+                      amount: convertedAmounts[amount],
+                      currency: selectedCurrency,
+                    })}
               </button>
             ))}
           </div>
@@ -121,10 +125,14 @@ export default function DonationAmountStep({
                 placeholder="0.00"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">{selectedCurrency.toUpperCase()}</span>
+                <span className="text-gray-500 sm:text-sm">
+                  {selectedCurrency.toUpperCase()}
+                </span>
               </div>
             </div>
-            {errors.amount && <p className="mt-2 text-sm text-red-600">{errors.amount}</p>}
+            {errors.amount && (
+              <p className="mt-2 text-sm text-red-600">{errors.amount}</p>
+            )}
           </div>
 
           {/* Cover Fees Checkbox */}
@@ -158,9 +166,17 @@ export default function DonationAmountStep({
                   className="z-50 max-w-xs !bg-white !text-gray-800 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
                 >
                   <div className="space-y-2 text-xs">
-                    <h2 className="text-sm font-semibold">Cover Processing Fees</h2>
-                    <p>When checked, 100% of your intended donation amount reaches the cause.</p>
-                    <p>This small additional amount helps cover Stripe and platform fees.</p>
+                    <h2 className="text-sm font-semibold">
+                      Cover Processing Fees
+                    </h2>
+                    <p>
+                      When checked, 100% of your intended donation amount
+                      reaches the cause.
+                    </p>
+                    <p>
+                      This small additional amount helps cover Stripe and
+                      platform fees.
+                    </p>
                   </div>
                 </Tooltip>
               </label>
@@ -194,7 +210,12 @@ export default function DonationAmountStep({
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>

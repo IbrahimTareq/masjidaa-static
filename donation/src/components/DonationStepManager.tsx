@@ -95,6 +95,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
             onNext={handleAmountSelected}
             onBack={handleBack}
             isLoading={isLoading}
+            currentStep={currentStep}
           />
         </div>
 
@@ -115,6 +116,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
               initialCurrency={tempDonationData.selectedCurrency}
               frequency={tempDonationData.frequency}
               giftAidDeclared={giftAidDeclared}
+              currentStep={currentStep}
             />
           )}
         </div>
@@ -134,6 +136,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
               onSelectMonthlyAmount={handleRecurringUpsellSelected}
               onKeepOneTime={handleKeepOneTime}
               onBack={handleBack}
+              currentStep={currentStep}
             />
           )}
         </div>
@@ -150,6 +153,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
             onSubmit={handleGiftAidSubmit}
             onBack={handleBack}
             isLoading={isLoading}
+            currentStep={currentStep}
           />
         </div>
 

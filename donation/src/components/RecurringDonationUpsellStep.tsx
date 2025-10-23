@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import { PaymentFrequency } from "../types";
 import { useDonationUpsell } from "../hooks/useDonationUpsell";
 import { DonationStepLayout, DonationButton } from "./ui";
+import { ExtendedDonationStep } from "../hooks/useDonationForm";
 
 interface RecurringDonationUpsellStepProps {
   amount: string;
@@ -11,6 +12,7 @@ interface RecurringDonationUpsellStepProps {
   onSelectMonthlyAmount: (amount: string, frequency: PaymentFrequency) => void;
   onKeepOneTime: () => void;
   onBack: () => void;
+  currentStep?: ExtendedDonationStep;
 }
 
 export default function RecurringDonationUpsellStep({
@@ -19,6 +21,7 @@ export default function RecurringDonationUpsellStep({
   onSelectMonthlyAmount,
   onKeepOneTime,
   onBack,
+  currentStep = "recurring_upsell",
 }: RecurringDonationUpsellStepProps) {
   const {
     formattedOriginalAmount,
@@ -38,6 +41,7 @@ export default function RecurringDonationUpsellStep({
     <DonationStepLayout
       title="Become a monthly supporter"
       onBack={onBack}
+      currentStep={currentStep}
     >
       <p className="text-center text-gray-700">
         Would you consider turning your {formattedOriginalAmount} contribution

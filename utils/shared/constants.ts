@@ -10,7 +10,7 @@ export const STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL = 0.045;
 // Standard Stripe fixed fee
 export const STRIPE_DONATION_FEE_FIXED = 0.30;
 
-export const PRESET_AMOUNTS = [10, 20, 50];
+export const PRESET_AMOUNTS = [20, 50, 100, 200];
 export const SWIPER_SETTINGS = {
   spaceBetween: 30,
   centeredSlides: true,
