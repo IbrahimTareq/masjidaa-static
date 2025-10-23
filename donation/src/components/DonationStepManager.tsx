@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { Campaign, ShortLink, Masjid, BankAccount } from "../types";
 import { useDonationForm } from "../hooks/useDonationForm";
+import { BankAccount, Campaign, Masjid, ShortLink } from "../types";
 import DonationAmountStep from "./DonationAmountStep";
-import DonationUserDetailsStep from "./DonationUserDetailsStep";
-import RecurringDonationUpsellStep from "./RecurringDonationUpsellStep";
-import GiftAidStep from "./GiftAidStep";
 import DonationForm from "./DonationForm";
 import { DonationStats } from "./DonationStats";
+import DonationUserDetailsStep from "./DonationUserDetailsStep";
+import GiftAidStep from "./GiftAidStep";
+import RecurringDonationUpsellStep from "./RecurringDonationUpsellStep";
 
 interface DonationStepManagerProps {
   campaign: Campaign;
@@ -44,7 +44,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
     giftAidDeclared,
     showGiftAidStep,
     isRecurring,
-    
+
     // Actions
     handleDonateClick,
     handleBack,
@@ -58,7 +58,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
     campaign,
     masjid,
     bankAccount,
-    monthlyDonorCount
+    monthlyDonorCount,
   });
 
   return (
@@ -140,7 +140,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
             />
           )}
         </div>
-        
+
         {/* Gift Aid Declaration Panel - Step 3/4 (conditional for UK) */}
         <div
           className={`transition-all duration-300 ${
@@ -149,12 +149,15 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
               : "opacity-0 invisible h-0"
           }`}
         >
-          <GiftAidStep
-            onSubmit={handleGiftAidSubmit}
-            onBack={handleBack}
-            isLoading={isLoading}
-            currentStep={currentStep}
-          />
+          {tempDonationData && (
+            <GiftAidStep
+              onSubmit={handleGiftAidSubmit}
+              onBack={handleBack}
+              isLoading={isLoading}
+              currentStep={currentStep}
+              donationAmount={parseFloat(tempDonationData.amount)}
+            />
+          )}
         </div>
 
         {/* Payment Form Panel - Step 4/5 */}
@@ -169,7 +172,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
             <DonationForm
               masjid={masjid.slug}
               name={donorInfo.firstName}
-              currency={masjid.local_currency}
+              currency={tempDonationData?.selectedCurrency || 'aud'}
               amount={selectedAmount / 100}
               clientSecret={clientSecret}
               mode={recurringMeta ? "recurring" : "one_off"}

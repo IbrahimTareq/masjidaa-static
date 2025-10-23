@@ -4,8 +4,11 @@ import { PaymentMode, RecurringMeta } from "@/donation/src/types";
 import { formatCurrency } from "@/utils/currency";
 import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
-import { useDonationPayment, getStripePromise } from "../hooks/useDonationPayment";
-import { DonationStepLayout, DonationButton } from "./ui";
+import {
+  getStripePromise,
+  useDonationPayment,
+} from "../hooks/useDonationPayment";
+import { DonationButton } from "./ui";
 
 /**
  * Props for the DonationForm component
@@ -37,24 +40,21 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
   onCancel,
   isRecurring,
 }) => {
-  const {
-    stripe,
-    elements,
-    isProcessing,
-    errorMessage,
-    handleSubmit,
-  } = useDonationPayment({
-    masjid,
-    mode,
-    recurringMeta,
-    onSuccess,
-    onCancel,
-  });
+  const { stripe, elements, isProcessing, errorMessage, handleSubmit } =
+    useDonationPayment({
+      masjid,
+      mode,
+      recurringMeta,
+      onSuccess,
+      onCancel,
+    });
 
   // Determine button text based on whether this is a recurring donation
-  const buttonText = isRecurring 
-    ? "Set Up Monthly Donation" 
+  const buttonText = isRecurring
+    ? "Set Up Recurring Donation"
     : "Complete Donation";
+
+  const frequencyText = recurringMeta?.frequency;
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -70,10 +70,10 @@ const DonationFormContent: React.FC<DonationFormProps> = ({
           <div className="text-lg font-medium">
             {isRecurring ? "Setting up " : "Donating "}
             {formatCurrency({ amount, currency })}
-            {isRecurring && " monthly"}
+            {isRecurring && ` ${frequencyText}`}
           </div>
         </div>
-        
+
         <PaymentElement />
 
         {errorMessage && (
@@ -128,11 +128,7 @@ export default function DonationForm({
 
   return (
     <Elements stripe={getStripePromise()} options={options}>
-      <DonationFormContent 
-        mode={mode} 
-        isRecurring={isRecurring} 
-        {...props} 
-      />
+      <DonationFormContent mode={mode} isRecurring={isRecurring} {...props} />
     </Elements>
   );
 }

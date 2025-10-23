@@ -1,19 +1,20 @@
 "use client";
 
-import React from "react";
-import { useDonationGiftAid } from "../hooks/useDonationGiftAid";
-import { 
-  DonationStepLayout, 
-  DonationButton,
-  DonationCheckbox
-} from "./ui";
+import { formatCurrency } from "@/utils/currency";
 import { ExtendedDonationStep } from "../hooks/useDonationForm";
+import { useDonationGiftAid } from "../hooks/useDonationGiftAid";
+import {
+  DonationButton,
+  DonationCheckbox,
+  DonationStepLayout
+} from "./ui";
 
 interface GiftAidStepProps {
   onSubmit: (giftAidDeclared: boolean) => void;
   onBack: () => void;
   isLoading?: boolean;
   currentStep?: ExtendedDonationStep;
+  donationAmount?: number; // Added prop for donation amount
 }
 
 export default function GiftAidStep({
@@ -21,6 +22,7 @@ export default function GiftAidStep({
   onBack,
   isLoading = false,
   currentStep = "gift_aid",
+  donationAmount = 0,
 }: GiftAidStepProps) {
   const {
     giftAidDeclared,
@@ -29,10 +31,14 @@ export default function GiftAidStep({
   } = useDonationGiftAid({
     onSubmit,
   });
-
+  
+  // Calculate Gift Aid amount (25% of donation amount)
+  const giftAidAmount = donationAmount * 0.25;
+  const totalAmount = donationAmount + giftAidAmount;
+  
   return (
     <DonationStepLayout
-      title="Gift Aid Declaration"
+      title="Boost your donation with Gift Aid"
       onBack={onBack}
       currentStep={currentStep}
     >
@@ -42,6 +48,31 @@ export default function GiftAidStep({
             <h3 className="font-medium text-theme mb-2">
               Make your donation go 25% further – at no extra cost.
             </h3>
+            
+            {/* Gift Aid Summary Box */}
+            <div className="border border-gray-200 rounded-lg p-4 mb-4">
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-gray-600 text-sm">Your donation</p>
+                  <p className="text-gray-900 text-xl font-semibold">
+                    {formatCurrency({ amount: donationAmount, currency: 'GBP', decimals: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-theme text-sm">Gift Aid boost</p>
+                  <p className="text-theme text-xl font-semibold">
+                    + {formatCurrency({ amount: giftAidAmount, currency: 'GBP', decimals: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Total received</p>
+                  <p className="text-gray-900 text-xl font-semibold">
+                    {formatCurrency({ amount: totalAmount, currency: 'GBP', decimals: 2 })}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <p className="text-sm">
               By applying Gift Aid to your donation, you acknowledge that you
               are a UK taxpayer and understand that if you pay less income

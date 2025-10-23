@@ -139,7 +139,7 @@ export async function finalizeRecurringDonation(
       }
     );
 
-    const data = await response.json();
+    const data = await response.json() as { error?: string; subscription_id?: string };
     
     if (!response.ok) {
       return { 
@@ -154,7 +154,7 @@ export async function finalizeRecurringDonation(
 
     return { 
       success: true, 
-      subscription_id: data.subscription_id 
+      subscription_id: data.subscription_id
     };
   } catch (error) {
     console.error("Error finalizing recurring donation:", error);

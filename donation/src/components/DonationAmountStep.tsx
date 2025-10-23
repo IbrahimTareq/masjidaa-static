@@ -6,9 +6,9 @@ import { PRESET_AMOUNTS } from "@/utils/shared/constants";
 import { Info } from "lucide-react";
 import { Tooltip } from "react-tooltip";
 import { useDonationAmount } from "../hooks/useDonationAmount";
+import { ExtendedDonationStep } from "../hooks/useDonationForm";
 import { PaymentFrequency } from "../types";
 import { DonationButton, DonationStepLayout } from "./ui";
-import { ExtendedDonationStep } from "../hooks/useDonationForm";
 
 interface DonationAmountStepProps {
   onNext: (
@@ -55,14 +55,14 @@ export default function DonationAmountStep({
   if (!masjid) return null;
 
   return (
-    <DonationStepLayout title="Donation Amount" onBack={onBack} currentStep="amount">
+    <DonationStepLayout title="Donation Amount" onBack={onBack} currentStep={currentStep}>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Frequency Selection */}
         <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700">
             Donation Frequency
           </label>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {["once", "weekly", "monthly", "daily"].map((freq) => (
               <button
                 key={freq}
@@ -87,7 +87,7 @@ export default function DonationAmountStep({
           <label className="block text-sm font-medium text-gray-700">
             Suggested Amounts
           </label>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {PRESET_AMOUNTS.map((amount) => (
               <button
                 key={amount}
@@ -195,12 +195,11 @@ export default function DonationAmountStep({
                 onChange={(e) => setSelectedCurrency(e.target.value)}
                 disabled={conversionLoading}
               >
-                <option value="aud">Australian Dollars</option>
-                <option value="usd">US Dollars</option>
-                <option value="eur">Euros</option>
-                <option value="gbp">British Pounds</option>
-                <option value="cad">Canadian Dollars</option>
-                <option value="sgd">Singapore Dollars</option>
+                <option value="aud">🇦🇺 Australian Dollars</option>
+                <option value="gbp">🇬🇧 British Pounds</option>
+                <option value="cad">🇨🇦 Canadian Dollars</option>
+                <option value="nzd">🇳🇿 New Zealand Dollars</option>
+                <option value="usd">🇺🇸 US Dollars</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
                 <svg
