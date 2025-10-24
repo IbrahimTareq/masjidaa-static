@@ -30,9 +30,7 @@ export default async function Page({
 
   if (prayerScreen) {
     return (
-      <PrayerScreens>
-        {prayerScreen}
-      </PrayerScreens>
+      <PrayerScreens formattedData={prayerData}>{prayerScreen}</PrayerScreens>
     );
   }
 

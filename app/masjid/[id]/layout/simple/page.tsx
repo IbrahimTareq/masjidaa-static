@@ -1,7 +1,7 @@
-import Slideshow from "@/components/client/interactive/Slideshow";
-import { Ticker } from "@/components/client/interactive/Ticker";
 import { getUpcomingIqamahTimeChanges } from "@/lib/server/services/masjidIqamahTimes";
 import { getMasjidSlidesById } from "@/lib/server/services/masjidSlides";
+import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
+import SimpleLayout from "./simple-layout";
 
 export default async function SimpleLayoutPage({
   params,
@@ -15,6 +15,9 @@ export default async function SimpleLayoutPage({
 
   // Check for upcoming iqamah time changes
   const upcomingIqamahTimeChanges = await getUpcomingIqamahTimeChanges(id);
+  
+  // Get prayer data for iqamah dimming functionality
+  const prayerData = await getServerPrayerData(id);
 
   if (!slidesData || slidesData.length === 0) {
     return (
@@ -157,11 +160,9 @@ export default async function SimpleLayoutPage({
   }
 
   return (
-    <div className="h-screen p-2 sm:p-4 lg:p-5 bg-gradient-to-br from-theme to-theme flex flex-col">
-      <div className="flex-1 w-full rounded-t-2xl rounded-b-2xl sm:rounded-t-3xl sm:rounded-b-3xl overflow-hidden">
-        <Slideshow slides={processedSlides} />
-      </div>
-      <Ticker />
-    </div>
+    <SimpleLayout 
+      slides={processedSlides} 
+      formattedData={prayerData}
+    />
   );
 }

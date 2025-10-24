@@ -3,10 +3,12 @@
 import { useMasjidContext } from "@/context/masjidContext";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Slideshow, { Slide } from "@/components/client/interactive/Slideshow";
 import { useQRCode } from "@/hooks/useQRCode";
+import { useScreenDim } from "@/hooks/useScreenDim";
+import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import { DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -28,6 +30,8 @@ export default function AdvancedSlideshow({
 
   const qrRef = useRef<HTMLDivElement>(null);
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const masjid = useMasjidContext();
 
   const { formatCurrentTime } = useDateTimeFormat();
@@ -43,15 +47,60 @@ export default function AdvancedSlideshow({
     qrRef
   );
 
+  const [secondsLeft, setSecondsLeft] = useState(() =>
+    getTimeUntilNextInSeconds(
+      prayerInfo?.timeUntilNext || { hours: 0, minutes: 0, seconds: 0 }
+    )
+  );
+
+  useEffect(() => {
+    if (prayerInfo?.timeUntilNext) {
+      setSecondsLeft(getTimeUntilNextInSeconds(prayerInfo?.timeUntilNext));
+    }
+  }, [prayerInfo?.timeUntilNext]);
+
+  useEffect(() => {
+    if (!prayerInfo?.timeUntilNext || secondsLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [prayerInfo?.timeUntilNext, secondsLeft]);
+
+  const countdown = calculateCountdown(secondsLeft);
+  
+  // Use the screen dim hook to handle dimming when iqamah countdown reaches zero
+  const { isDimmed, opacity, remainingPercent } = useScreenDim({
+    shouldDim: label.toLowerCase() === "iqamah" && secondsLeft === 0,
+    durationMinutes: 5,
+    dimOpacity: 0.8
+  });
+
   return (
-    <div className="h-screen w-screen bg-white flex flex-col lg:flex-row overflow-hidden">
+    <div className="h-screen w-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
+      {/* Dimming overlay */}
+      {isDimmed && (
+        <div className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500" 
+             style={{ opacity: opacity }}>
+          {/* Optional: Progress indicator for remaining dim time */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-theme-accent" 
+               style={{ width: `${remainingPercent}%`, transition: 'width 1s linear' }}>
+          </div>
+        </div>
+      )}
       {/* Mobile Top Bar - Only visible on mobile */}
       <div className="lg:hidden bg-theme text-white p-3 flex justify-between items-center flex-shrink-0">
         <div className="text-center">
           <div className="text-lg font-light">{time}</div>
           <div className="text-xs opacity-90">
-            Next prayer begins in {prayerInfo?.timeUntilNext?.hours}hr{" "}
-            {prayerInfo?.timeUntilNext?.minutes}min
+            {prayerInfo?.next?.name} {label} in {countdown.hours}{" "}
+            <span className="text-base font-semibold">hr</span>&nbsp;
+            {countdown.minutes}{" "}
+            <span className="text-base font-semibold">min</span>&nbsp;
+            {countdown.seconds}{" "}
+            <span className="text-base font-semibold">sec</span>&nbsp;
           </div>
         </div>
         <div className="text-center">
@@ -139,19 +188,30 @@ export default function AdvancedSlideshow({
         {/* Content container to ensure it appears above the background */}
         <div className="relative z-10 flex flex-col h-full w-full">
           {/* Current Time Section */}
-          <div className="p-8 xl:p-10 text-center border-b border-white/20">
+          <div className="p-8 text-center border-b border-white/20">
             <div className="text-6xl xl:text-[4rem] font-light mb-4 xl:mb-6 tracking-tighter">
               {time}
             </div>
             <div className="text-base xl:text-lg opacity-90 font-medium">
-              <span className="font-bold uppercase">
-                {prayerInfo?.next?.name}
-              </span>{" "}
-              begins in&nbsp;
-              <span className="font-bold uppercase">
-                {prayerInfo?.timeUntilNext?.hours}hr{" "}
-                {prayerInfo?.timeUntilNext?.minutes}min
-              </span>
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="flex gap-2 items-center justify-center">
+                  <span className="text-lg xl:text-2xl font-semibold uppercase">
+                    {prayerInfo?.next?.name}
+                  </span>
+                  &nbsp;{label} in&nbsp;
+                </div>
+
+                <div className="flex gap-2 items-center justify-center">
+                  <span className="text-lg xl:text-2xl font-semibold uppercase">
+                    {countdown.hours}&nbsp;
+                    <span className="text-base">hr</span>&nbsp;
+                    {countdown.minutes}&nbsp;
+                    <span className="text-base">min</span>&nbsp;
+                    {countdown.seconds}&nbsp;
+                    <span className="text-base">sec</span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -204,7 +264,7 @@ export default function AdvancedSlideshow({
           )}
 
           {/* Logo Section - Takes remaining space */}
-          <div className="flex-1 flex flex-col justify-end p-6 xl:p-8">
+          <div className="flex-1 flex flex-col p-6 xl:px-6">
             <div className="text-center mb-4 xl:mb-6">
               <div className="text-sm xl:text-base opacity-80 font-medium leading-relaxed">
                 Scan below for prayer notifications, masjid events, and
