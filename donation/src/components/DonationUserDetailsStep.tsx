@@ -128,7 +128,7 @@ export default function DonationUserDetailsStep({
             onChange={(e) => handleInputChange(e, "isAnonymous")}
             label={
               <span className="flex items-center justify-between">
-                <span>
+                <span className="text-xs">
                   Don't display my name publicly on this donation campaign
                 </span>
                 <Info

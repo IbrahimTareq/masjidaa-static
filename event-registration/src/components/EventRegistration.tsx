@@ -184,6 +184,11 @@ interface EventRegistrationProps {
   masjid: Tables<"masjids">;
   eventForm?: Tables<"event_forms"> | null;
   bankAccount?: Tables<"masjid_bank_accounts"> | null;
+  enrollmentStatus?: {
+    isFull: boolean;
+    currentEnrollments: number;
+    limit: number | null;
+  } | null;
 }
 
 interface FormData {
@@ -198,6 +203,7 @@ export default function EventRegistration({
   masjid,
   eventForm,
   bankAccount,
+  enrollmentStatus,
 }: EventRegistrationProps) {
   const [currentStep, setCurrentStep] = useState<Step>("initial");
   const [formData, setFormData] = useState<FormData>({});
@@ -259,11 +265,11 @@ export default function EventRegistration({
         if (!result.success) {
           throw new Error(result.error || "Failed to submit registration");
         }
-        
+
         // For free events, show success immediately
         setFormData({}); // Reset form data
         setCurrentStep("success");
-      } 
+      }
       // If it's a paid event, proceed to payment without submitting form yet
       else if (isPaid && event.enrolment_fee && bankAccount) {
         const amountInCents = Math.round(event.enrolment_fee * 100);
@@ -303,12 +309,9 @@ export default function EventRegistration({
         const firstName = formData.firstName || "";
         const lastName = formData.lastName || "";
         const email = formData.email || "";
-        
+
         // Transform the data to use titles as keys
-        const transformedData = transformFormData(
-          formData,
-          eventForm.schema
-        );
+        const transformedData = transformFormData(formData, eventForm.schema);
 
         const result = await submitEventRegistrationAction({
           formId: eventForm.id,
@@ -321,7 +324,10 @@ export default function EventRegistration({
         });
 
         if (!result.success) {
-          console.error("Failed to submit registration after payment:", result.error);
+          console.error(
+            "Failed to submit registration after payment:",
+            result.error
+          );
         }
       }
     } catch (err) {
@@ -339,18 +345,24 @@ export default function EventRegistration({
       case "initial":
         return (
           <div className="p-5">
-            <button
-              onClick={handleRegisterClick}
-              className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center"
-            >
-              <TicketIcon className="w-5 h-5 mr-2 text-white" />
-              {isPaid
-                ? `Register (${formatAmount(
-                    event.enrolment_fee!,
-                    masjid.local_currency
-                  )})`
-                : "Register for this Event"}
-            </button>
+            {enrollmentStatus?.isFull ? (
+              <div className="w-full py-3 bg-gray-200 text-gray-700 font-medium rounded-lg flex items-center justify-center">
+                <span>Enrollments closed</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleRegisterClick}
+                className="w-full py-3 bg-theme hover:bg-theme-gradient text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center"
+              >
+                <TicketIcon className="w-5 h-5 mr-2 text-white" />
+                {isPaid
+                  ? `Register (${formatAmount(
+                      event.enrolment_fee!,
+                      masjid.local_currency
+                    )})`
+                  : "Register for this event"}
+              </button>
+            )}
           </div>
         );
 

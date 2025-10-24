@@ -2,13 +2,13 @@
 
 import { WavyBackground } from "@/components/client/ui/WavyBackground";
 import { Tables } from "@/database.types";
+import { EventRegistration } from "@/event-registration/src";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { AddToCalendarButton } from "add-to-calendar-button-react";
-import { Calendar, Check, MapPin, Share, X } from "lucide-react";
+import { Calendar, Check, MapPin, Share, Users, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { EventRegistration } from "@/event-registration/src";
 
 export default function EventClient({
   event,
@@ -16,12 +16,18 @@ export default function EventClient({
   eventForm,
   bankAccount,
   masjid,
+  enrollmentStatus,
 }: {
   event: Tables<"events">;
   eventLink: string;
   eventForm?: Tables<"event_forms"> | null;
   bankAccount?: Tables<"masjid_bank_accounts"> | null;
   masjid: Tables<"masjids">;
+  enrollmentStatus?: {
+    isFull: boolean;
+    currentEnrollments: number;
+    limit: number | null;
+  } | null;
 }) {
   const { formatTime, formatDate } = useDateTimeFormat();
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
@@ -45,11 +51,11 @@ export default function EventClient({
         }
       }
     };
-  
+
     scrollToHash();
     window.addEventListener("hashchange", scrollToHash);
     return () => window.removeEventListener("hashchange", scrollToHash);
-  }, []);  
+  }, []);
 
   const searchParams = useSearchParams();
   const eventDateParam = searchParams.get("eventDate");
@@ -254,6 +260,23 @@ export default function EventClient({
                         </div>
                       </div>
                     </div>
+
+                    {enrollmentStatus && (
+                      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 shadow-sm">
+                        <div className="flex items-start">
+                          <Users className="w-6 h-6 text-theme mr-4 mt-1 flex-shrink-0" />
+                          <div>
+                            <h3 className="font-semibold text-gray-900 mb-1">
+                              Enrollment Status
+                            </h3>
+                            <p className="text-lg text-gray-800">
+                              {enrollmentStatus?.currentEnrollments}/
+                              {enrollmentStatus?.limit} spots
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Event Registration Form */}
@@ -264,6 +287,7 @@ export default function EventClient({
                         masjid={masjid}
                         bankAccount={bankAccount || undefined}
                         eventForm={eventForm || undefined}
+                        enrollmentStatus={enrollmentStatus}
                       />
                     )}
 

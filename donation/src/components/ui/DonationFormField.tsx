@@ -160,7 +160,7 @@ export function DonationCheckbox({
   className?: string;
 }) {
   return (
-    <label className={`flex items-start gap-2 text-sm text-gray-700 cursor-pointer ${className}`}>
+    <label className={`flex items-center gap-2 text-sm text-gray-700 cursor-pointer ${className}`}>
       <div className="flex-shrink-0 mt-0.5">
         <input
           id={id}
