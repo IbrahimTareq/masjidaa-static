@@ -22,6 +22,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   // Use the countdown hook with auto-refresh when it reaches zero
   const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
@@ -65,7 +67,7 @@ export default function PrayerClient({
               {/* Next Prayer Info */}
               <div className="space-y-2 sm:space-y-3">
                 <div className="text-sm sm:text-base lg:text-xl xl:text-2xl text-gray-400 font-medium uppercase tracking-wider">
-                  Next Prayer Starts In
+                  {prayerInfo?.next.name} {label} in
                 </div>
                 <div className="text-3xl sm:text-4xl lg:text-6xl xl:text-6xl font-semibold text-black">
                   {countdown.hours !== "00" && (

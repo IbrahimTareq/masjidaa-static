@@ -43,6 +43,7 @@ export type PrayerInfo = {
     time: string;
   };
   timeUntilNext: {
+    label: string;
     hours: number;
     minutes: number;
     seconds: number;

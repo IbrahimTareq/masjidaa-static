@@ -26,6 +26,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   return (
@@ -85,7 +87,7 @@ export default function PrayerClient({
                     <span className="font-bold text-theme uppercase">
                       {prayerInfo?.current.name}
                     </span>
-                    &nbsp;will begin in
+                    &nbsp;{label} in
                   </h2>
 
                   {/* Mobile Countdown Cards */}
@@ -298,7 +300,7 @@ export default function PrayerClient({
                     <span className="font-bold text-theme uppercase">
                       {prayerInfo?.next.name}
                     </span>
-                    &nbsp;will begin in
+                    &nbsp;{label} in
                   </h2>
 
                   {/* Countdown Cards */}

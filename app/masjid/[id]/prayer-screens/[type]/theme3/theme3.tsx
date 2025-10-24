@@ -34,11 +34,13 @@ const DateSection: React.FC<DateSectionProps> = ({
 };
 
 interface TimeSectionProps {
+  nextPrayer: PrayerInfo["next"]["name"];
   timeUntilNext: PrayerInfo["timeUntilNext"];
   isMobile?: boolean;
 }
 
 const TimeSection: React.FC<TimeSectionProps> = ({
+  nextPrayer,
   timeUntilNext,
   isMobile = false,
 }) => {
@@ -68,8 +70,8 @@ const TimeSection: React.FC<TimeSectionProps> = ({
         })}
       </div>
       {timeUntilNext && (
-        <div className={`${labelClasses} font-medium text-gray-600`}>
-          NEXT PRAYER IN&nbsp;
+        <div className={`${labelClasses} font-medium text-gray-600 uppercase`}>
+          {nextPrayer} {timeUntilNext.label} in&nbsp;
           {countdown.hours !== "00" && (
             <>
               <span className={`${numberClasses} font-semibold text-gray-800`}>
@@ -124,13 +126,13 @@ export default function PrayerClient({
 
             {/* Current Time */}
             <TimeSection
-              timeUntilNext={
-                prayerInfo?.timeUntilNext || {
-                  hours: 0,
-                  minutes: 0,
-                  seconds: 0,
-                }
-              }
+              nextPrayer={prayerInfo?.next.name || "fajr"}
+              timeUntilNext={prayerInfo?.timeUntilNext || {
+                label: "starts",
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+              }}
               isMobile
             />
           </div>
@@ -214,8 +216,10 @@ export default function PrayerClient({
 
               {/* Current Time */}
               <TimeSection
+                nextPrayer={prayerInfo?.next.name || "fajr"}
                 timeUntilNext={
                   prayerInfo?.timeUntilNext || {
+                    label: "starts",
                     hours: 0,
                     minutes: 0,
                     seconds: 0,

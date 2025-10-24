@@ -22,6 +22,8 @@ export default function Theme5({
   } = formattedData;
   const masjid = useMasjidContext();
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const [secondsLeft, setSecondsLeft] = useState(() =>
     getTimeUntilNextInSeconds(
       prayerInfo?.timeUntilNext || { hours: 0, minutes: 0, seconds: 0 }
@@ -96,8 +98,8 @@ export default function Theme5({
               Until&nbsp;
               <span className="font-bold uppercase">
                 {prayerInfo?.next.name}
-              </span>{" "}
-              at&nbsp;
+              </span>
+              &nbsp;{label}&nbsp;at&nbsp;
               {prayerInfo?.next.time}
             </div>
             <div className="text-xs sm:text-sm md:text-base lg:text-lg font-medium tracking-wider uppercase text-gray-100">
@@ -148,8 +150,8 @@ export default function Theme5({
                       key={prayer.name}
                       className={`grid grid-cols-12 gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 transition-all ${
                         prayer.isActive
-                          ? `bg-white text-theme`
-                          : "bg-transparent text-white"
+                          ? `bg-white text-theme font-semibold`
+                          : "bg-transparent text-white font-light"
                       }`}
                     >
                       {/* Prayer Icon */}
@@ -172,7 +174,7 @@ export default function Theme5({
                       {/* Athan Time */}
                       <div className="col-span-3 text-center relative">
                         <div className="absolute left-0 top-0 h-full w-px bg-teal-700 opacity-20"></div>
-                        <div className="text-xs sm:text-sm md:text-base lg:text-lg font-light tracking-wide">
+                        <div className="text-xs sm:text-sm md:text-base lg:text-lg tracking-wide">
                           {prayer.start}
                         </div>
                       </div>

@@ -25,6 +25,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   return (
@@ -93,11 +95,11 @@ export default function PrayerClient({
               {/* Next Prayer Info */}
               <div className="text-center">
                 <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-3xl font-medium tracking-wider uppercase mb-2 text-gray-800">
-                  Until{" "}
+                  Until&nbsp;
                   <span className="font-bold text-theme-gradient">
                     {prayerInfo?.next.name}
-                  </span>{" "}
-                  at&nbsp;
+                  </span>
+                  &nbsp;{label}&nbsp;at&nbsp;
                   {formatTime({
                     timeString: prayerInfo?.next.time || "",
                     config: {

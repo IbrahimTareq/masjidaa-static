@@ -27,6 +27,8 @@ export default function Theme1({
     gregorianDate,
   } = formattedData;
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const masjid = useMasjidContext();
 
   // Set up real-time updates with auto-refresh
@@ -98,7 +100,7 @@ export default function Theme1({
             Time until&nbsp;
             <span className="font-bold uppercase">
               {prayerInfo?.next.name}
-            </span>{" "}
+            </span>&nbsp;{label}
           </h2>
 
           <div className="flex justify-center items-center gap-2 mb-2">

@@ -17,6 +17,8 @@ export default function PrayerClient({
   const { dailyPrayerTimes, jummahPrayerTimes, prayerInfo } = formattedData;
   const masjid = useMasjidContext();
 
+  const label = prayerInfo?.timeUntilNext.label || "starts";
+
   const countdown = useCountdown(prayerInfo?.timeUntilNext);
 
   return (
@@ -29,7 +31,7 @@ export default function PrayerClient({
             <span className="font-bold text-theme-gradient uppercase">
               {prayerInfo?.next.name}
             </span>
-            &nbsp;will begin in
+            &nbsp;{label} in
           </h2>
 
           <div className="flex justify-center items-center gap-3 sm:gap-4 lg:gap-6">
