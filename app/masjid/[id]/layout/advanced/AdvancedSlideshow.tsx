@@ -41,7 +41,10 @@ export default function AdvancedSlideshow({
 
   // Check if we're in iqamah state and countdown is zero
   const isIqamah = nextEvent.label.toLowerCase() === "iqamah";
-  const countdownZero = countdown.hours === "00" && countdown.minutes === "00" && countdown.seconds === "00";
+  const countdownZero =
+    countdown.hours === "00" &&
+    countdown.minutes === "00" &&
+    countdown.seconds === "00";
 
   useQRCode(
     {
@@ -51,24 +54,30 @@ export default function AdvancedSlideshow({
     },
     qrRef
   );
-  
+
   // Use the screen dim hook to handle dimming when iqamah countdown reaches zero
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
     shouldDim: isIqamah && countdownZero,
     durationMinutes: 5,
-    dimOpacity: 0.8
+    dimOpacity: 0.8,
   });
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
       {/* Dimming overlay */}
       {isDimmed && (
-        <div className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500" 
-             style={{ opacity: opacity }}>
+        <div
+          className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500"
+          style={{ opacity: opacity }}
+        >
           {/* Optional: Progress indicator for remaining dim time */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-theme-accent" 
-               style={{ width: `${remainingPercent}%`, transition: 'width 1s linear' }}>
-          </div>
+          <div
+            className="absolute top-0 left-0 right-0 h-1 bg-theme-accent"
+            style={{
+              width: `${remainingPercent}%`,
+              transition: "width 1s linear",
+            }}
+          ></div>
         </div>
       )}
       {/* Mobile Top Bar - Only visible on mobile */}
@@ -184,12 +193,24 @@ export default function AdvancedSlideshow({
 
                 <div className="flex gap-2 items-center justify-center">
                   <span className="text-lg xl:text-2xl font-semibold uppercase">
-                    {countdown.hours}&nbsp;
-                    <span className="text-base">hr</span>&nbsp;
-                    {countdown.minutes}&nbsp;
-                    <span className="text-base">min</span>&nbsp;
-                    {countdown.seconds}&nbsp;
-                    <span className="text-base">sec</span>
+                    {countdown.hours !== "00" && (
+                      <>
+                        {countdown.hours}&nbsp;
+                        <span className="text-base">hr</span>&nbsp;
+                      </>
+                    )}
+                    {countdown.minutes !== "00" && (
+                      <>
+                        {countdown.minutes}&nbsp;
+                        <span className="text-base">min</span>&nbsp;
+                      </>
+                    )}
+                    {countdown.seconds !== "00" && (
+                      <>
+                        {countdown.seconds}&nbsp;
+                        <span className="text-base">sec</span>&nbsp;
+                      </>
+                    )}
                   </span>
                 </div>
               </div>
