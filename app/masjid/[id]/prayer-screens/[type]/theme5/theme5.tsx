@@ -3,7 +3,7 @@
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useCountdown } from "@/hooks/useCountdown";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import {
   formatCurrentTime,
   formatTime,
@@ -25,9 +25,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
-  const countdown = useCountdown(prayerInfo?.timeUntilNext);
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <div className="font-sans h-screen">
@@ -97,16 +96,10 @@ export default function PrayerClient({
                 <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-3xl font-medium tracking-wider uppercase mb-2 text-gray-800">
                   Until&nbsp;
                   <span className="font-bold text-theme-gradient">
-                    {prayerInfo?.next.name}
+                    {nextEvent.prayer}
                   </span>
-                  &nbsp;{label}&nbsp;at&nbsp;
-                  {formatTime({
-                    timeString: prayerInfo?.next.time || "",
-                    config: {
-                      timeZone: config.timeZone,
-                      is12Hour: config.is12Hour,
-                    },
-                  })}
+                  &nbsp;{nextEvent.label}&nbsp;at&nbsp;
+                  {nextEvent.time}
                 </div>
                 <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl font-medium tracking-wider uppercase text-theme-gradient">
                   Current time:&nbsp;

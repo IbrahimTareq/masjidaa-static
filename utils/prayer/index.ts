@@ -82,19 +82,3 @@ export const calculateCountdown = (totalSeconds: number): CountdownDisplay => {
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
   return { hours, minutes, seconds };
 };
-
-interface TimeUntilNext {
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-export const getTimeUntilNextInSeconds = (
-  timeUntilNext: TimeUntilNext
-): number => {
-  return (
-    timeUntilNext.hours * 3600 +
-    timeUntilNext.minutes * 60 +
-    timeUntilNext.seconds
-  );
-};

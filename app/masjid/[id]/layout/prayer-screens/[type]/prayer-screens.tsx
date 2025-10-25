@@ -1,8 +1,11 @@
 "use client";
 
+import { useMasjidContext } from "@/context/masjidContext";
+import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { useScreenDim } from "@/hooks/useScreenDim";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 interface PrayerScreensProps {
   children: React.ReactNode;
@@ -13,21 +16,15 @@ export default function PrayerScreens({
   children,
   formattedData,
 }: PrayerScreensProps) {
-  // Extract prayer info from props if available
-  const [isIqamah, setIsIqamah] = useState(false);
-  const [countdownZero, setCountdownZero] = useState(false);
+  // Use the prayer screen hook to get next event and countdown
+  const { nextEvent, countdown } = usePrayerScreen(formattedData?.prayerInfo);
 
   // Check if we're in iqamah state and countdown is zero
-  useEffect(() => {
-    if (!formattedData?.prayerInfo) return;
-
-    const label = formattedData.prayerInfo.timeUntilNext.label || "starts";
-    setIsIqamah(label.toLowerCase() === "iqamah");
-
-    // Check if countdown is at zero
-    const { hours, minutes, seconds } = formattedData.prayerInfo.timeUntilNext;
-    setCountdownZero(hours === 0 && minutes === 0 && seconds === 0);
-  }, [formattedData]);
+  const isIqamah = nextEvent.label.toLowerCase() === "iqamah";
+  const countdownZero =
+    countdown.hours === "00" &&
+    countdown.minutes === "00" &&
+    countdown.seconds === "00";
 
   // Use the screen dim hook
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
@@ -35,6 +32,22 @@ export default function PrayerScreens({
     durationMinutes: 5,
     dimOpacity: 0.8,
   });
+
+  const masjid = useMasjidContext();
+
+  // Set up real-time updates with auto-refresh
+  const { hasUpdates } = usePrayerRealtime(masjid?.id || "");
+  // Auto-refresh when updates are detected
+  useEffect(() => {
+    if (hasUpdates) {
+      const timer = setTimeout(() => {
+        console.log("Auto-refreshing due to prayer data updates");
+        window.location.reload();
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasUpdates]);
 
   return (
     <div className="h-screen p-2 sm:p-4 lg:p-5 bg-gradient-to-br from-theme to-theme flex flex-col relative">

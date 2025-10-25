@@ -1,8 +1,11 @@
 "use client";
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
+import { useMasjidContext } from "@/context/masjidContext";
+import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
+import { useEffect } from "react";
 
 export default function Theme3({
   formattedData,
@@ -16,6 +19,22 @@ export default function Theme3({
     hijriDate,
     gregorianDate,
   } = formattedData;
+
+  const masjid = useMasjidContext();
+
+  // Set up real-time updates with auto-refresh
+  const { hasUpdates } = usePrayerRealtime(masjid?.id || "");
+  // Auto-refresh when updates are detected
+  useEffect(() => {
+    if (hasUpdates) {
+      const timer = setTimeout(() => {
+        console.log("Auto-refreshing due to prayer data updates");
+        window.location.reload();
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasUpdates]);
 
   return (
     <div className="bg-white text-gray-800 min-h-screen">

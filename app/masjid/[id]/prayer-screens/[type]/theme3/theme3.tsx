@@ -2,10 +2,10 @@
 
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useCountdown } from "@/hooks/useCountdown";
-import { PrayerInfo } from "@/lib/server/services/masjidPrayers";
+import { usePrayerScreen, NextEvent } from "@/hooks/usePrayerScreen";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
+import { CountdownDisplay } from "@/utils/prayer";
 
 import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
@@ -34,18 +34,17 @@ const DateSection: React.FC<DateSectionProps> = ({
 };
 
 interface TimeSectionProps {
-  nextPrayer: PrayerInfo["next"]["name"];
-  timeUntilNext: PrayerInfo["timeUntilNext"];
+  nextEvent: NextEvent;
+  countdown: CountdownDisplay;
   isMobile?: boolean;
 }
 
 const TimeSection: React.FC<TimeSectionProps> = ({
-  nextPrayer,
-  timeUntilNext,
+  nextEvent,
+  countdown,
   isMobile = false,
 }) => {
   const config = useDateTimeConfig();
-  const countdown = useCountdown(timeUntilNext);
 
   const timeClasses = isMobile
     ? "text-4xl sm:text-5xl"
@@ -69,31 +68,29 @@ const TimeSection: React.FC<TimeSectionProps> = ({
           },
         })}
       </div>
-      {timeUntilNext && (
-        <div className={`${labelClasses} font-medium text-gray-600 uppercase`}>
-          {nextPrayer} {timeUntilNext.label} in&nbsp;
-          {countdown.hours !== "00" && (
-            <>
-              <span className={`${numberClasses} font-semibold text-gray-800`}>
-                {countdown.hours}
-              </span>
-              <span className="text-base">HR</span>&nbsp;
-            </>
-          )}
-          {countdown.minutes !== "00" && (
-            <>
-              <span className={`${numberClasses} font-semibold text-gray-800`}>
-                {countdown.minutes}
-              </span>
-              <span className="text-base">MIN</span>&nbsp;
-            </>
-          )}
-          <span className={`${numberClasses} font-semibold text-gray-800`}>
-            {countdown.seconds}
-          </span>
-          <span className="text-base">SEC</span>
-        </div>
-      )}
+      <div className={`${labelClasses} font-medium text-gray-600 uppercase`}>
+        {nextEvent.prayer} {nextEvent.label} in&nbsp;
+        {countdown.hours !== "00" && (
+          <>
+            <span className={`${numberClasses} font-semibold text-gray-800`}>
+              {countdown.hours}
+            </span>
+            <span className="text-base">HR</span>&nbsp;
+          </>
+        )}
+        {countdown.minutes !== "00" && (
+          <>
+            <span className={`${numberClasses} font-semibold text-gray-800`}>
+              {countdown.minutes}
+            </span>
+            <span className="text-base">MIN</span>&nbsp;
+          </>
+        )}
+        <span className={`${numberClasses} font-semibold text-gray-800`}>
+          {countdown.seconds}
+        </span>
+        <span className="text-base">SEC</span>
+      </div>
     </div>
   );
 };
@@ -111,6 +108,9 @@ export default function PrayerClient({
     gregorianDate,
   } = formattedData;
   const masjid = useMasjidContext();
+  
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <div className="font-sans h-screen">
@@ -126,13 +126,8 @@ export default function PrayerClient({
 
             {/* Current Time */}
             <TimeSection
-              nextPrayer={prayerInfo?.next.name || "fajr"}
-              timeUntilNext={prayerInfo?.timeUntilNext || {
-                label: "starts",
-                hours: 0,
-                minutes: 0,
-                seconds: 0,
-              }}
+              nextEvent={nextEvent}
+              countdown={countdown}
               isMobile
             />
           </div>
@@ -216,15 +211,8 @@ export default function PrayerClient({
 
               {/* Current Time */}
               <TimeSection
-                nextPrayer={prayerInfo?.next.name || "fajr"}
-                timeUntilNext={
-                  prayerInfo?.timeUntilNext || {
-                    label: "starts",
-                    hours: 0,
-                    minutes: 0,
-                    seconds: 0,
-                  }
-                }
+                nextEvent={nextEvent}
+                countdown={countdown}
               />
 
               <hr className="border-gray-300" />
@@ -302,7 +290,7 @@ export default function PrayerClient({
                               Starts
                             </div>
                             <div className="text-lg font-light text-gray-800">
-                              {session.khutbah}
+                              {session.start}
                             </div>
                           </div>
                           <div>
@@ -310,7 +298,7 @@ export default function PrayerClient({
                               Khutbah
                             </div>
                             <div className="text-lg font-light text-gray-800">
-                              {session.start}
+                              {session.khutbah}
                             </div>
                           </div>
                         </div>

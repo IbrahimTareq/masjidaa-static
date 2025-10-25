@@ -2,10 +2,9 @@
 
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useMasjidContext } from "@/context/masjidContext";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
-import { useEffect, useState } from "react";
 
 export default function Theme5({
   formattedData,
@@ -22,31 +21,8 @@ export default function Theme5({
   } = formattedData;
   const masjid = useMasjidContext();
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
-  const [secondsLeft, setSecondsLeft] = useState(() =>
-    getTimeUntilNextInSeconds(
-      prayerInfo?.timeUntilNext || { hours: 0, minutes: 0, seconds: 0 }
-    )
-  );
-
-  useEffect(() => {
-    if (prayerInfo?.timeUntilNext) {
-      setSecondsLeft(getTimeUntilNextInSeconds(prayerInfo?.timeUntilNext));
-    }
-  }, [prayerInfo?.timeUntilNext]);
-
-  useEffect(() => {
-    if (!prayerInfo?.timeUntilNext || secondsLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [prayerInfo?.timeUntilNext, secondsLeft]);
-
-  const countdown = calculateCountdown(secondsLeft);
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <div className="bg-gradient-to-br from-theme via-theme-gradient to-theme text-white p-4 sm:p-6 lg:p-8 font-montserrat">
@@ -56,7 +32,7 @@ export default function Theme5({
         <div className="col-span-12 lg:col-span-4 flex flex-col justify-center items-center space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12 lg:border-r lg:border-white lg:border-opacity-30 lg:pr-8">
           {/* Date and Location */}
           <div className="text-center">
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-wider uppercase mb-1">
+            <div className="text-lg sm:text-xl md:text-xl lg:text-2xl font-medium tracking-wider uppercase mb-1">
               {hijriDate}
             </div>
             <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium tracking-wider uppercase text-gray-100">
@@ -97,14 +73,10 @@ export default function Theme5({
             <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium tracking-wider uppercase mb-2">
               Until&nbsp;
               <span className="font-bold uppercase">
-                {prayerInfo?.next.name}
+                {nextEvent.prayer}
               </span>
-              &nbsp;{label}&nbsp;at&nbsp;
-              {prayerInfo?.next.time}
-            </div>
-            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-medium tracking-wider uppercase text-gray-100">
-              Current time:&nbsp;
-              {prayerInfo?.current.time}
+              &nbsp;{nextEvent.label}&nbsp;at&nbsp;
+              {nextEvent.time}
             </div>
           </div>
         </div>

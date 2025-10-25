@@ -33,20 +33,18 @@ export type Jummah = {
   khutbah: string;
 };
 
+type Prayer = "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
+
 export type PrayerInfo = {
   current: {
-    name: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
-    time: string;
+    name: Prayer;
+    startTime: string;
+    iqamahTime: string;
   };
   next: {
-    name: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
-    time: string;
-  };
-  timeUntilNext: {
-    label: string;
-    hours: number;
-    minutes: number;
-    seconds: number;
+    name: Prayer;
+    startTime: string;
+    iqamahTime: string;
   };
 };
 

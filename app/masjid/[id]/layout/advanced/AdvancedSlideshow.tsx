@@ -2,13 +2,13 @@
 
 import { useMasjidContext } from "@/context/masjidContext";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import Slideshow, { Slide } from "@/components/client/interactive/Slideshow";
 import { useQRCode } from "@/hooks/useQRCode";
 import { useScreenDim } from "@/hooks/useScreenDim";
-import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import { DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -30,13 +30,18 @@ export default function AdvancedSlideshow({
 
   const qrRef = useRef<HTMLDivElement>(null);
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
   const masjid = useMasjidContext();
 
   const { formatCurrentTime } = useDateTimeFormat();
 
   const time = formatCurrentTime();
+
+  // Use the prayer screen hook to get next event and countdown
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
+
+  // Check if we're in iqamah state and countdown is zero
+  const isIqamah = nextEvent.label.toLowerCase() === "iqamah";
+  const countdownZero = countdown.hours === "00" && countdown.minutes === "00" && countdown.seconds === "00";
 
   useQRCode(
     {
@@ -46,34 +51,10 @@ export default function AdvancedSlideshow({
     },
     qrRef
   );
-
-  const [secondsLeft, setSecondsLeft] = useState(() =>
-    getTimeUntilNextInSeconds(
-      prayerInfo?.timeUntilNext || { hours: 0, minutes: 0, seconds: 0 }
-    )
-  );
-
-  useEffect(() => {
-    if (prayerInfo?.timeUntilNext) {
-      setSecondsLeft(getTimeUntilNextInSeconds(prayerInfo?.timeUntilNext));
-    }
-  }, [prayerInfo?.timeUntilNext]);
-
-  useEffect(() => {
-    if (!prayerInfo?.timeUntilNext || secondsLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [prayerInfo?.timeUntilNext, secondsLeft]);
-
-  const countdown = calculateCountdown(secondsLeft);
   
   // Use the screen dim hook to handle dimming when iqamah countdown reaches zero
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
-    shouldDim: label.toLowerCase() === "iqamah" && secondsLeft === 0,
+    shouldDim: isIqamah && countdownZero,
     durationMinutes: 5,
     dimOpacity: 0.8
   });
@@ -95,7 +76,7 @@ export default function AdvancedSlideshow({
         <div className="text-center">
           <div className="text-lg font-light">{time}</div>
           <div className="text-xs opacity-90">
-            {prayerInfo?.next?.name} {label} in {countdown.hours}{" "}
+            {nextEvent.prayer} {nextEvent.label} in {countdown.hours}{" "}
             <span className="text-base font-semibold">hr</span>&nbsp;
             {countdown.minutes}{" "}
             <span className="text-base font-semibold">min</span>&nbsp;
@@ -196,9 +177,9 @@ export default function AdvancedSlideshow({
               <div className="flex flex-col items-center justify-center text-center">
                 <div className="flex gap-2 items-center justify-center">
                   <span className="text-lg xl:text-2xl font-semibold uppercase">
-                    {prayerInfo?.next?.name}
+                    {nextEvent.prayer}
                   </span>
-                  &nbsp;{label} in&nbsp;
+                  &nbsp;{nextEvent.label} in&nbsp;
                 </div>
 
                 <div className="flex gap-2 items-center justify-center">

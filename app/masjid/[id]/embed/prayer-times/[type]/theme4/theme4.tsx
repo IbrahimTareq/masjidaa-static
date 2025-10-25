@@ -1,11 +1,14 @@
 "use client";
 
+import { useMasjidContext } from "@/context/masjidContext";
+import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import {
   BRAND_NAME,
   DOMAIN_NAME,
   SWIPER_SETTINGS,
 } from "@/utils/shared/constants";
+import { useEffect } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -21,6 +24,22 @@ export default function Theme4({
     hijriDate,
     gregorianDate,
   } = formattedData;
+
+  const masjid = useMasjidContext();
+
+  // Set up real-time updates with auto-refresh
+  const { hasUpdates } = usePrayerRealtime(masjid?.id || "");
+  // Auto-refresh when updates are detected
+  useEffect(() => {
+    if (hasUpdates) {
+      const timer = setTimeout(() => {
+        console.log("Auto-refreshing due to prayer data updates");
+        window.location.reload();
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasUpdates]);
 
   return (
     <div className="bg-white min-h-screen font-sans">

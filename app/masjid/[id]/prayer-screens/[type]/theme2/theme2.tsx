@@ -2,7 +2,7 @@
 
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useCountdown } from "@/hooks/useCountdown";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
@@ -26,9 +26,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
-  const countdown = useCountdown(prayerInfo?.timeUntilNext);
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <div className="font-montserrat h-screen">
@@ -85,9 +84,9 @@ export default function PrayerClient({
                 <div className="text-center mb-4 sm:mb-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl font-light text-gray-900 mb-4 sm:mb-6">
                     <span className="font-bold text-theme uppercase">
-                      {prayerInfo?.current.name}
+                      {nextEvent.prayer}
                     </span>
-                    &nbsp;{label} in
+                    &nbsp;{nextEvent.label} in
                   </h2>
 
                   {/* Mobile Countdown Cards */}
@@ -298,9 +297,9 @@ export default function PrayerClient({
                 <div className="text-center mb-6 xl:mb-8">
                   <h2 className="text-2xl xl:text-3xl 2xl:text-4xl font-light text-gray-900 mb-4 xl:mb-6">
                     <span className="font-bold text-theme uppercase">
-                      {prayerInfo?.next.name}
+                      {nextEvent.prayer}
                     </span>
-                    &nbsp;{label} in
+                    &nbsp;{nextEvent.label} in
                   </h2>
 
                   {/* Countdown Cards */}

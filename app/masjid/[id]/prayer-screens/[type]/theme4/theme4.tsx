@@ -2,7 +2,7 @@
 
 import LayoutWithHeader from "@/components/LayoutWithHeader";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useCountdown } from "@/hooks/useCountdown";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
 import { SWIPER_SETTINGS } from "@/utils/shared/constants";
@@ -17,9 +17,8 @@ export default function PrayerClient({
   const { dailyPrayerTimes, jummahPrayerTimes, prayerInfo } = formattedData;
   const masjid = useMasjidContext();
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
-  const countdown = useCountdown(prayerInfo?.timeUntilNext);
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <LayoutWithHeader headerTitle={masjid?.name || "Masjid"}>
@@ -29,9 +28,9 @@ export default function PrayerClient({
         <div className="flex-[2] flex flex-col justify-center text-center min-h-0">
           <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light mb-2 sm:mb-4 lg:mb-6 text-gray-900">
             <span className="font-bold text-theme-gradient uppercase">
-              {prayerInfo?.next.name}
+              {nextEvent.prayer}
             </span>
-            &nbsp;{label} in
+            &nbsp;{nextEvent.label} in
           </h2>
 
           <div className="flex justify-center items-center gap-3 sm:gap-4 lg:gap-6">

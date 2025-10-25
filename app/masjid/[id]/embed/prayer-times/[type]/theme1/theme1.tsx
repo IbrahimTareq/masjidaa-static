@@ -2,14 +2,14 @@
 
 import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerRealtime } from "@/hooks/usePrayerRealtime";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { calculateCountdown, getTimeUntilNextInSeconds } from "@/utils/prayer";
 import {
   BRAND_NAME,
   DOMAIN_NAME,
   SWIPER_SETTINGS,
 } from "@/utils/shared/constants";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -27,9 +27,10 @@ export default function Theme1({
     gregorianDate,
   } = formattedData;
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
   const masjid = useMasjidContext();
+
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   // Set up real-time updates with auto-refresh
   const { hasUpdates } = usePrayerRealtime(masjid?.id || "");
@@ -44,41 +45,6 @@ export default function Theme1({
       return () => clearTimeout(timer);
     }
   }, [hasUpdates]);
-
-  const [secondsLeft, setSecondsLeft] = useState(() =>
-    getTimeUntilNextInSeconds(
-      formattedData.prayerInfo?.timeUntilNext || {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      }
-    )
-  );
-
-  // Update seconds left when data changes
-  useEffect(() => {
-    setSecondsLeft(
-      getTimeUntilNextInSeconds(
-        formattedData.prayerInfo?.timeUntilNext || {
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        }
-      )
-    );
-  }, [formattedData.prayerInfo?.timeUntilNext]);
-
-  useEffect(() => {
-    if (secondsLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [secondsLeft]);
-
-  const countdown = calculateCountdown(secondsLeft);
 
   return (
     <div className="min-h-screen bg-white text-white font-sans">
@@ -99,8 +65,8 @@ export default function Theme1({
           <h2 className="text-xl font-light mb-4">
             Time until&nbsp;
             <span className="font-bold uppercase">
-              {prayerInfo?.next.name}
-            </span>&nbsp;{label}
+              {nextEvent.prayer}
+            </span>&nbsp;{nextEvent.label}
           </h2>
 
           <div className="flex justify-center items-center gap-2 mb-2">

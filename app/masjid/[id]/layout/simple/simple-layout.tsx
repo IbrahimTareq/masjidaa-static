@@ -1,6 +1,7 @@
 "use client";
 
 import { useScreenDim } from "@/hooks/useScreenDim";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { useState, useEffect } from "react";
 import { Slide } from "@/components/client/interactive/Slideshow";
@@ -16,13 +17,17 @@ interface SimpleLayoutProps {
 }
 
 export default function SimpleLayout({ slides, formattedData }: SimpleLayoutProps) {
-  // Extract prayer info from props if available
-  const [isIqamah, setIsIqamah] = useState(false);
-  const [countdownZero, setCountdownZero] = useState(false);
   const [tickerData, setTickerData] = useState<Tables<"masjid_tickers"> | null>(null);
   const [isTickerLoading, setIsTickerLoading] = useState(true);
   
   const masjid = useMasjidContext();
+
+  // Use the prayer screen hook to get next event and countdown
+  const { nextEvent, countdown } = usePrayerScreen(formattedData?.prayerInfo);
+
+  // Check if we're in iqamah state and countdown is zero
+  const isIqamah = nextEvent.label.toLowerCase() === "iqamah";
+  const countdownZero = countdown.hours === "00" && countdown.minutes === "00" && countdown.seconds === "00";
 
   // Fetch ticker data once
   useEffect(() => {
@@ -40,18 +45,6 @@ export default function SimpleLayout({ slides, formattedData }: SimpleLayoutProp
 
     fetchTickerData();
   }, [masjid?.id]);
-
-  // Check if we're in iqamah state and countdown is zero
-  useEffect(() => {
-    if (!formattedData?.prayerInfo) return;
-    
-    const label = formattedData.prayerInfo.timeUntilNext.label || "starts";
-    setIsIqamah(label.toLowerCase() === "iqamah");
-    
-    // Check if countdown is at zero
-    const { hours, minutes, seconds } = formattedData.prayerInfo.timeUntilNext;
-    setCountdownZero(hours === 0 && minutes === 0 && seconds === 0);
-  }, [formattedData]);
 
   // Use the screen dim hook
   const { isDimmed, opacity, remainingPercent } = useScreenDim({

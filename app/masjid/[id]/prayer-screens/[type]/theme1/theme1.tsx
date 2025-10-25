@@ -3,10 +3,9 @@
 import LayoutWithHeader from "@/components/LayoutWithHeader";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useCountdown } from "@/hooks/useCountdown";
+import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
-import { useEffect } from "react";
 
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
@@ -22,26 +21,8 @@ export default function PrayerClient({
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
 
-  const label = prayerInfo?.timeUntilNext.label || "starts";
-
-  // Use the countdown hook with auto-refresh when it reaches zero
-  const countdown = useCountdown(prayerInfo?.timeUntilNext);
-
-  // Auto-refresh when countdown reaches zero
-  useEffect(() => {
-    if (
-      countdown.hours === "00" &&
-      countdown.minutes === "00" &&
-      countdown.seconds === "00"
-    ) {
-      console.log("Countdown reached zero, refreshing page");
-      const timer = setTimeout(() => {
-        window.location.reload();
-      }, 1000); // Wait 1 second before refreshing
-
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
+  // Use the custom hook to manage prayer screen logic
+  const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
     <LayoutWithHeader headerTitle={masjid?.name || "Masjid"}>
@@ -67,7 +48,7 @@ export default function PrayerClient({
               {/* Next Prayer Info */}
               <div className="space-y-2 sm:space-y-3">
                 <div className="text-sm sm:text-base lg:text-xl xl:text-2xl text-gray-400 font-medium uppercase tracking-wider">
-                  {prayerInfo?.next.name} {label} in
+                  {nextEvent.prayer} {nextEvent.label} in
                 </div>
                 <div className="text-3xl sm:text-4xl lg:text-6xl xl:text-6xl font-semibold text-black">
                   {countdown.hours !== "00" && (

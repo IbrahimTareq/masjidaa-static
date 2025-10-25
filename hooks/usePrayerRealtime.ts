@@ -13,24 +13,49 @@ export function usePrayerRealtime(masjidId: string) {
 
   useEffect(() => {
     if (!masjidId) return;
-    
+
     const supabase = createBrowserSupabase();
 
     const channel = supabase
       .channel(`masjid-${masjidId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "masjid_prayer_settings", filter: `masjid_id=eq.${masjidId}` },
+        {
+          event: "*",
+          schema: "public",
+          table: "masjids",
+          filter: `id=eq.${masjidId}`,
+        },
         handleChange
       )
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "masjid_iqamah_times", filter: `masjid_id=eq.${masjidId}` },
+        {
+          event: "*",
+          schema: "public",
+          table: "masjid_prayer_settings",
+          filter: `masjid_id=eq.${masjidId}`,
+        },
         handleChange
       )
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "masjid_jummah_times", filter: `masjid_id=eq.${masjidId}` },
+        {
+          event: "*",
+          schema: "public",
+          table: "masjid_iqamah_times",
+          filter: `masjid_id=eq.${masjidId}`,
+        },
+        handleChange
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "masjid_jummah_times",
+          filter: `masjid_id=eq.${masjidId}`,
+        },
         handleChange
       )
       .subscribe(() => {
@@ -43,13 +68,15 @@ export function usePrayerRealtime(masjidId: string) {
     }
 
     return () => {
-      console.log(`Unsubscribing from real-time updates for masjid ${masjidId}`);
+      console.log(
+        `Unsubscribing from real-time updates for masjid ${masjidId}`
+      );
       supabase.removeChannel(channel);
     };
   }, [masjidId]);
 
   return {
     hasUpdates,
-    clearUpdates: () => setHasUpdates(false)
+    clearUpdates: () => setHasUpdates(false),
   };
 }
