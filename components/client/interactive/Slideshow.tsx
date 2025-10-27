@@ -70,7 +70,7 @@ interface IqamahTimesChangeSlide extends SlideBase {
 interface BusinessSlide extends SlideBase {
   slide_type: "business-ad";
   props: {
-    businessAdId: string;
+    adId: string;
   };
 }
 
@@ -104,8 +104,8 @@ const slideComponents: Record<string, React.ComponentType<any>> = {
   "prayer-screen": (props: { theme: number; type?: string }) => (
     <PrayerScreenSlide theme={props.theme} type={props.type} />
   ),
-  "business-ad": (props: { businessAdId: string }) => (
-    <BusinessSlide businessAdId={props.businessAdId} />
+  "business-ad": (props: { adId: string }) => (
+    <BusinessSlide adId={props.adId} />
   ),
   static: (props: { type: string }) => <StaticScreenSlide type={props.type} />,
 };

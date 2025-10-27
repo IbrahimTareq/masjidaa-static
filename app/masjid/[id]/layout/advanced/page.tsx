@@ -108,7 +108,7 @@ export default async function AdvancedLayoutPage({
           id: slide.id,
           slide_type: slide.slide_type,
           props: {
-            businessAdId: (slideProps as { businessAdId: string }).businessAdId,
+            adId: (slideProps as { adId: string }).adId,
           },
         };
       }

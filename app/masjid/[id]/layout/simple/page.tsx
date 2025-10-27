@@ -136,6 +136,15 @@ export default async function SimpleLayoutPage({
         };
       }
 
+      // For business ad slides, we need to pass the component name
+      if (slide.slide_type === "business-ad") {
+        return {
+          id: slide.id,
+          slide_type: slide.slide_type,
+          props: { adId: (slideProps as { adId: string }).adId },
+        };
+      }
+
       // Return other slide types as is
       return {
         id: slide.id,

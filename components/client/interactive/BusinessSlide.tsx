@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import { FastAverageColor } from "fast-average-color";
 
 interface BusinessSlideProps {
-  businessAdId: string;
+  adId: string;
 }
 
-export default function BusinessSlide({ businessAdId }: BusinessSlideProps) {
+export default function BusinessSlide({ adId }: BusinessSlideProps) {
   const [businessAd, setBusinessAd] = useState<{
     image: string | null;
     message: string | null;
@@ -30,7 +30,7 @@ export default function BusinessSlide({ businessAdId }: BusinessSlideProps) {
     async function fetchBusinessAd() {
       try {
         setLoading(true);
-        const data = await getBusinessAd(businessAdId);
+        const data = await getBusinessAd(adId);
         if (!data) {
           throw new Error("Failed to fetch business ad");
         }
@@ -44,7 +44,7 @@ export default function BusinessSlide({ businessAdId }: BusinessSlideProps) {
     }
 
     fetchBusinessAd();
-  }, [businessAdId]);
+  }, [adId]);
 
   // Extract average color from the image using fast-average-color
   useEffect(() => {
