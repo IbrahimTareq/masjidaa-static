@@ -29,7 +29,7 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
       badges.push(
         <span
           key="pinned"
-          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-theme-accent text-theme-gradient"
+          className="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-theme-accent text-theme-gradient"
         >
           <Pin
             className="w-3 h-3 mr-1"
@@ -49,14 +49,14 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
   return (
     <>
       {announcements.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">
+        <div className="text-center py-8 md:py-12">
+          <p className="text-sm md:text-base text-gray-500">
             There are currently no announcements listed. Please check back later
             for updates.
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {[...announcements]
             .sort((a, b) => {
               // Sort pinned announcements first
@@ -78,23 +78,23 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
                   href={`/${slug}/announcement/${announcement.id}`}
                   className="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
                 >
-                  <div className="flex">
+                  <div className="flex flex-col sm:flex-row">
                     {/* Date Sidebar */}
-                    <div className="flex-shrink-0 w-24 bg-gray-100 p-6 flex flex-col items-center justify-center">
-                      <div className="text-3xl font-bold text-gray-800">
+                    <div className="flex-shrink-0 sm:w-20 md:w-24 bg-gray-100 p-4 sm:p-6 flex flex-row sm:flex-col items-center justify-center sm:justify-center gap-2 sm:gap-0">
+                      <div className="text-2xl sm:text-3xl font-bold text-gray-800">
                         {day}
                       </div>
-                      <div className="text-sm font-medium text-gray-600 uppercase">
+                      <div className="text-xs sm:text-sm font-medium text-gray-600 uppercase">
                         {month}
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 p-6">
-                      <div className="flex items-start justify-between">
+                    <div className="flex-1 p-4 md:p-6">
+                      <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-theme-gradient transition-colors duration-200">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-theme-gradient transition-colors duration-200">
                               {announcement.title}
                             </h3>
                             {statusBadge}
@@ -102,7 +102,7 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
 
                           {announcement.description && (
                             <p
-                              className="text-gray-600 leading-relaxed mb-4 overflow-hidden text-ellipsis"
+                              className="text-sm md:text-base text-gray-600 leading-relaxed mb-3 md:mb-4 overflow-hidden text-ellipsis"
                               style={{
                                 display: "-webkit-box",
                                 WebkitLineClamp: 3,
@@ -115,7 +115,7 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
                         </div>
 
                         {/* Arrow Icon */}
-                        <div className="ml-4 flex-shrink-0">
+                        <div className="flex-shrink-0 hidden sm:block">
                           <svg
                             className="w-5 h-5 text-gray-400 group-hover:text-theme-gradient transition-colors duration-200"
                             fill="none"
@@ -133,7 +133,7 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
                       </div>
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs md:text-sm text-gray-500 pt-3 md:pt-4 border-t border-gray-100">
                         <div>
                           Published{" "}
                           {new Date(
@@ -145,8 +145,8 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
                           })}
                         </div>
 
-                        <div className="text-gray-400 group-hover:text-theme-gradient transition-colors duration-200">
-                          Read more
+                        <div className="text-gray-400 group-hover:text-theme-gradient transition-colors duration-200 font-medium">
+                          Read more →
                         </div>
                       </div>
                     </div>
@@ -154,8 +154,10 @@ export const Announcements: React.FC<AnnouncementsProps> = ({
                 </Link>
               );
             })}
-          <div className="flex justify-center">
-            Announcements older than 3 months are not available.
+          <div className="flex justify-center mt-4 md:mt-6">
+            <p className="text-xs md:text-sm text-gray-500 text-center">
+              Announcements older than 3 months are not available.
+            </p>
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import {
@@ -138,6 +138,29 @@ const Calendar: React.FC<CalendarProps> = ({
 }) => {
   const masjid = useMasjidContext();
   const { hijriDate } = useDateTimeFormat();
+  
+  // Detect mobile screen size
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Responsive header toolbar
+  const responsiveHeaderToolbar = isMobile
+    ? {
+        left: "prev,next",
+        center: "title",
+        right: "",
+      }
+    : headerToolbar;
 
   // Event Handlers
   const handleEventClick = (clickInfo: EventClickArg): void => {
@@ -180,12 +203,12 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const renderEventContent = (eventInfo: EventContentArg) => (
-    <div className="p-1">
-      <div className="font-medium text-xs truncate">
+    <div className="p-0.5 md:p-1">
+      <div className="font-medium text-[10px] md:text-xs truncate">
         {eventInfo.event.title}
       </div>
       {eventInfo.timeText && (
-        <div className="text-xs opacity-75">{eventInfo.timeText}</div>
+        <div className="text-[9px] md:text-xs opacity-75">{eventInfo.timeText}</div>
       )}
     </div>
   );
@@ -235,16 +258,46 @@ const Calendar: React.FC<CalendarProps> = ({
 
   // Render
   return (
-    <div className="w-full">
+    <div className="w-full calendar-responsive">
+      <style jsx global>{`
+        .calendar-responsive .fc {
+          font-size: 14px;
+        }
+        
+        @media (max-width: 767px) {
+          .calendar-responsive .fc {
+            font-size: 12px;
+          }
+          
+          .calendar-responsive .fc-toolbar-title {
+            font-size: 1.1rem !important;
+          }
+          
+          .calendar-responsive .fc-button {
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.875rem !important;
+          }
+          
+          .calendar-responsive .fc-daygrid-day-number {
+            font-size: 0.75rem !important;
+            padding: 2px !important;
+          }
+          
+          .calendar-responsive .fc-col-header-cell-cushion {
+            padding: 4px 2px !important;
+            font-size: 0.75rem !important;
+          }
+        }
+      `}</style>
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
         height={height}
-        headerToolbar={headerToolbar}
+        headerToolbar={responsiveHeaderToolbar}
         events={events}
         editable={false}
         selectable={false}
-        dayMaxEvents={3}
+        dayMaxEvents={isMobile ? 2 : 3}
         weekends={true}
         fixedWeekCount={false}
         showNonCurrentDates={false}
@@ -254,9 +307,9 @@ const Calendar: React.FC<CalendarProps> = ({
         eventContent={renderEventContent}
         eventClassNames="cursor-pointer hover:opacity-90 transition-opacity bg-theme border-theme"
         dayCellClassNames="hover:bg-gray-50 transition-colors"
-        aspectRatio={1.35}
+        aspectRatio={isMobile ? 1.0 : 1.35}
         eventDisplay="block"
-        displayEventTime={true}
+        displayEventTime={!isMobile}
         eventTimeFormat={EVENT_TIME_FORMAT}
         dayCellContent={renderDayCell}
         titleFormat={formatTitle}
