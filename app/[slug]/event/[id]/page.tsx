@@ -7,6 +7,8 @@ import { getMasjidEventShortCodeById } from "@/lib/server/services/masjidEventSh
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import EventClient from "./event";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default async function Page({
   params,
   searchParams,
@@ -16,11 +18,15 @@ export default async function Page({
 }) {
   const { id, slug } = await params;
   const eventDate = (await searchParams).eventDate;
-  const event = await getEvent(id);
-  const shortCode = await getMasjidEventShortCodeById(id);
-  const eventLink = `${DOMAIN_NAME}/r/${shortCode}`;
 
-  const masjid = await getMasjidBySlug(slug);
+  // Parallelize initial data fetching
+  const [event, shortCode, masjid] = await Promise.all([
+    getEvent(id),
+    getMasjidEventShortCodeById(id),
+    getMasjidBySlug(slug),
+  ]);
+
+  const eventLink = `${DOMAIN_NAME}/r/${shortCode}`;
 
   if (!event) {
     return <div>Event not found</div>;
@@ -30,25 +36,14 @@ export default async function Page({
     return <div>Masjid not found</div>;
   }
 
-  // Fetch additional data for event registration if needed
-  let eventForm = null;
-  let bankAccount = null;
-  let enrollmentStatus = null;
-
-  // Fetch event form if available
-  if (event.event_form_id) {
-    eventForm = await getEventForm(event.event_form_id);
-  }
-
-  // Fetch bank account for paid events
-  if (event.type === "paid" && event.bank_account_id) {
-    bankAccount = await getMasjidBankAccountById(event.bank_account_id);
-  }
-
-  // Fetch enrollment status if event has an enrollment limit
-  if (event.enrolment_limit) {
-    enrollmentStatus = await getMasjidEventEnrollmentStatus(event.id);
-  }
+  // Parallelize conditional data fetching
+  const [eventForm, bankAccount, enrollmentStatus] = await Promise.all([
+    event.event_form_id ? getEventForm(event.event_form_id) : null,
+    event.type === "paid" && event.bank_account_id
+      ? getMasjidBankAccountById(event.bank_account_id)
+      : null,
+    event.enrolment_limit ? getMasjidEventEnrollmentStatus(event.id) : null,
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",

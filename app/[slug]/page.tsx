@@ -7,6 +7,8 @@ import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerD
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export async function generateMetadata({
   params,
 }: {
@@ -40,10 +42,12 @@ export default async function Page({
     return <div>Masjid not found</div>;
   }
 
-  const prayerData = await getServerPrayerData(masjid.id);
-  const events = await getMasjidEventsByMasjidId(masjid.id);
-
-  const siteSettings = await getMasjidSiteSettingsByMasjidId(masjid.id);
+  // Parallelize data fetching
+  const [prayerData, events, siteSettings] = await Promise.all([
+    getServerPrayerData(masjid.id),
+    getMasjidEventsByMasjidId(masjid.id),
+    getMasjidSiteSettingsByMasjidId(masjid.id),
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -65,26 +69,10 @@ export default async function Page({
     hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`,
   };
 
-  if (siteSettings?.featured_campaign_id) {
-    const campaign = await getMasjidDonationCampaignById(
-      siteSettings.featured_campaign_id
-    );
-    return (
-      <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-        <HomeClient
-          prayerData={prayerData}
-          events={events ?? []}
-          campaign={campaign ?? null}
-        />
-      </>
-    );
-  }
+  // Fetch campaign only if needed
+  const campaign = siteSettings?.featured_campaign_id
+    ? await getMasjidDonationCampaignById(siteSettings.featured_campaign_id)
+    : null;
 
   return (
     <>
@@ -94,7 +82,11 @@ export default async function Page({
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <HomeClient prayerData={prayerData} events={events ?? []} />
+      <HomeClient
+        prayerData={prayerData}
+        events={events ?? []}
+        campaign={campaign}
+      />
     </>
   );
 }

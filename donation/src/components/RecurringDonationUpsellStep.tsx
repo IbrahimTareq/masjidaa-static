@@ -43,14 +43,14 @@ export default function RecurringDonationUpsellStep({
       onBack={onBack}
       currentStep={currentStep}
     >
-      <p className="text-center text-gray-700">
+      <p className="text-center text-sm md:text-base text-gray-700">
         Would you consider turning your {formattedOriginalAmount} contribution
         into a monthly donation? Your continued support helps us do more,
         reach further, and create lasting impact — together.
       </p>
 
       {/* Monthly donation options */}
-      <div className="space-y-3">
+      <div className="space-y-3 md:space-y-4">
         {/* First option - Half amount */}
         <DonationButton
           onClick={handleSelectHalfAmount}
@@ -72,11 +72,11 @@ export default function RecurringDonationUpsellStep({
         </DonationButton>
 
         {/* Keep one-time option */}
-        <div className="pt-4 text-center">
+        <div className="pt-3 md:pt-4 text-center">
           <button
             type="button"
             onClick={handleKeepOneTime}
-            className="text-gray-700 hover:text-gray-900 font-medium underline cursor-pointer"
+            className="text-sm md:text-base text-gray-700 hover:text-gray-900 font-medium underline cursor-pointer min-h-[44px] inline-flex items-center"
           >
             No, keep my one-time {formattedOriginalAmount} donation
           </button>

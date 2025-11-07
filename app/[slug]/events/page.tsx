@@ -4,6 +4,8 @@ import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 import EventsClient from "./events";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default async function Page({
   params,
 }: {

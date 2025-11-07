@@ -46,10 +46,10 @@ export function DonationStepLayout({
   const showProgress = currentStep !== "initial";
 
   return (
-    <div className="p-5 pb-4">
+    <div className="p-4 md:p-5 pb-4">
       {/* Progress tracker */}
       {showProgress && (
-        <div className="sticky top-0 left-0 right-0 -mx-5 -mt-5 bg-white/90 backdrop-blur-sm pb-5 z-10">
+        <div className="sticky top-0 left-0 right-0 -mx-4 md:-mx-5 -mt-4 md:-mt-5 bg-white/90 backdrop-blur-sm pb-4 md:pb-5 z-10">
           <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-theme rounded-full transition-all duration-300 ease-in-out"
@@ -60,23 +60,23 @@ export function DonationStepLayout({
       )}
 
       {/* Header with back button and title */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6 md:mb-8">
         {onBack ? (
           <button
             type="button"
             onClick={onBack}
-            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+            className="text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors cursor-pointer min-h-[44px] flex items-center"
           >
             ← Back
           </button>
         ) : (
           <div></div> // Empty div to maintain flex spacing when no back button
         )}
-        <div className="text-lg font-medium">{title}</div>
+        <div className="text-base md:text-lg font-medium">{title}</div>
       </div>
 
       {/* Main content */}
-      <div className="space-y-6">
+      <div className="space-y-5 md:space-y-6">
         {children}
       </div>
 

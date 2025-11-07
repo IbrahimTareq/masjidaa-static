@@ -15,6 +15,7 @@ import { useRandomHadith } from "@/hooks/useRandomHadith";
 import { formatCurrency, formatCurrencyWithSymbol } from "@/utils/currency";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { HeartHandshake } from "lucide-react";
+import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 
 interface DonationDisplayProps {
@@ -56,7 +57,7 @@ export default function DonationDisplay({
     : "";
 
   return (
-    <div className="bg-white relative overflow-hidden my-10 text-black">
+    <div className="bg-white relative overflow-hidden my-6 md:my-10 text-black">
       <WavyBackground
         colors={themeColorsVariations as string[]}
         waveWidth={60}
@@ -68,18 +69,18 @@ export default function DonationDisplay({
 
       <div className="relative z-10">
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-          <div className="flex flex-col lg:flex-row lg:gap-12">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <div className="flex flex-col md:flex-row lg:gap-12 md:gap-8">
             <div className="flex flex-col">
               <CampaignDetails
                 campaign={campaign}
                 onImageClick={() => setIsImagePreviewOpen(true)}
               />
-              <div className="w-full flex flex-col">
+              <div className="w-full flex flex-col mt-6 md:mt-0">
                 {/* Recent Supporters Section */}
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-5">
-                  <h3 className="text-md font-semibold mb-4">Recent donors</h3>
-                  <div className="space-y-4">
+                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-4 md:p-5">
+                  <h3 className="text-base md:text-md font-semibold mb-4">Recent donors</h3>
+                  <div className="space-y-3 md:space-y-4">
                     {donations.length > 0 ? (
                       donations.map((donation, index) => {
                         const displayName = donation.is_anonymous
@@ -138,7 +139,7 @@ export default function DonationDisplay({
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-6 md:mt-0">
               <DonationStepManager
                 campaign={campaign}
                 masjid={masjid}
@@ -148,7 +149,7 @@ export default function DonationDisplay({
                 totalDonorCount={donationCount}
               />
 
-              <div className="flex flex-row gap-2 justify-between">
+              <div className="flex flex-col sm:flex-row gap-2 justify-between text-center sm:text-left">
                 <a
                   data-tooltip-id="secure-donation-tooltip"
                   className="text-gray-500 text-xs underline cursor-pointer"
@@ -219,12 +220,12 @@ export default function DonationDisplay({
 
               <div className="h-px bg-gray-200 my-4" />
 
-              <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-5">
-                  <h3 className="text-lg font-semibold mb-4">
+              <div className="w-full md:w-[420px] lg:w-[480px] flex flex-col gap-6 mt-4 md:mt-0">
+                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-4 md:p-5">
+                  <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">
                     The reward of charity
                   </h3>
-                  <div className="text-gray-500">
+                  <div className="text-sm md:text-base text-gray-500">
                     "{hadith.text}"
                     <br />- {hadith.source}
                   </div>

@@ -9,6 +9,8 @@ import { getDonationCount } from "@/lib/server/services/donationCount";
 import { getDonationCountMonthly } from "@/lib/server/services/donationCountMonthly";
 import { getDonationsByCampaignId } from "@/lib/server/services/donations";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default async function DonationCampaignPage({
   params,
 }: {

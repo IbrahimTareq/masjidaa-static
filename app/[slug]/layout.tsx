@@ -19,15 +19,15 @@ export default async function MasjidLayout({
   const { slug } = await params;
 
   const masjid = await getMasjidBySlug(slug);
-  const prayerSettings = masjid
-    ? await getPrayerSettingsByMasjidId(masjid.id)
-    : null;
-  const siteSettings = masjid
-    ? await getMasjidSiteSettingsByMasjidId(masjid.id)
-    : null;
-  const socials = masjid
-    ? await getMasjidSocialsByMasjidId(masjid.id)
-    : null;
+
+  // Parallelize related data fetching
+  const [prayerSettings, siteSettings, socials] = masjid
+    ? await Promise.all([
+        getPrayerSettingsByMasjidId(masjid.id),
+        getMasjidSiteSettingsByMasjidId(masjid.id),
+        getMasjidSocialsByMasjidId(masjid.id),
+      ])
+    : [null, null, null];
 
   return (
     <MasjidProvider masjid={masjid}>

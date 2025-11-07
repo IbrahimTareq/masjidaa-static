@@ -20,52 +20,54 @@ export default function DownloadApp() {
         style={{ backgroundSize: "400px" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 items-center">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         {/* Left Side */}
         <div>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight">
             Stay connected with&nbsp;
             <span className="text-theme">{masjid.name}</span>
           </h1>
-          <p className="text-lg font-semibold text-gray-600 mb-8">
+          <p className="text-base md:text-lg font-semibold text-gray-600 mb-6 md:mb-8">
             Get accurate prayer times with helpful iqama reminders, instant
             updates on announcements and events, and never miss a moment with
             your community. You can also support your masjid easily and
             securely, helping it continue to serve you and others.
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
             <Link
               href="https://apps.apple.com/us/app/pillars-prayer-times-qibla/id1559086853"
               target="_blank"
               rel="noopener noreferrer"
-              className="cursor-pointer"
+              className="cursor-pointer min-h-[44px]"
             >
               <Image
                 src="/appstore.png"
                 alt="App Store"
                 width={150}
                 height={45}
+                className="w-[130px] sm:w-[150px] h-auto"
               />
             </Link>
             <Link
               href="https://play.google.com/store/apps/details?id=com.pillars.pillars"
               target="_blank"
               rel="noopener noreferrer"
-              className="cursor-pointer"
+              className="cursor-pointer min-h-[44px]"
             >
               <Image
                 src="/playstore.png"
                 alt="Google Play"
                 width={150}
                 height={45}
+                className="w-[130px] sm:w-[150px] h-auto"
               />
             </Link>
           </div>
         </div>
 
-        <div className="flex justify-center mt-10 lg:mt-0">
-          <div className="relative w-[300px] h-[600px] rounded-[2.5rem] border-4 border-gray-800 bg-black shadow-2xl overflow-hidden pointer-events-none">
+        <div className="flex justify-center mt-10 md:mt-0">
+          <div className="relative w-[280px] sm:w-[300px] h-[560px] sm:h-[600px] rounded-[2.5rem] border-4 border-gray-800 bg-black shadow-2xl overflow-hidden pointer-events-none">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20"></div>
 
             <div className="absolute inset-0 flex flex-col bg-white text-black">
@@ -73,11 +75,11 @@ export default function DownloadApp() {
               <div className="h-56 bg-theme"></div>
 
               {/* Masjid card */}
-              <div className="relative -mt-30 mx-4 bg-white rounded-2xl shadow p-4">
-                <h2 className="font-bold text-md mb-2">{masjid.name}</h2>
+              <div className="relative -mt-30 mx-3 sm:mx-4 bg-white rounded-2xl shadow p-3 sm:p-4">
+                <h2 className="font-bold text-sm sm:text-md mb-2 pr-12">{masjid.name}</h2>
 
                 {/* Floating logo */}
-                <div className="absolute top-4 right-4 w-12 h-12 bg-white rounded-lg border-2 border-gray-100 flex justify-center items-center p-2 shadow-sm">
+                <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg border-2 border-gray-100 flex justify-center items-center p-1.5 sm:p-2 shadow-sm">
                   <img
                     src={masjid.logo || ""}
                     alt="Masjid Logo"
@@ -85,7 +87,7 @@ export default function DownloadApp() {
                   />
                 </div>
 
-                <div className="text-xs text-gray-600 space-y-1">
+                <div className="text-[10px] sm:text-xs text-gray-600 space-y-0.5 sm:space-y-1">
                   <p>🌐 {masjid.website}</p>
                   <p>📞 {masjid.contact_number}</p>
                   <p>📍 {masjid.address_label}</p>
@@ -106,16 +108,16 @@ export default function DownloadApp() {
               </div>
 
               {/* Prayer timetable */}
-              <div className="mt-4 flex-1 px-4 overflow-y-auto bg-white">
-                <table className="w-full text-sm">
+              <div className="mt-3 sm:mt-4 flex-1 px-3 sm:px-4 overflow-y-auto bg-white">
+                <table className="w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="text-gray-500">
-                      <th className="text-left pb-2">Prayer</th>
-                      <th className="text-center pb-2">Starts</th>
-                      <th className="text-center pb-2">Iqamah</th>
+                      <th className="text-left pb-1.5 sm:pb-2 text-[10px] sm:text-xs">Prayer</th>
+                      <th className="text-center pb-1.5 sm:pb-2 text-[10px] sm:text-xs">Starts</th>
+                      <th className="text-center pb-1.5 sm:pb-2 text-[10px] sm:text-xs">Iqamah</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y text-gray-800">
+                  <tbody className="divide-y text-gray-800 text-[10px] sm:text-xs">
                     <tr>
                       <td className="py-2 font-semibold">Fajr</td>
                       <td className="text-center">4:52 AM</td>
@@ -146,13 +148,13 @@ export default function DownloadApp() {
               </div>
 
               {/* Bottom nav */}
-              <div className="border-t bg-white flex justify-between py-2 px-15 text-gray-500 text-xs">
-                <div className="flex flex-col items-center">
-                  <Home />
+              <div className="border-t bg-white flex justify-between py-2 px-10 sm:px-15 text-gray-500 text-[10px] sm:text-xs">
+                <div className="flex flex-col items-center gap-0.5">
+                  <Home className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Home</span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <Search />
+                <div className="flex flex-col items-center gap-0.5">
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Discover</span>
                 </div>
               </div>

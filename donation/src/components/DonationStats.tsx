@@ -35,11 +35,11 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
       );
 
   return (
-    <div className="p-5 space-y-4">
+    <div className="p-4 md:p-5 space-y-3 md:space-y-4">
       {/* Amount Raised */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-3xl font-light text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-light text-gray-900">
             {formatCurrency({
               amount: Number(campaign.amount_raised),
               currency: masjid.local_currency,
@@ -47,7 +47,7 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
             })}
             &nbsp;donated
           </h2>
-          <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+          <p className="text-xs md:text-sm text-gray-500 mt-1 flex flex-wrap items-center gap-1">
             <Target className="w-3 h-3 text-gray-500" />
             <span>
               {formatCurrency({
@@ -78,8 +78,8 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
 
       {/* Recent Activity */}
       <div className="flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-gray-500" />
-        <span className="text-sm text-gray-500 tracking-tight">
+        <TrendingUp className="w-4 h-4 text-gray-500 flex-shrink-0" />
+        <span className="text-xs md:text-sm text-gray-500 tracking-tight">
           {loadingCount
             ? "People have donated this month"
             : monthlyDonorCount === 0
@@ -94,12 +94,12 @@ export const DonationStats: React.FC<DonationStatsProps> = ({
       <div className="space-y-2.5 pt-1">
         {campaign.active ? <button
           onClick={onDonateClick}
-          className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer"
+          className="w-full py-3 bg-theme hover:bg-theme-gradient disabled:bg-theme-accent text-white font-medium rounded-lg transition-colors cursor-pointer min-h-[44px]"
         >
           Donate now
         </button> : <button
           disabled
-          className="w-full py-3 bg-theme disabled:bg-theme-accent text-white font-medium rounded-lg"
+          className="w-full py-3 bg-theme disabled:bg-theme-accent text-white font-medium rounded-lg min-h-[44px]"
         >
           Campaign closed
         </button>}

@@ -1,6 +1,7 @@
 "use client";
 
 import { formatCurrency } from "@/utils/currency";
+import Image from "next/image";
 import { ExtendedDonationStep } from "../hooks/useDonationForm";
 import { useDonationGiftAid } from "../hooks/useDonationGiftAid";
 import {
@@ -42,31 +43,31 @@ export default function GiftAidStep({
       onBack={onBack}
       currentStep={currentStep}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+        <div className="space-y-3 md:space-y-4">
           <div className="rounded-lg">
-            <h3 className="font-medium text-theme mb-2">
+            <h3 className="font-medium text-theme mb-2 text-sm md:text-base">
               Make your donation go 25% further – at no extra cost.
             </h3>
             
             {/* Gift Aid Summary Box */}
-            <div className="border border-gray-200 rounded-lg p-4 mb-4">
-              <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="border border-gray-200 rounded-lg p-3 md:p-4 mb-3 md:mb-4">
+              <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
                 <div>
-                  <p className="text-gray-600 text-sm">Your donation</p>
-                  <p className="text-gray-900 text-xl font-semibold">
+                  <p className="text-gray-600 text-xs md:text-sm">Your donation</p>
+                  <p className="text-gray-900 text-base md:text-xl font-semibold">
                     {formatCurrency({ amount: donationAmount, currency: 'GBP', decimals: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-theme text-sm">Gift Aid boost</p>
-                  <p className="text-theme text-xl font-semibold">
+                  <p className="text-theme text-xs md:text-sm">Gift Aid boost</p>
+                  <p className="text-theme text-base md:text-xl font-semibold">
                     + {formatCurrency({ amount: giftAidAmount, currency: 'GBP', decimals: 2 })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-600 text-sm">Total received</p>
-                  <p className="text-gray-900 text-xl font-semibold">
+                  <p className="text-gray-600 text-xs md:text-sm">Total received</p>
+                  <p className="text-gray-900 text-base md:text-xl font-semibold">
                     {formatCurrency({ amount: totalAmount, currency: 'GBP', decimals: 2 })}
                   </p>
                 </div>
@@ -92,7 +93,7 @@ export default function GiftAidStep({
           </div>
 
           <div className="flex justify-start">
-            <img src="/gift-aid.svg" alt="Gift Aid" className="w-40 h-auto" />
+            <Image src="/gift-aid.svg" alt="Gift Aid" width={160} height={60} className="w-32 md:w-40 h-auto" />
           </div>
 
           <DonationCheckbox

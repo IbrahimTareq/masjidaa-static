@@ -2,6 +2,8 @@ import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidAnnouncementsByMasjidId } from "@/lib/server/services/masjidAnnouncements";
 import AnnouncementsClient from "./announcements";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default async function Page({
   params,
 }: {

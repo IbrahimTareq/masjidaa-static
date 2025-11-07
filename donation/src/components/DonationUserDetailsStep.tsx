@@ -55,10 +55,10 @@ export default function DonationUserDetailsStep({
       onBack={onBack}
       currentStep={currentStep}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
         {/* Personal Information Section */}
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             <DonationFormField
               id="firstName"
               label="First Name"

@@ -62,7 +62,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
   });
 
   return (
-    <div className="w-full lg:w-[480px] flex flex-col gap-6 mt-4 lg:mt-0">
+    <div className="w-full md:w-[420px] lg:w-[480px] flex flex-col gap-4 md:gap-6 mt-4 md:mt-0">
       <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden">
         {/* Stats Panel */}
         <div

@@ -31,7 +31,7 @@ export function DonationButton({
   className = "",
 }: DonationButtonProps) {
   // Base classes
-  const baseClasses = "py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer";
+  const baseClasses = "py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer min-h-[44px] flex items-center justify-center";
   
   // Width classes
   const widthClasses = fullWidth ? "w-full" : "";

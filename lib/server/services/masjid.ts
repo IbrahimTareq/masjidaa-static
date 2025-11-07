@@ -1,9 +1,10 @@
 import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 
-export async function getMasjidById(
+export const getMasjidById = cache(async (
   id: string
-): Promise<Tables<"masjids"> | null> {
+): Promise<Tables<"masjids"> | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("masjids")
@@ -16,11 +17,11 @@ export async function getMasjidById(
     return null;
   }
   return data;
-}
+});
 
-export async function getMasjidBySlug(
+export const getMasjidBySlug = cache(async (
   slug: string
-): Promise<Tables<"masjids"> | null> {
+): Promise<Tables<"masjids"> | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("masjids")
@@ -33,9 +34,9 @@ export async function getMasjidBySlug(
     return null;
   }
   return data;
-}
+});
 
-export async function getMasjids(): Promise<Tables<"masjids">[] | null> {
+export const getMasjids = cache(async (): Promise<Tables<"masjids">[] | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("masjids")
@@ -47,4 +48,4 @@ export async function getMasjids(): Promise<Tables<"masjids">[] | null> {
     return null;
   }
   return data;
-}
+});

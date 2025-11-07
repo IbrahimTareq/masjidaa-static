@@ -5,6 +5,7 @@ import { Tables } from "@/database.types";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import Linkify from "linkify-react";
 import { Calendar, X } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function AnnouncementClient({
@@ -27,7 +28,7 @@ export default function AnnouncementClient({
   const { colorVariations } = useThemeColors();
 
   return (
-    <div className="bg-white/80 relative overflow-hidden my-10">
+    <div className="bg-white/80 relative overflow-hidden my-6 md:my-10">
       {/* Wavy Background */}
       <WavyBackground
         colors={colorVariations}
@@ -40,12 +41,12 @@ export default function AnnouncementClient({
 
       <div className="relative z-10">
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="lg:flex lg:gap-12">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <div className="md:flex md:gap-8 lg:gap-12">
             {/* Left Column - Event Details */}
-            <div className="flex-1 mb-8 lg:mb-0">
+            <div className="flex-1 mb-8 md:mb-0">
               {/* Title */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6 md:mb-8">
                 {announcement.title}
               </h1>
 
@@ -68,17 +69,21 @@ export default function AnnouncementClient({
             </div>
 
             {/* Right Column - Event Image and Desktop Buttons */}
-            <div className="lg:w-[480px] flex flex-col gap-6">
+            <div className="md:w-[380px] lg:w-[480px] flex flex-col gap-6">
               <div
-                className="aspect-[4/3] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 cursor-pointer transition-transform hover:scale-[1.02]"
+                className="aspect-video sm:aspect-[4/3] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 cursor-pointer transition-transform hover:scale-[1.02]"
                 onClick={openImagePreview}
               >
                 {announcement.image ? (
-                  <img
-                    src={announcement.image}
-                    alt={announcement.title}
-                    className="w-full h-full object-contain p-4"
-                  />
+                  <div className="relative w-full h-full p-4">
+                    <Image
+                      src={announcement.image}
+                      alt={announcement.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 380px, 480px"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Calendar className="w-16 h-16 sm:w-32 sm:h-32 text-gray-300" />
@@ -98,16 +103,21 @@ export default function AnnouncementClient({
         >
           <button
             onClick={closeImagePreview}
-            className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors"
+            className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 rounded-full p-3 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
           >
             <X className="w-6 h-6 text-white" />
           </button>
-          <img
-            src={announcement.image}
-            alt={announcement.title}
-            className="max-w-full max-h-[90vh] object-contain rounded-lg"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="relative max-w-4xl w-full" style={{ maxHeight: '90vh' }}>
+            <Image
+              src={announcement.image}
+              alt={announcement.title}
+              width={1200}
+              height={800}
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+              sizes="(max-width: 768px) 100vw, 1200px"
+            />
+          </div>
         </div>
       )}
     </div>

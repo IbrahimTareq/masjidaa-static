@@ -56,19 +56,19 @@ export default function DonationAmountStep({
 
   return (
     <DonationStepLayout title="Donation Amount" onBack={onBack} currentStep={currentStep}>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
         {/* Frequency Selection */}
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           <label className="block text-sm font-medium text-gray-700">
             Donation Frequency
           </label>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
             {["once", "weekly", "monthly", "daily"].map((freq) => (
               <button
                 key={freq}
                 type="button"
                 onClick={() => setFrequency(freq as PaymentFrequency)}
-                className={`text-sm py-3 px-4 rounded-lg border-2 transition-colors ${
+                className={`text-xs md:text-sm py-3 px-3 md:px-4 rounded-lg border-2 transition-colors min-h-[44px] ${
                   frequency === freq
                     ? "border-[var(--theme-color)] bg-[var(--theme-color-10)] text-[var(--theme-color)]"
                     : "border-gray-200 hover:border-gray-300 text-gray-700 cursor-pointer"
@@ -83,18 +83,18 @@ export default function DonationAmountStep({
         </div>
 
         {/* Amount Selection */}
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           <label className="block text-sm font-medium text-gray-700">
             Suggested Amounts
           </label>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
             {PRESET_AMOUNTS.map((amount) => (
               <button
                 key={amount}
                 type="button"
                 onClick={() => handlePresetClick(amount)}
                 disabled={conversionLoading}
-                className={`text-sm py-3 px-4 rounded-lg border-2 transition-colors ${
+                className={`text-xs md:text-sm py-3 px-3 md:px-4 rounded-lg border-2 transition-colors min-h-[44px] ${
                   selectedPresetAmount === amount
                     ? "border-[var(--theme-color)] bg-[var(--theme-color-10)] text-[var(--theme-color)]"
                     : "border-gray-200 hover:border-gray-300 text-gray-700 cursor-pointer"
@@ -121,7 +121,7 @@ export default function DonationAmountStep({
                 step="any"
                 value={customAmount}
                 onChange={handleInputChange}
-                className="block w-full pl-7 pr-12 py-3 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50"
+                className="block w-full pl-7 pr-12 py-3 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50 text-sm md:text-base min-h-[44px]"
                 placeholder="0.00"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -145,7 +145,7 @@ export default function DonationAmountStep({
                   onChange={(e) => handleFeeToggle(e.target.checked)}
                   className="rounded border-gray-300 text-[var(--theme-color)] focus:ring-[var(--theme-color)]"
                 />
-                <span className="flex items-center justify-between">
+                <span className="flex items-center">
                   <span>
                     I want 100% of my donation to reach the cause (adds&nbsp;
                     {formatCurrency({
@@ -160,26 +160,31 @@ export default function DonationAmountStep({
                     data-tooltip-id="cover-fees-tooltip"
                   />
                 </span>
-                <Tooltip
-                  id="cover-fees-tooltip"
-                  place="top"
-                  className="z-50 max-w-xs !bg-white !text-gray-800 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
-                >
-                  <div className="space-y-2 text-xs">
-                    <h2 className="text-sm font-semibold">
-                      Cover Processing Fees
-                    </h2>
-                    <p>
-                      When checked, 100% of your intended donation amount
-                      reaches the cause.
-                    </p>
-                    <p>
-                      This small additional amount helps cover Stripe and
-                      platform fees.
-                    </p>
-                  </div>
-                </Tooltip>
               </label>
+              <Tooltip
+                id="cover-fees-tooltip"
+                place="top"
+                className="z-50 max-w-xs !bg-white !text-gray-800 !opacity-100 !shadow-lg !rounded-xl !p-5 !border !border-gray-100"
+                style={{
+                  fontWeight: 500,
+                  boxShadow:
+                    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                }}
+              >
+                <div className="space-y-2 text-xs">
+                  <h2 className="text-sm font-semibold">
+                    Cover Processing Fees
+                  </h2>
+                  <p>
+                    When checked, 100% of your intended donation amount
+                    reaches the cause.
+                  </p>
+                  <p>
+                    This small additional amount helps cover Stripe and
+                    platform fees.
+                  </p>
+                </div>
+              </Tooltip>
             </div>
           )}
         </div>
