@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -23,6 +23,7 @@ export type Database = {
           image: string
           masjid_id: string
           message: string | null
+          receipt_id: string | null
           rejected_reason: string | null
           status: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id: string | null
@@ -36,6 +37,7 @@ export type Database = {
           image: string
           masjid_id: string
           message?: string | null
+          receipt_id?: string | null
           rejected_reason?: string | null
           status?: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id?: string | null
@@ -49,6 +51,7 @@ export type Database = {
           image?: string
           masjid_id?: string
           message?: string | null
+          receipt_id?: string | null
           rejected_reason?: string | null
           status?: Database["public"]["Enums"]["status_type"]
           stripe_payment_intent_id?: string | null
@@ -80,7 +83,6 @@ export type Database = {
           masjid_id: string
           pinned: boolean
           push_notification: boolean | null
-          short_link_id: string | null
           title: string
           updated_at: string | null
         }
@@ -92,7 +94,6 @@ export type Database = {
           masjid_id: string
           pinned?: boolean
           push_notification?: boolean | null
-          short_link_id?: string | null
           title: string
           updated_at?: string | null
         }
@@ -104,7 +105,6 @@ export type Database = {
           masjid_id?: string
           pinned?: boolean
           push_notification?: boolean | null
-          short_link_id?: string | null
           title?: string
           updated_at?: string | null
         }
@@ -116,14 +116,22 @@ export type Database = {
             referencedRelation: "masjids"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "announcements_short_link_id_fkey"
-            columns: ["short_link_id"]
-            isOneToOne: false
-            referencedRelation: "short_links"
-            referencedColumns: ["id"]
-          },
         ]
+      }
+      anonymous_qna_users: {
+        Row: {
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: []
       }
       anonymous_users: {
         Row: {
@@ -222,7 +230,6 @@ export type Database = {
           image: string | null
           masjid_id: string
           name: string
-          short_link_id: string | null
           target_amount: number
           video: string | null
         }
@@ -236,7 +243,6 @@ export type Database = {
           image?: string | null
           masjid_id: string
           name: string
-          short_link_id?: string | null
           target_amount: number
           video?: string | null
         }
@@ -250,7 +256,6 @@ export type Database = {
           image?: string | null
           masjid_id?: string
           name?: string
-          short_link_id?: string | null
           target_amount?: number
           video?: string | null
         }
@@ -269,13 +274,6 @@ export type Database = {
             referencedRelation: "masjids"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "donation_campaigns_short_link_id_fkey"
-            columns: ["short_link_id"]
-            isOneToOne: false
-            referencedRelation: "short_links"
-            referencedColumns: ["id"]
-          },
         ]
       }
       donations: {
@@ -290,13 +288,14 @@ export type Database = {
           donor_first_name: string
           donor_last_name: string
           donor_message: string | null
+          fee_covered: boolean
           gift_aid_declared: boolean
           id: string
           is_anonymous: boolean
           masjid_id: string
           receipt_id: string | null
           resend_id: string | null
-          stripe_payment_intent_id: string | null
+          stripe_payment_id: string | null
           stripe_receipt_url: string | null
         }
         Insert: {
@@ -310,13 +309,14 @@ export type Database = {
           donor_first_name: string
           donor_last_name: string
           donor_message?: string | null
+          fee_covered?: boolean
           gift_aid_declared?: boolean
           id?: string
           is_anonymous?: boolean
           masjid_id: string
           receipt_id?: string | null
           resend_id?: string | null
-          stripe_payment_intent_id?: string | null
+          stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
         }
         Update: {
@@ -330,13 +330,14 @@ export type Database = {
           donor_first_name?: string
           donor_last_name?: string
           donor_message?: string | null
+          fee_covered?: boolean
           gift_aid_declared?: boolean
           id?: string
           is_anonymous?: boolean
           masjid_id?: string
           receipt_id?: string | null
           resend_id?: string | null
-          stripe_payment_intent_id?: string | null
+          stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
         }
         Relationships: [
@@ -366,6 +367,8 @@ export type Database = {
           id: string
           last_name: string
           masjid_id: string
+          quantity: number
+          status: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at: string | null
         }
         Insert: {
@@ -377,6 +380,8 @@ export type Database = {
           id?: string
           last_name: string
           masjid_id: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }
         Update: {
@@ -388,6 +393,8 @@ export type Database = {
           id?: string
           last_name?: string
           masjid_id?: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }
         Relationships: [
@@ -531,7 +538,6 @@ export type Database = {
           masjid_id: string
           push_notification: boolean
           recurrence: string | null
-          short_link_id: string
           start_time: string | null
           status: Database["public"]["Enums"]["event_status"]
           title: string
@@ -553,7 +559,6 @@ export type Database = {
           masjid_id: string
           push_notification?: boolean
           recurrence?: string | null
-          short_link_id: string
           start_time?: string | null
           status?: Database["public"]["Enums"]["event_status"]
           title: string
@@ -575,7 +580,6 @@ export type Database = {
           masjid_id?: string
           push_notification?: boolean
           recurrence?: string | null
-          short_link_id?: string
           start_time?: string | null
           status?: Database["public"]["Enums"]["event_status"]
           title?: string
@@ -602,13 +606,6 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "events_short_link_id_fkey"
-            columns: ["short_link_id"]
-            isOneToOne: false
-            referencedRelation: "short_links"
             referencedColumns: ["id"]
           },
         ]
@@ -805,6 +802,60 @@ export type Database = {
           },
         ]
       }
+      masjid_invites: {
+        Row: {
+          accepted_at: string | null
+          allowed_pages: string[]
+          created_at: string
+          email: string
+          id: string
+          invited_by: string
+          masjid_id: string
+          name: string
+          role: Database["public"]["Enums"]["masjid_role"]
+          status: Database["public"]["Enums"]["invite_status_type"]
+        }
+        Insert: {
+          accepted_at?: string | null
+          allowed_pages?: string[]
+          created_at?: string
+          email: string
+          id?: string
+          invited_by: string
+          masjid_id: string
+          name: string
+          role?: Database["public"]["Enums"]["masjid_role"]
+          status?: Database["public"]["Enums"]["invite_status_type"]
+        }
+        Update: {
+          accepted_at?: string | null
+          allowed_pages?: string[]
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string
+          masjid_id?: string
+          name?: string
+          role?: Database["public"]["Enums"]["masjid_role"]
+          status?: Database["public"]["Enums"]["invite_status_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_invites_invited_by_users_id_fk"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masjid_invites_masjid_id_masjids_id_fk"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masjid_iqamah_times: {
         Row: {
           active: boolean
@@ -902,12 +953,90 @@ export type Database = {
           },
         ]
       }
+      masjid_memberships: {
+        Row: {
+          allowed_pages: string[]
+          created_at: string
+          id: string
+          masjid_id: string
+          role: Database["public"]["Enums"]["masjid_role"]
+          user_id: string
+        }
+        Insert: {
+          allowed_pages?: string[]
+          created_at?: string
+          id?: string
+          masjid_id: string
+          role?: Database["public"]["Enums"]["masjid_role"]
+          user_id: string
+        }
+        Update: {
+          allowed_pages?: string[]
+          created_at?: string
+          id?: string
+          masjid_id?: string
+          role?: Database["public"]["Enums"]["masjid_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_memberships_masjid_id_masjids_id_fk"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masjid_memberships_user_id_users_id_fk"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      masjid_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean
+          masjid_id: string
+          notification_data: string
+          notification_type: Database["public"]["Enums"]["notification_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          masjid_id: string
+          notification_data: string
+          notification_type: Database["public"]["Enums"]["notification_type"]
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          masjid_id?: string
+          notification_data?: string
+          notification_type?: Database["public"]["Enums"]["notification_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masjid_notifications_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masjid_prayer_settings: {
         Row: {
           asr_adjustment: number
           calculation_method: Database["public"]["Enums"]["calculation_method"]
           created_at: string | null
           dhuhr_adjustment: number
+          duha_offset: string
           fajr_adjustment: number
           fajr_angle: number
           high_latitude_rule:
@@ -931,6 +1060,7 @@ export type Database = {
           calculation_method: Database["public"]["Enums"]["calculation_method"]
           created_at?: string | null
           dhuhr_adjustment?: number
+          duha_offset: string
           fajr_adjustment?: number
           fajr_angle?: number
           high_latitude_rule?:
@@ -954,6 +1084,7 @@ export type Database = {
           calculation_method?: Database["public"]["Enums"]["calculation_method"]
           created_at?: string | null
           dhuhr_adjustment?: number
+          duha_offset?: string
           fajr_adjustment?: number
           fajr_angle?: number
           high_latitude_rule?:
@@ -1063,30 +1194,30 @@ export type Database = {
       masjid_slides: {
         Row: {
           created_at: string | null
+          entity_id: string | null
           id: string
           layout_type: Database["public"]["Enums"]["layout_type"]
           masjid_id: string
           props: Json
-          reference_id: string | null
-          slide_type: string
+          slide_type: Database["public"]["Enums"]["slide_type"]
         }
         Insert: {
           created_at?: string | null
+          entity_id?: string | null
           id?: string
           layout_type: Database["public"]["Enums"]["layout_type"]
           masjid_id: string
           props: Json
-          reference_id?: string | null
-          slide_type: string
+          slide_type: Database["public"]["Enums"]["slide_type"]
         }
         Update: {
           created_at?: string | null
+          entity_id?: string | null
           id?: string
           layout_type?: Database["public"]["Enums"]["layout_type"]
           masjid_id?: string
           props?: Json
-          reference_id?: string | null
-          slide_type?: string
+          slide_type?: Database["public"]["Enums"]["slide_type"]
         }
         Relationships: [
           {
@@ -1303,10 +1434,10 @@ export type Database = {
           created_at: string | null
           description: string | null
           email: string | null
-          fts: unknown | null
+          fts: unknown
           hijri_date_adjustment: number
           id: string
-          local_currency: string
+          local_currency: Database["public"]["Enums"]["supported_currency"]
           logo: string | null
           name: string
           postcode: string | null
@@ -1333,10 +1464,10 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           email?: string | null
-          fts?: unknown | null
+          fts?: unknown
           hijri_date_adjustment: number
           id?: string
-          local_currency: string
+          local_currency?: Database["public"]["Enums"]["supported_currency"]
           logo?: string | null
           name: string
           postcode?: string | null
@@ -1363,10 +1494,10 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           email?: string | null
-          fts?: unknown | null
+          fts?: unknown
           hijri_date_adjustment?: number
           id?: string
-          local_currency?: string
+          local_currency?: Database["public"]["Enums"]["supported_currency"]
           logo?: string | null
           name?: string
           postcode?: string | null
@@ -1398,10 +1529,145 @@ export type Database = {
           },
         ]
       }
+      qna_questions: {
+        Row: {
+          author_anonymous_id: string | null
+          author_name: string | null
+          created_at: string
+          id: string
+          is_answered: boolean
+          question: string
+          session_id: string
+          status: Database["public"]["Enums"]["qna_question_status"]
+          updated_at: string
+          upvote_count: number
+        }
+        Insert: {
+          author_anonymous_id?: string | null
+          author_name?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean
+          question: string
+          session_id: string
+          status?: Database["public"]["Enums"]["qna_question_status"]
+          updated_at?: string
+          upvote_count?: number
+        }
+        Update: {
+          author_anonymous_id?: string | null
+          author_name?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean
+          question?: string
+          session_id?: string
+          status?: Database["public"]["Enums"]["qna_question_status"]
+          updated_at?: string
+          upvote_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qna_questions_author_anonymous_id_anonymous_qna_users_id_fk"
+            columns: ["author_anonymous_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_qna_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qna_questions_session_id_qna_sessions_id_fk"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "qna_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qna_sessions: {
+        Row: {
+          closed_at: string | null
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_open: boolean
+          masjid_id: string
+          password: string | null
+          require_approval: boolean
+          title: string
+        }
+        Insert: {
+          closed_at?: string | null
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_open?: boolean
+          masjid_id: string
+          password?: string | null
+          require_approval?: boolean
+          title: string
+        }
+        Update: {
+          closed_at?: string | null
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_open?: boolean
+          masjid_id?: string
+          password?: string | null
+          require_approval?: boolean
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qna_sessions_masjid_id_masjids_id_fk"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qna_upvotes: {
+        Row: {
+          created_at: string
+          question_id: string
+          voter_anonymous_id: string
+        }
+        Insert: {
+          created_at?: string
+          question_id: string
+          voter_anonymous_id: string
+        }
+        Update: {
+          created_at?: string
+          question_id?: string
+          voter_anonymous_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qna_upvotes_question_id_qna_questions_id_fk"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "qna_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qna_upvotes_voter_anonymous_id_anonymous_qna_users_id_fk"
+            columns: ["voter_anonymous_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_qna_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recurring_donations: {
         Row: {
           amount_cents: number
           campaign_id: string
+          canceled_at: string | null
           created_at: string | null
           currency: string
           email: string
@@ -1410,7 +1676,7 @@ export type Database = {
           id: string
           last_name: string
           masjid_id: string
-          status: string
+          status: Database["public"]["Enums"]["recurring_donation_status"]
           stripe_account_id: string
           stripe_customer_id: string
           stripe_payment_method_id: string
@@ -1420,6 +1686,7 @@ export type Database = {
         Insert: {
           amount_cents: number
           campaign_id: string
+          canceled_at?: string | null
           created_at?: string | null
           currency?: string
           email: string
@@ -1428,7 +1695,7 @@ export type Database = {
           id?: string
           last_name: string
           masjid_id: string
-          status?: string
+          status?: Database["public"]["Enums"]["recurring_donation_status"]
           stripe_account_id: string
           stripe_customer_id: string
           stripe_payment_method_id: string
@@ -1438,6 +1705,7 @@ export type Database = {
         Update: {
           amount_cents?: number
           campaign_id?: string
+          canceled_at?: string | null
           created_at?: string | null
           currency?: string
           email?: string
@@ -1446,7 +1714,7 @@ export type Database = {
           id?: string
           last_name?: string
           masjid_id?: string
-          status?: string
+          status?: Database["public"]["Enums"]["recurring_donation_status"]
           stripe_account_id?: string
           stripe_customer_id?: string
           stripe_payment_method_id?: string
@@ -1492,6 +1760,7 @@ export type Database = {
         Row: {
           clicks: number | null
           created_at: string | null
+          entity_id: string | null
           id: string
           is_admin: boolean
           masjid_id: string | null
@@ -1502,6 +1771,7 @@ export type Database = {
         Insert: {
           clicks?: number | null
           created_at?: string | null
+          entity_id?: string | null
           id?: string
           is_admin?: boolean
           masjid_id?: string | null
@@ -1512,6 +1782,7 @@ export type Database = {
         Update: {
           clicks?: number | null
           created_at?: string | null
+          entity_id?: string | null
           id?: string
           is_admin?: boolean
           masjid_id?: string | null
@@ -1857,10 +2128,10 @@ export type Database = {
           created_at: string | null
           description: string | null
           email: string | null
-          fts: unknown | null
+          fts: unknown
           hijri_date_adjustment: number
           id: string
-          local_currency: string
+          local_currency: Database["public"]["Enums"]["supported_currency"]
           logo: string | null
           name: string
           postcode: string | null
@@ -1875,10 +2146,12 @@ export type Database = {
           verified: boolean
           website: string | null
         }[]
-      }
-      update_user_metadata: {
-        Args: { metadata: Json; user_id: string }
-        Returns: undefined
+        SetofOptions: {
+          from: "*"
+          to: "masjids"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
     }
     Enums: {
@@ -1899,14 +2172,29 @@ export type Database = {
         | "Other"
       contact_method: "email" | "phone"
       donation_type: "one-off" | "recurring"
+      event_form_submission_status: "confirmed" | "cancelled" | "registered"
       event_status: "active" | "draft"
       event_type: "none" | "free" | "paid"
       high_latitude_rule:
         | "MiddleOfTheNight"
         | "SeventhOfTheNight"
         | "TwilightAngle"
+      invite_status_type: "pending" | "accepted"
       layout_type: "simple" | "advanced"
       madhab: "Shafi" | "Hanafi"
+      masjid_role: "admin" | "member"
+      notification_type:
+        | "ads"
+        | "iqamah_times"
+        | "jummah_times"
+        | "donations"
+        | "volunteers"
+        | "media"
+        | "events"
+        | "announcements"
+        | "general"
+      qna_question_status: "pending" | "approved" | "rejected" | "answered"
+      recurring_donation_status: "active" | "paused" | "canceled"
       scheme_types:
         | "GIFT_AID"
         | "IRS_501C3"
@@ -1926,6 +2214,14 @@ export type Database = {
         | "prayer-screen-4"
         | "prayer-screen-5"
         | "other"
+      slide_type:
+        | "static"
+        | "announcement"
+        | "event"
+        | "business-ad"
+        | "prayer-screen"
+        | "donation"
+        | "custom"
       status_type:
         | "pending"
         | "approved"
@@ -1933,6 +2229,7 @@ export type Database = {
         | "payment_failed"
         | "paid"
         | "live"
+        | "expired"
       subscription_status: "active" | "inactive" | "canceled"
       subscription_type: "starter" | "community" | "hub"
       supported_country_code: "US" | "GB" | "CA" | "AU" | "NZ"
@@ -1942,6 +2239,7 @@ export type Database = {
         | "Canada"
         | "Australia"
         | "New Zealand"
+      supported_currency: "aud" | "nzd" | "gbp" | "usd" | "cad"
       time_format: "12" | "24"
       volunteer_interest:
         | "Cleaning"
@@ -2096,6 +2394,7 @@ export const Constants = {
       ],
       contact_method: ["email", "phone"],
       donation_type: ["one-off", "recurring"],
+      event_form_submission_status: ["confirmed", "cancelled", "registered"],
       event_status: ["active", "draft"],
       event_type: ["none", "free", "paid"],
       high_latitude_rule: [
@@ -2103,8 +2402,23 @@ export const Constants = {
         "SeventhOfTheNight",
         "TwilightAngle",
       ],
+      invite_status_type: ["pending", "accepted"],
       layout_type: ["simple", "advanced"],
       madhab: ["Shafi", "Hanafi"],
+      masjid_role: ["admin", "member"],
+      notification_type: [
+        "ads",
+        "iqamah_times",
+        "jummah_times",
+        "donations",
+        "volunteers",
+        "media",
+        "events",
+        "announcements",
+        "general",
+      ],
+      qna_question_status: ["pending", "approved", "rejected", "answered"],
+      recurring_donation_status: ["active", "paused", "canceled"],
       scheme_types: [
         "GIFT_AID",
         "IRS_501C3",
@@ -2126,6 +2440,15 @@ export const Constants = {
         "prayer-screen-5",
         "other",
       ],
+      slide_type: [
+        "static",
+        "announcement",
+        "event",
+        "business-ad",
+        "prayer-screen",
+        "donation",
+        "custom",
+      ],
       status_type: [
         "pending",
         "approved",
@@ -2133,6 +2456,7 @@ export const Constants = {
         "payment_failed",
         "paid",
         "live",
+        "expired",
       ],
       subscription_status: ["active", "inactive", "canceled"],
       subscription_type: ["starter", "community", "hub"],
@@ -2144,6 +2468,7 @@ export const Constants = {
         "Australia",
         "New Zealand",
       ],
+      supported_currency: ["aud", "nzd", "gbp", "usd", "cad"],
       time_format: ["12", "24"],
       volunteer_interest: [
         "Cleaning",

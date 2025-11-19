@@ -57,3 +57,71 @@ export async function getBusinessAdById(
     contact_number: businessData?.contact_number ?? null,
   };
 }
+
+export interface ApprovedBusinessAd extends BusinessAd {
+  id: string;
+  title: string;
+  expires_at: string | null;
+}
+
+export async function getApprovedBusinessAdsByMasjidId(
+  masjidId: string
+): Promise<ApprovedBusinessAd[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("ad_requests")
+    .select(
+      `
+      id,
+      image,
+      message,
+      title,
+      expires_at,
+      business:business_id (
+        name,
+        website,
+        contact_email,
+        address,
+        contact_number
+      )
+    `
+    )
+    .eq("masjid_id", masjidId)
+    .in("status", ["approved", "live"])
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching approved business ads:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  return data
+    .map((ad) => {
+      const businessData = Array.isArray(ad.business)
+        ? ad.business[0]
+        : ad.business;
+
+      return {
+        id: ad.id,
+        title: ad.title,
+        image: ad.image ?? null,
+        message: ad.message ?? null,
+        expires_at: ad.expires_at ?? null,
+        name: businessData?.name ?? null,
+        website: businessData?.website ?? null,
+        contact_email: businessData?.contact_email ?? null,
+        address: businessData?.address ?? null,
+        contact_number: businessData?.contact_number ?? null,
+      };
+    })
+    .filter((ad) => {
+      // Filter out expired ads
+      if (ad.expires_at) {
+        return new Date(ad.expires_at) > new Date();
+      }
+      return true;
+    });
+}

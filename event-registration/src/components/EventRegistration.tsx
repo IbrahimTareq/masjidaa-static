@@ -195,6 +195,7 @@ interface FormData {
   firstName?: string;
   lastName?: string;
   email?: string;
+  quantity?: number;
   [key: string]: any;
 }
 
@@ -243,6 +244,7 @@ export default function EventRegistration({
       const firstName = data.formData.firstName || "";
       const lastName = data.formData.lastName || "";
       const email = data.formData.email || "";
+      const quantity = data.formData.quantity || 1;
 
       // For free events, submit the form data immediately
       if (!isPaid && event.event_form_id && eventForm?.schema) {
@@ -272,7 +274,7 @@ export default function EventRegistration({
       }
       // If it's a paid event, proceed to payment without submitting form yet
       else if (isPaid && event.enrolment_fee && bankAccount) {
-        const amountInCents = Math.round(event.enrolment_fee * 100);
+        const amountInCents = Math.round(event.enrolment_fee * quantity * 100);
 
         const paymentData = await createEventPaymentIntentAction({
           amount: amountInCents,
@@ -359,7 +361,7 @@ export default function EventRegistration({
                   ? `Register (${formatAmount(
                       event.enrolment_fee!,
                       masjid.local_currency
-                    )})`
+                    )} per ticket)`
                   : "Register for this event"}
               </button>
             )}
@@ -474,11 +476,14 @@ export default function EventRegistration({
           );
         }
 
+        const quantity = formData.quantity || 1;
+        const totalAmount = event.enrolment_fee! * quantity;
+
         return (
-          <div className="p-5">
+          <div>
             <StripePaymentForm
               clientSecret={clientSecret}
-              amount={event.enrolment_fee!}
+              amount={totalAmount}
               currency={masjid.local_currency}
               onSuccess={handlePaymentSuccess}
               onCancel={handleBack}
@@ -619,7 +624,7 @@ function PaymentFormContent({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="p-5 pb-4 space-y-8">
         <div className="flex justify-between items-center">
           <button
             type="button"
@@ -628,8 +633,8 @@ function PaymentFormContent({
           >
             ← Back
           </button>
-          <div className="text-lg font-medium">
-            Payment: {formatAmount(amount, currency)}
+          <div className="text-lg font-medium text-gray-900">
+            Paying {formatAmount(amount, currency)}
           </div>
         </div>
 
