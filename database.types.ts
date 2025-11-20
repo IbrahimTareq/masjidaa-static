@@ -2235,6 +2235,7 @@ export type Database = {
         | "prayer-screen"
         | "donation"
         | "custom"
+        | "iqamah-times-change"
       status_type:
         | "pending"
         | "approved"
@@ -2461,6 +2462,7 @@ export const Constants = {
         "prayer-screen",
         "donation",
         "custom",
+        "iqamah-times-change",
       ],
       status_type: [
         "pending",

@@ -125,7 +125,7 @@ export default async function AdvancedLayoutPage({
   if (upcomingIqamahTimeChanges) {
     const iqamahTimeChangeSlide = {
       id: "iqamah-times-change",
-      slide_type: "iqamah-times-change",
+      slide_type: "iqamah-times-change" as const,
       props: {
         iqamahTimeChange: upcomingIqamahTimeChanges,
       },

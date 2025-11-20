@@ -158,7 +158,7 @@ export default async function SimpleLayoutPage({
   if (upcomingIqamahTimeChanges) {
     const iqamahTimeChangeSlide = {
       id: "iqamah-times-change",
-      slide_type: "iqamah-times-change",
+      slide_type: "iqamah-times-change" as const,
       props: {
         iqamahTimeChange: upcomingIqamahTimeChanges,
       },
