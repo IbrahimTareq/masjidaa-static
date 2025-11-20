@@ -362,6 +362,7 @@ export type Database = {
           data: Json
           email: string
           event_id: string
+          event_payment_id: string | null
           first_name: string
           form_id: string
           id: string
@@ -376,6 +377,7 @@ export type Database = {
           data: Json
           email: string
           event_id: string
+          event_payment_id?: string | null
           first_name: string
           form_id: string
           id?: string
@@ -390,6 +392,7 @@ export type Database = {
           data?: Json
           email?: string
           event_id?: string
+          event_payment_id?: string | null
           first_name?: string
           form_id?: string
           id?: string
@@ -420,6 +423,13 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_form_submissions_payment_id_fkey"
+            columns: ["event_payment_id"]
+            isOneToOne: false
+            referencedRelation: "event_payments"
             referencedColumns: ["id"]
           },
         ]
@@ -468,7 +478,6 @@ export type Database = {
           created_at: string | null
           currency: string
           email: string
-          event_form_submission_id: string | null
           event_id: string
           first_name: string
           id: string
@@ -484,7 +493,6 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email: string
-          event_form_submission_id?: string | null
           event_id: string
           first_name: string
           id?: string
@@ -500,7 +508,6 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email?: string
-          event_form_submission_id?: string | null
           event_id?: string
           first_name?: string
           id?: string
@@ -524,13 +531,6 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_payments_submission_id_fkey"
-            columns: ["event_form_submission_id"]
-            isOneToOne: false
-            referencedRelation: "event_form_submissions"
             referencedColumns: ["id"]
           },
         ]
@@ -2185,7 +2185,11 @@ export type Database = {
         | "Other"
       contact_method: "email" | "phone"
       donation_type: "one-off" | "recurring"
-      event_form_submission_status: "confirmed" | "cancelled" | "registered"
+      event_form_submission_status:
+        | "confirmed"
+        | "cancelled"
+        | "registered"
+        | "payment_pending"
       event_status: "active" | "draft"
       event_type: "none" | "free" | "paid"
       high_latitude_rule:
@@ -2408,7 +2412,12 @@ export const Constants = {
       ],
       contact_method: ["email", "phone"],
       donation_type: ["one-off", "recurring"],
-      event_form_submission_status: ["confirmed", "cancelled", "registered"],
+      event_form_submission_status: [
+        "confirmed",
+        "cancelled",
+        "registered",
+        "payment_pending",
+      ],
       event_status: ["active", "draft"],
       event_type: ["none", "free", "paid"],
       high_latitude_rule: [

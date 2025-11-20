@@ -5,6 +5,7 @@ import {
   createEventPaymentIntentAction,
   submitEventRegistrationAction,
   getEventEnrollmentStatusAction,
+  updateEventFormSubmissionStatusAction,
 } from "@/lib/server/actions/eventRegistrationActions";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
@@ -218,6 +219,7 @@ export default function EventRegistration({
   const [isLoading, setIsLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [enrollmentStatus, setEnrollmentStatus] = useState<{
     isFull: boolean;
     currentEnrollments: number;
@@ -274,13 +276,16 @@ export default function EventRegistration({
       const email = data.formData.email || "";
       const quantity = data.formData.quantity || 1;
 
-      // For free events, submit the form data immediately
-      if (!isPaid && event.event_form_id && eventForm?.schema) {
+      // Always submit the form first, regardless of payment requirement
+      if (event.event_form_id && eventForm?.schema) {
         // Transform the data to use titles as keys
         const transformedData = transformFormData(
           data.formData,
           eventForm.schema
         );
+
+        // Determine status based on whether payment is required
+        const status = isPaid ? "payment_pending" : "registered";
 
         const result = await submitEventRegistrationAction({
           formId: eventForm.id,
@@ -291,47 +296,52 @@ export default function EventRegistration({
           email: email,
           data: transformedData,
           quantity: quantity,
+          status: status,
         });
 
         if (!result.success) {
           throw new Error(result.error || "Failed to submit registration");
         }
 
-        // Refresh enrollment status after successful registration
-        await refreshEnrollmentStatus();
+        // Store the submission ID for later use
+        setSubmissionId(result.submissionId);
 
-        // For free events, show success immediately
-        setFormData({}); // Reset form data
-        setCurrentStep("success");
-      }
-      // If it's a paid event, proceed to payment without submitting form yet
-      else if (isPaid && event.enrolment_fee && bankAccount) {
-        const amountInCents = Math.round(event.enrolment_fee * quantity * 100);
+        // For free events, refresh enrollment and show success immediately
+        if (!isPaid) {
+          await refreshEnrollmentStatus();
+          setFormData({}); // Reset form data
+          setCurrentStep("success");
+        }
+        // For paid events, proceed to payment with the submission ID
+        else if (isPaid) {
+          const amountInCents = Math.round(event.enrolment_fee! * quantity * 100);
 
-        const paymentData = await createEventPaymentIntentAction({
-          amount: amountInCents,
-          currency: masjid.local_currency.toLowerCase(),
-          eventId: event.id,
-          eventTitle: event.title,
-          masjidId: masjid.id,
-          stripeAccountId: bankAccount.stripe_account_id,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          quantity: quantity,
-        });
+          const paymentData = await createEventPaymentIntentAction({
+            amount: amountInCents,
+            currency: masjid.local_currency.toLowerCase(),
+            eventId: event.id,
+            eventTitle: event.title,
+            masjidId: masjid.id,
+            stripeAccountId: bankAccount.stripe_account_id,
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            quantity: quantity,
+            formSubmissionId: result.submissionId,
+          });
 
-        setClientSecret(paymentData.client_secret);
-        setCurrentStep("payment");
+          setClientSecret(paymentData.client_secret);
+          setCurrentStep("payment");
+        }
       } else {
-        // For events without forms or payments
+        // For events without forms, just show success
         setFormData({}); // Reset form data
         setCurrentStep("success");
       }
     } catch (err) {
       console.error("Error submitting form:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
-      
+
       // Refresh enrollment status to update UI if slots are full
       const currentStatus = await refreshEnrollmentStatus();
       if (currentStatus?.isFull) {
@@ -344,44 +354,29 @@ export default function EventRegistration({
 
   const handlePaymentSuccess = async () => {
     try {
-      // After successful payment, submit the form data if there's an event form
-      if (event.event_form_id && eventForm?.schema && formData) {
-        // Extract basic user info from form data
-        const firstName = formData.firstName || "";
-        const lastName = formData.lastName || "";
-        const email = formData.email || "";
-        const quantity = formData.quantity || 1;
-        
-        // Transform the data to use titles as keys
-        const transformedData = transformFormData(formData, eventForm.schema);
-
-        const result = await submitEventRegistrationAction({
-          formId: eventForm.id,
-          eventId: event.id,
-          masjidId: masjid.id,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          data: transformedData,
-          quantity: quantity,
-        });
+      // After successful payment, update the submission status to "registered"
+      if (submissionId) {
+        const result = await updateEventFormSubmissionStatusAction(
+          submissionId,
+          "registered"
+        );
 
         if (!result.success) {
           console.error(
-            "Failed to submit registration after payment:",
+            "Failed to update submission status after payment:",
             result.error
           );
         }
       }
     } catch (err) {
-      console.error("Error submitting form after payment:", err);
+      console.error("Error updating submission status after payment:", err);
     } finally {
       // Refresh enrollment status after successful payment
       await refreshEnrollmentStatus();
-      
-      // Reset form data and show success screen regardless of submission result
-      // since payment was successful
+
+      // Reset form data and submission ID, then show success screen
       setFormData({}); // Reset form data
+      setSubmissionId(null); // Reset submission ID
       setCurrentStep("success");
     }
   };
@@ -556,6 +551,7 @@ export default function EventRegistration({
               <button
                 onClick={() => {
                   setFormData({}); // Reset form data
+                  setSubmissionId(null); // Reset submission ID
                   setCurrentStep("initial");
                 }}
                 className="px-6 py-2 bg-theme text-white rounded-lg hover:bg-theme/90 cursor-pointer"

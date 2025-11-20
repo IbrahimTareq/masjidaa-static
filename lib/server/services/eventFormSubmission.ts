@@ -59,7 +59,8 @@ export async function submitEventRegistration(
   lastName: string,
   email: string,
   quantity: number,
-  data: Record<string, any>
+  data: Record<string, any>,
+  status: "registered" | "payment_pending" = "registered"
 ) {
   // Validate enrollment availability
   const validation = await validateEnrollmentAvailability(eventId, quantity);
@@ -69,22 +70,27 @@ export async function submitEventRegistration(
 
   // Submit the registration
   const supabase = await createClient();
-  const { error } = await supabase.from("event_form_submissions").insert({
-    form_id: formId,
-    event_id: eventId,
-    masjid_id: masjidId,
-    first_name: firstName,
-    last_name: lastName,
-    email: email,
-    quantity: quantity,
-    data: data,
-  });
+  const { data: submission, error } = await supabase
+    .from("event_form_submissions")
+    .insert({
+      form_id: formId,
+      event_id: eventId,
+      masjid_id: masjidId,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      quantity: quantity,
+      data: data,
+      status: status,
+    })
+    .select("id")
+    .single();
 
   if (error) {
     console.error("Error submitting event form submission", error);
     return { success: false, error: "Failed to submit event form submission" };
   }
-  return { success: true };
+  return { success: true, submissionId: submission.id };
 }
 
 export async function createEventPaymentIntent({
@@ -98,6 +104,7 @@ export async function createEventPaymentIntent({
   firstName,
   lastName,
   quantity,
+  formSubmissionId,
 }: {
   amount: number;
   currency: string;
@@ -109,13 +116,8 @@ export async function createEventPaymentIntent({
   firstName: string;
   lastName: string;
   quantity: number;
+  formSubmissionId: string;
 }): Promise<{ client_secret: string }> {
-  // Validate enrollment availability
-  const validation = await validateEnrollmentAvailability(eventId, quantity);
-  if (!validation.available) {
-    throw new Error(validation.error);
-  }
-
   // Create payment intent
   const supabase = await createClient();
   const { data, error } = await supabase.functions.invoke(
@@ -133,10 +135,28 @@ export async function createEventPaymentIntent({
         first_name: firstName,
         last_name: lastName,
         quantity: quantity,
+        form_submission_id: formSubmissionId,
       },
     }
   );
 
   if (error) throw error;
   return data as { client_secret: string };
+}
+
+export async function updateEventFormSubmissionStatus(
+  submissionId: string,
+  status: "confirmed" | "cancelled" | "registered" | "payment_pending"
+) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("event_form_submissions")
+    .update({ status })
+    .eq("id", submissionId);
+
+  if (error) {
+    console.error("Error updating event form submission status", error);
+    return { success: false, error: "Failed to update submission status" };
+  }
+  return { success: true };
 }
