@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useDonationForm } from "../hooks/useDonationForm";
-import { BankAccount, Campaign, Masjid, ShortLink } from "../types";
+import { BankAccount, Campaign, Masjid } from "../types";
 import DonationAmountStep from "./DonationAmountStep";
 import DonationForm from "./DonationForm";
 import { DonationStats } from "./DonationStats";
@@ -14,7 +14,6 @@ interface DonationStepManagerProps {
   campaign: Campaign;
   masjid: Masjid;
   bankAccount: BankAccount;
-  shortLink: ShortLink | null;
   monthlyDonorCount: number;
   totalDonorCount: number;
 }
@@ -27,7 +26,6 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
   campaign,
   masjid,
   bankAccount,
-  shortLink,
   monthlyDonorCount,
   totalDonorCount,
 }) => {
@@ -112,7 +110,7 @@ export const DonationStepManager: React.FC<DonationStepManagerProps> = ({
               onSubmit={handleUserDetailsSubmit}
               onBack={handleBack}
               isLoading={isLoading}
-              shortLink={shortLink?.short_code || ""}
+              shortLink={window.location.href}
               initialCurrency={tempDonationData.selectedCurrency}
               frequency={tempDonationData.frequency}
               giftAidDeclared={giftAidDeclared}

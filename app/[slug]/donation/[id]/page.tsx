@@ -29,9 +29,8 @@ export default async function DonationCampaignPage({
     return <div className="p-8 text-center">Masjid not found</div>;
   }
 
-  const [bankAccount, shortLink, theme, donationCount, donationCountMonthly, donations] = await Promise.all([
+  const [bankAccount, theme, donationCount, donationCountMonthly, donations] = await Promise.all([
     getMasjidBankAccountById(campaign.bank_account_id || ""),
-    getShortLinkById(campaign.short_link_id || ""),
     getMasjidThemeById(masjid.theme_color_id || ""),
     getDonationCount(campaign.id),
     getDonationCountMonthly(campaign.id),
@@ -42,7 +41,6 @@ export default async function DonationCampaignPage({
     <DonationDisplay
       campaign={campaign}
       bankAccount={bankAccount}
-      shortLink={shortLink}
       theme={theme}
       masjid={masjid}
       donationCount={donationCount || 0}

@@ -65,7 +65,6 @@ export interface Campaign {
   target_amount: number;
   masjid_id: string;
   bank_account_id: string | null;
-  short_link_id: string | null;
   active: boolean;
   created_at: string | null;
   // Add any other required fields from the database type
@@ -101,19 +100,6 @@ export interface BankAccount {
   stripe_account_id: string;
   masjid_id: string;
   // Add any other required fields from the database type
-}
-
-/**
- * Short link information
- */
-export interface ShortLink {
-  id: string;
-  short_code: string;
-  clicks?: number | null;
-  created_at?: string | null;
-  masjid_id?: string | null;
-  original_url?: string;
-  type?: "event" | "announcement" | "donation-campaign" | "masjid" | "other";
 }
 
 /**

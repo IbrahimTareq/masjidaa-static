@@ -6,22 +6,18 @@ import { getTimeAgo } from "@/utils/time";
 import { useMemo, useState } from "react";
 
 import { DonationStepManager } from "@/donation/src/components/DonationStepManager";
-import type { ShortLink as DonationShortLink } from "@/donation/src/types";
 
 import { CampaignDetails } from "@/components/client/interactive/CampaignDetails";
 import { ImagePreviewModal } from "@/components/client/ui/ImagePreviewModal";
 import { ShareModal } from "@/components/client/ui/ShareModal";
 import { useRandomHadith } from "@/hooks/useRandomHadith";
-import { formatCurrency, formatCurrencyWithSymbol } from "@/utils/currency";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { HeartHandshake } from "lucide-react";
-import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 
 interface DonationDisplayProps {
   campaign: Tables<"donation_campaigns">;
   bankAccount: Tables<"masjid_bank_accounts"> | null;
-  shortLink: Tables<"short_links"> | null;
   theme: Tables<"themes"> | null;
   masjid: Tables<"masjids">;
   donationCount: number;
@@ -32,7 +28,6 @@ interface DonationDisplayProps {
 export default function DonationDisplay({
   campaign,
   bankAccount,
-  shortLink,
   theme,
   masjid,
   donationCount,
@@ -50,11 +45,7 @@ export default function DonationDisplay({
 
   if (!bankAccount) return <div>Bank account not found</div>;
 
-  const shareUrl = shortLink
-    ? `${DOMAIN_NAME}/r/${shortLink.short_code}`
-    : typeof window !== "undefined"
-    ? window.location.href
-    : "";
+  const shareUrl = window.location.href;
 
   return (
     <div className="bg-white relative overflow-hidden my-6 md:my-10 text-black">
@@ -79,7 +70,9 @@ export default function DonationDisplay({
               <div className="w-full flex flex-col mt-6 md:mt-0">
                 {/* Recent Supporters Section */}
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-4 md:p-5">
-                  <h3 className="text-base md:text-md font-semibold mb-4">Recent donors</h3>
+                  <h3 className="text-base md:text-md font-semibold mb-4">
+                    Recent donors
+                  </h3>
                   <div className="space-y-3 md:space-y-4">
                     {donations.length > 0 ? (
                       donations.map((donation, index) => {
@@ -144,7 +137,6 @@ export default function DonationDisplay({
                 campaign={campaign}
                 masjid={masjid}
                 bankAccount={bankAccount}
-                shortLink={shortLink as unknown as DonationShortLink}
                 monthlyDonorCount={donationCountMonthly}
                 totalDonorCount={donationCount}
               />
@@ -211,8 +203,8 @@ export default function DonationDisplay({
                       or cancel your recurring donation anytime.
                     </p>
                     <p>
-                      Just use the donor portal link in your receipt email,
-                      it's quick and easy.
+                      Just use the donor portal link in your receipt email, it's
+                      quick and easy.
                     </p>
                   </div>
                 </Tooltip>
