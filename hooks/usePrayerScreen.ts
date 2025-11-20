@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useCallback, useRef } from "react";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useCountdown } from "@/hooks/useCountdown";
 import { PrayerInfo } from "@/lib/server/services/masjidPrayers";
@@ -33,6 +33,22 @@ export function usePrayerScreen(
   prayerInfo: PrayerInfo | undefined
 ): PrayerScreenState {
   const config = useDateTimeConfig();
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Memoize expensive time parsing calculations
+  const timeCalculations = useMemo(() => {
+    if (!prayerInfo) {
+      return {
+        currentIqamahSec: null,
+        nextStartSec: null,
+      };
+    }
+
+    return {
+      currentIqamahSec: parseTimeToSeconds(prayerInfo.current.iqamahTime),
+      nextStartSec: parseTimeToSeconds(prayerInfo.next.startTime),
+    };
+  }, [prayerInfo]);
 
   // Determine what to show as the next event (iqamah or next prayer)
   const nextEvent = useMemo((): NextEvent => {
@@ -40,28 +56,26 @@ export function usePrayerScreen(
       return { label: "starts", prayer: "Prayer", time: null, timeInSeconds: null };
     }
 
-    const currentIqamahSec = parseTimeToSeconds(prayerInfo.current.iqamahTime);
     const nowSec = getCurrentTimeInSeconds(config.timeZone);
 
     // If current iqamah exists and hasn't happened yet, show it
-    if (currentIqamahSec !== null && currentIqamahSec > nowSec) {
+    if (timeCalculations.currentIqamahSec !== null && timeCalculations.currentIqamahSec > nowSec) {
       return {
         label: "iqamah",
         prayer: prayerInfo.current.name,
         time: prayerInfo.current.iqamahTime,
-        timeInSeconds: currentIqamahSec,
+        timeInSeconds: timeCalculations.currentIqamahSec,
       };
     }
 
     // Otherwise, show next prayer start time
-    const nextStartSec = parseTimeToSeconds(prayerInfo.next.startTime);
     return {
       label: "starts",
       prayer: prayerInfo.next.name,
       time: prayerInfo.next.startTime,
-      timeInSeconds: nextStartSec,
+      timeInSeconds: timeCalculations.nextStartSec,
     };
-  }, [prayerInfo, config.timeZone]);
+  }, [prayerInfo, config.timeZone, timeCalculations]);
 
   // Calculate countdown to the next event
   const countdownTarget = useMemo(() => {
@@ -85,21 +99,31 @@ export function usePrayerScreen(
   // Use the countdown hook with the calculated target
   const countdown = useCountdown(countdownTarget);
 
-  // Auto-refresh when countdown reaches zero
+  // Optimized auto-refresh when countdown reaches zero
+  const handleRefresh = useCallback(() => {
+    console.log("Countdown reached zero, refreshing page");
+    refreshTimeoutRef.current = setTimeout(() => {
+      window.location.reload();
+    }, 1000); // Wait 1 second before refreshing
+  }, []);
+
   useEffect(() => {
-    if (
+    const isZeroCountdown =
       countdown.hours === "00" &&
       countdown.minutes === "00" &&
-      countdown.seconds === "00"
-    ) {
-      console.log("Countdown reached zero, refreshing page");
-      const timer = setTimeout(() => {
-        window.location.reload();
-      }, 1000); // Wait 1 second before refreshing
+      countdown.seconds === "00";
 
-      return () => clearTimeout(timer);
+    if (isZeroCountdown && !refreshTimeoutRef.current) {
+      handleRefresh();
     }
-  }, [countdown]);
+
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = undefined;
+      }
+    };
+  }, [countdown, handleRefresh]);
 
   return {
     nextEvent,

@@ -5,6 +5,7 @@ import {
   PrayerSchedule,
 } from "../../services/masjidPrayers";
 import { enrichPrayerTimes } from "../../formatters/prayer";
+import { cache } from "react";
 
 export type PrayerTime = {
   name: string;
@@ -22,10 +23,10 @@ export type FormattedData = Omit<PrayerSchedule, "dailyPrayers" | "jummah"> & {
   gregorianDate: string;
 };
 
-export async function getServerPrayerData(
+export const getServerPrayerData = cache(async (
   masjidId: string,
   date?: string
-): Promise<FormattedData> {
+): Promise<FormattedData> => {
   const prayerData: PrayerSchedule | null = await getMasjidPrayers(masjidId, date);
   if (!prayerData) {
     throw new Error("Prayer data not found");
@@ -49,4 +50,4 @@ export async function getServerPrayerData(
     gregorianDate: dates?.gregorian?.formatted,
     date: prayerData?.date,
   };
-}
+});

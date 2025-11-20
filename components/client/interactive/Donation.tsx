@@ -6,14 +6,33 @@ import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { memo, useMemo } from "react";
 
 interface DonationProps {
   campaign: Tables<"donation_campaigns">;
   masjid: Masjid;
 }
 
-export const Donation: React.FC<DonationProps> = ({ campaign, masjid }) => {
+const DonationComponent: React.FC<DonationProps> = ({ campaign, masjid }) => {
+  // Memoize expensive calculations
+  const progressPercentage = useMemo(() => {
+    return Math.min(100, (campaign.amount_raised / campaign.target_amount) * 100);
+  }, [campaign.amount_raised, campaign.target_amount]);
+
+  const currency = masjid?.local_currency || "AUD";
+
+  const formattedAmounts = useMemo(() => {
+    return {
+      raised: formatCurrencyWithSymbol({
+        amount: campaign.amount_raised,
+        currency,
+      }),
+      target: formatCurrencyWithSymbol({
+        amount: campaign.target_amount,
+        currency,
+      }),
+    };
+  }, [campaign.amount_raised, campaign.target_amount, currency]);
   return (
     <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 block">
       <div className="relative h-48 overflow-hidden">
@@ -38,23 +57,13 @@ export const Donation: React.FC<DonationProps> = ({ campaign, masjid }) => {
             <div
               className="bg-theme h-2 rounded-full"
               style={{
-                width: `${Math.min(
-                  100,
-                  (campaign.amount_raised / campaign.target_amount) * 100
-                )}%`,
+                width: `${progressPercentage}%`,
               }}
             ></div>
           </div>
 
           <p className="font-medium text-lg truncate">
-            {formatCurrencyWithSymbol({
-              amount: campaign.amount_raised,
-              currency: masjid?.local_currency || "AUD",
-            })} donated of&nbsp;
-            {formatCurrencyWithSymbol({
-              amount: campaign.target_amount,
-              currency: masjid?.local_currency || "AUD",
-            })}
+            {formattedAmounts.raised} donated of {formattedAmounts.target}
           </p>
         </div>
       </div>
@@ -83,3 +92,5 @@ export const Donation: React.FC<DonationProps> = ({ campaign, masjid }) => {
     </div>
   );
 };
+
+export const Donation = memo(DonationComponent);

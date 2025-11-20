@@ -1,9 +1,10 @@
 import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 
-export async function getMasjidDonationCampaignById(
+export const getMasjidDonationCampaignById = cache(async (
   id: string
-): Promise<Tables<"donation_campaigns"> | null> {
+): Promise<Tables<"donation_campaigns"> | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("donation_campaigns")
@@ -16,4 +17,4 @@ export async function getMasjidDonationCampaignById(
     return null;
   }
   return data;
-}
+});

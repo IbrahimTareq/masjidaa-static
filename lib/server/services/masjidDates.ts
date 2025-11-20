@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 
 export type DisplayDates = {
   gregorian: {
@@ -11,7 +12,7 @@ export type DisplayDates = {
   };
 };
 
-export async function getMasjidDates(masjidId: string) {
+export const getMasjidDates = cache(async (masjidId: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase.functions.invoke(
     `masjid-dates/${masjidId}`,
@@ -22,4 +23,4 @@ export async function getMasjidDates(masjidId: string) {
 
   if (error) throw error;
   return data as DisplayDates;
-}
+});

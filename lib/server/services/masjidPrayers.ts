@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 
 export type DailyPrayers = {
   fajr: {
@@ -57,7 +58,7 @@ export type PrayerSchedule = {
   lastUpdated: string | undefined;
 };
 
-export async function getMasjidPrayers(masjidId: string, date?: string) {
+export const getMasjidPrayers = cache(async (masjidId: string, date?: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase.functions.invoke(
     `masjid-prayers/${masjidId}${date ? `?date=${date}` : ""}`,
@@ -71,4 +72,4 @@ export async function getMasjidPrayers(masjidId: string, date?: string) {
     return null;
   }
   return data as PrayerSchedule;
-}
+});

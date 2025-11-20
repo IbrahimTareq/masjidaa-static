@@ -29,15 +29,13 @@ export const useCountdown = (timeUntilNext: TimeUntilNext | null | undefined): C
   useEffect(() => {
     // Skip this effect during SSR
     if (typeof window === 'undefined') return;
-    
+
     if (!timeUntilNext) return;
 
     const interval = setInterval(() => {
       setSecondsLeft(prev => {
         if (prev <= 0) {
-          // Instead of reloading immediately, we can handle this differently
-          // For example, we could trigger a callback or set a state
-          // For now, we'll just keep it at zero
+          // Stop the countdown when it reaches zero to prevent unnecessary updates
           return 0;
         }
         return prev - 1;

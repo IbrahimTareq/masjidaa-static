@@ -1,12 +1,13 @@
 "use client";
 
+import { memo } from "react";
 import { PrayerIcon } from "@/components/client/ui/PrayerIcon";
 import { useMasjidContext } from "@/context/masjidContext";
 import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
 
-export default function Theme5({
+function Theme5({
   formattedData,
 }: {
   formattedData: FormattedData;
@@ -252,3 +253,5 @@ export default function Theme5({
     </div>
   );
 }
+
+export default memo(Theme5);

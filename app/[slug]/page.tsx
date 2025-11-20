@@ -42,12 +42,21 @@ export default async function Page({
     return <div>Masjid not found</div>;
   }
 
-  // Parallelize data fetching
-  const [prayerData, events, siteSettings] = await Promise.all([
+  // Parallelize all data fetching with optimized campaign loading
+  const [prayerData, events, siteSettingsResult] = await Promise.all([
     getServerPrayerData(masjid.id),
     getMasjidEventsByMasjidId(masjid.id),
-    getMasjidSiteSettingsByMasjidId(masjid.id),
+    // Create a promise that includes the campaign fetch if needed
+    getMasjidSiteSettingsByMasjidId(masjid.id).then(async (settings) => {
+      const campaign = settings?.featured_campaign_id
+        ? await getMasjidDonationCampaignById(settings.featured_campaign_id)
+        : null;
+      return { settings, campaign };
+    }),
   ]);
+
+  const siteSettings = siteSettingsResult.settings;
+  const campaign = siteSettingsResult.campaign;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,11 +77,6 @@ export default async function Page({
     telephone: masjid?.contact_number,
     hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`,
   };
-
-  // Fetch campaign only if needed
-  const campaign = siteSettings?.featured_campaign_id
-    ? await getMasjidDonationCampaignById(siteSettings.featured_campaign_id)
-    : null;
 
   return (
     <>
