@@ -312,7 +312,6 @@ export default function SummaryClient({
                 gregorianDate={gregorianDate}
                 islamicDate={islamicDate}
                 businessAds={businessAds}
-                masjidSlug={masjid.slug}
               />
             )}
 

@@ -101,7 +101,7 @@ export default async function Page({
     "@context": "https://schema.org",
     "@type": "Mosque",
     name: masjid.name,
-    url: `${DOMAIN_NAME}/${masjid.slug}/summary`,
+    url: `${DOMAIN_NAME}/${masjid.slug}/profile`,
     sameAs: masjid.website,
     logo: masjid.logo,
     description: `Complete profile for ${masjid.name} on Masjidaa – prayer times, events, announcements, donations & community information.`,
