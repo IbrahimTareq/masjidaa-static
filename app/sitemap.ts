@@ -37,5 +37,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
       })) ?? [];
 
-  return [...staticUrls, ...masjidUrls];
+  // Generate masjid sub-page URLs
+  const masjidSubPageUrls =
+    masjids
+      ?.filter((masjid) => !excludedMasjids.includes(masjid.slug))
+      .flatMap((masjid) => [
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/profile`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/announcements`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/events`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/donations`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/services`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/contact`,
+          lastModified: new Date(),
+        },
+        {
+          url: `${DOMAIN_NAME}/${masjid.slug}/app-download`,
+          lastModified: new Date(),
+        },
+      ]) ?? [];
+
+  return [...staticUrls, ...masjidUrls, ...masjidSubPageUrls];
 }
