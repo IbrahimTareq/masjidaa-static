@@ -17,7 +17,7 @@ export default function EventClient({
   eventForm,
   bankAccount,
   masjid,
-  enrollmentStatus,
+  enrollmentStatus: initialEnrollmentStatus,
 }: {
   event: Tables<"events">;
   eventLink: string;
@@ -37,6 +37,7 @@ export default function EventClient({
   const calendarButtonRef = useRef<HTMLButtonElement>(null);
 
   const [copied, setCopied] = useState(false);
+  const [enrollmentStatus, setEnrollmentStatus] = useState(initialEnrollmentStatus);
 
   useEffect(() => {
     const scrollToHash = () => {
@@ -293,6 +294,7 @@ export default function EventClient({
                         bankAccount={bankAccount || undefined}
                         eventForm={eventForm || undefined}
                         enrollmentStatus={enrollmentStatus}
+                        onEnrollmentUpdate={setEnrollmentStatus}
                       />
                     )}
 

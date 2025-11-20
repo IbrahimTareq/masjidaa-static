@@ -40,18 +40,19 @@ export async function getMasjidEventEnrollmentStatus(
     return { isFull: false, currentEnrollments: 0, limit: null };
   }
   
-  // Count the number of submissions for this event
-  const { count, error: countError } = await supabase
+  // Sum the quantity field to get total enrollments (not just submission count)
+  const { data: submissions, error: submissionsError } = await supabase
     .from("event_form_submissions")
-    .select("*", { count: "exact", head: true })
+    .select("quantity")
     .eq("event_id", eventId);
     
-  if (countError) {
-    console.error("Error counting event form submissions", countError);
+  if (submissionsError) {
+    console.error("Error fetching event form submissions", submissionsError);
     return { isFull: false, currentEnrollments: 0, limit: event.enrolment_limit };
   }
   
-  const currentEnrollments = count || 0;
+  // Sum all quantities to get total number of people enrolled
+  const currentEnrollments = submissions?.reduce((sum, sub) => sum + (sub.quantity || 0), 0) || 0;
   const isFull = currentEnrollments >= event.enrolment_limit;
   
   return { 

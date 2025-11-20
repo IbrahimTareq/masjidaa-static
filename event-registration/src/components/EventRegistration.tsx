@@ -4,6 +4,7 @@ import { Tables } from "@/database.types";
 import {
   createEventPaymentIntentAction,
   submitEventRegistrationAction,
+  getEventEnrollmentStatusAction,
 } from "@/lib/server/actions/eventRegistrationActions";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
@@ -189,6 +190,11 @@ interface EventRegistrationProps {
     currentEnrollments: number;
     limit: number | null;
   } | null;
+  onEnrollmentUpdate?: (status: {
+    isFull: boolean;
+    currentEnrollments: number;
+    limit: number | null;
+  }) => void;
 }
 
 interface FormData {
@@ -204,13 +210,19 @@ export default function EventRegistration({
   masjid,
   eventForm,
   bankAccount,
-  enrollmentStatus,
+  enrollmentStatus: initialEnrollmentStatus,
+  onEnrollmentUpdate,
 }: EventRegistrationProps) {
   const [currentStep, setCurrentStep] = useState<Step>("initial");
   const [formData, setFormData] = useState<FormData>({});
   const [isLoading, setIsLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [enrollmentStatus, setEnrollmentStatus] = useState<{
+    isFull: boolean;
+    currentEnrollments: number;
+    limit: number | null;
+  } | null>(initialEnrollmentStatus || null);
 
   const isPaid =
     event.type === "paid" && !!event.enrolment_fee && !!bankAccount;
@@ -222,7 +234,23 @@ export default function EventRegistration({
     return null;
   }
 
+  // Refresh enrollment status after submission
+  const refreshEnrollmentStatus = async () => {
+    if (!event.enrolment_limit) return enrollmentStatus;
+
+    try {
+      const status = await getEventEnrollmentStatusAction(event.id);
+      setEnrollmentStatus(status);
+      onEnrollmentUpdate?.(status);
+      return status;
+    } catch (err) {
+      console.error("Error refreshing enrollment status:", err);
+      return enrollmentStatus;
+    }
+  };
+
   const handleRegisterClick = () => {
+    setError(null);
     setCurrentStep("form");
   };
 
@@ -262,11 +290,15 @@ export default function EventRegistration({
           lastName: lastName,
           email: email,
           data: transformedData,
+          quantity: quantity,
         });
 
         if (!result.success) {
           throw new Error(result.error || "Failed to submit registration");
         }
+
+        // Refresh enrollment status after successful registration
+        await refreshEnrollmentStatus();
 
         // For free events, show success immediately
         setFormData({}); // Reset form data
@@ -286,6 +318,7 @@ export default function EventRegistration({
           email: email,
           firstName: firstName,
           lastName: lastName,
+          quantity: quantity,
         });
 
         setClientSecret(paymentData.client_secret);
@@ -298,6 +331,12 @@ export default function EventRegistration({
     } catch (err) {
       console.error("Error submitting form:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
+      
+      // Refresh enrollment status to update UI if slots are full
+      const currentStatus = await refreshEnrollmentStatus();
+      if (currentStatus?.isFull) {
+        setCurrentStep("initial");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -311,7 +350,8 @@ export default function EventRegistration({
         const firstName = formData.firstName || "";
         const lastName = formData.lastName || "";
         const email = formData.email || "";
-
+        const quantity = formData.quantity || 1;
+        
         // Transform the data to use titles as keys
         const transformedData = transformFormData(formData, eventForm.schema);
 
@@ -323,6 +363,7 @@ export default function EventRegistration({
           lastName: lastName,
           email: email,
           data: transformedData,
+          quantity: quantity,
         });
 
         if (!result.success) {
@@ -335,6 +376,9 @@ export default function EventRegistration({
     } catch (err) {
       console.error("Error submitting form after payment:", err);
     } finally {
+      // Refresh enrollment status after successful payment
+      await refreshEnrollmentStatus();
+      
       // Reset form data and show success screen regardless of submission result
       // since payment was successful
       setFormData({}); // Reset form data
@@ -347,6 +391,11 @@ export default function EventRegistration({
       case "initial":
         return (
           <div className="p-5">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
             {enrollmentStatus?.isFull ? (
               <div className="w-full py-3 bg-gray-200 text-gray-700 font-medium rounded-lg flex items-center justify-center">
                 <span>Enrollments closed</span>

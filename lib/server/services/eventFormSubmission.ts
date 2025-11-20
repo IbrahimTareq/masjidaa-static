@@ -1,5 +1,56 @@
 import { createClient } from "@/utils/supabase/server";
 
+// Helper function to validate enrollment availability
+async function validateEnrollmentAvailability(
+  eventId: string,
+  quantity: number
+): Promise<{ available: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  // Check if the event has an enrollment limit
+  const { data: event, error: eventError } = await supabase
+    .from("events")
+    .select("enrolment_limit")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (eventError) {
+    console.error("Error fetching event", eventError);
+    return { available: false, error: "Failed to fetch event details" };
+  }
+
+  // If no enrollment limit, always available
+  if (!event?.enrolment_limit) {
+    return { available: true };
+  }
+
+  // Sum the quantity field to get total enrollments (not just submission count)
+  const { data: submissions, error: submissionsError } = await supabase
+    .from("event_form_submissions")
+    .select("quantity")
+    .eq("event_id", eventId);
+
+  if (submissionsError) {
+    console.error("Error fetching event form submissions", submissionsError);
+    return { available: false, error: "Failed to verify enrollment availability" };
+  }
+
+  // Sum all quantities to get total number of people enrolled
+  const currentEnrollments = submissions?.reduce((sum, sub) => sum + (sub.quantity || 0), 0) || 0;
+  const availableSlots = event.enrolment_limit - currentEnrollments;
+
+  // Check if there's enough space for the requested quantity
+  if (availableSlots < quantity) {
+    const error =
+      availableSlots > 0
+        ? `Only ${availableSlots} spot${availableSlots !== 1 ? "s" : ""} remaining. Please adjust your quantity.`
+        : "This event is now full. Enrollments are closed.";
+    return { available: false, error };
+  }
+
+  return { available: true };
+}
+
 export async function submitEventRegistration(
   formId: string,
   eventId: string,
@@ -7,8 +58,16 @@ export async function submitEventRegistration(
   firstName: string,
   lastName: string,
   email: string,
+  quantity: number,
   data: Record<string, any>
 ) {
+  // Validate enrollment availability
+  const validation = await validateEnrollmentAvailability(eventId, quantity);
+  if (!validation.available) {
+    return { success: false, error: validation.error };
+  }
+
+  // Submit the registration
   const supabase = await createClient();
   const { error } = await supabase.from("event_form_submissions").insert({
     form_id: formId,
@@ -17,6 +76,7 @@ export async function submitEventRegistration(
     first_name: firstName,
     last_name: lastName,
     email: email,
+    quantity: quantity,
     data: data,
   });
 
@@ -37,6 +97,7 @@ export async function createEventPaymentIntent({
   email,
   firstName,
   lastName,
+  quantity,
 }: {
   amount: number;
   currency: string;
@@ -47,7 +108,15 @@ export async function createEventPaymentIntent({
   email: string;
   firstName: string;
   lastName: string;
+  quantity: number;
 }): Promise<{ client_secret: string }> {
+  // Validate enrollment availability
+  const validation = await validateEnrollmentAvailability(eventId, quantity);
+  if (!validation.available) {
+    throw new Error(validation.error);
+  }
+
+  // Create payment intent
   const supabase = await createClient();
   const { data, error } = await supabase.functions.invoke(
     "stripe-event-payment",
@@ -63,6 +132,7 @@ export async function createEventPaymentIntent({
         email,
         first_name: firstName,
         last_name: lastName,
+        quantity: quantity,
       },
     }
   );

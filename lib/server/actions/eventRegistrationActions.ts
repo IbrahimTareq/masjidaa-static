@@ -5,6 +5,7 @@ import {
   createEventPaymentIntent,
   submitEventRegistration,
 } from "@/lib/server/services/eventFormSubmission";
+import { getMasjidEventEnrollmentStatus } from "@/lib/server/services/masjidEvent";
 
 export async function submitEventRegistrationAction({
   formId,
@@ -13,6 +14,7 @@ export async function submitEventRegistrationAction({
   firstName,
   lastName,
   email,
+  quantity,
   data,
 }: {
   formId: string;
@@ -22,6 +24,7 @@ export async function submitEventRegistrationAction({
   lastName: string;
   email: string;
   data: Record<string, any>;
+  quantity: number;
 }) {
   return submitEventRegistration(
     formId,
@@ -30,6 +33,7 @@ export async function submitEventRegistrationAction({
     firstName,
     lastName,
     email,
+    quantity,
     data
   );
 }
@@ -48,6 +52,7 @@ export async function createEventPaymentIntentAction({
   email,
   firstName,
   lastName,
+  quantity,
 }: {
   amount: number;
   currency: string;
@@ -58,6 +63,7 @@ export async function createEventPaymentIntentAction({
   email: string;
   firstName: string;
   lastName: string;
+  quantity: number;
 }): Promise<{ client_secret: string }> {
   return createEventPaymentIntent({
     amount,
@@ -69,5 +75,10 @@ export async function createEventPaymentIntentAction({
     email,
     firstName,
     lastName,
+    quantity,
   });
+}
+
+export async function getEventEnrollmentStatusAction(eventId: string) {
+  return getMasjidEventEnrollmentStatus(eventId);
 }

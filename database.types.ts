@@ -368,6 +368,7 @@ export type Database = {
           last_name: string
           masjid_id: string
           quantity: number
+          resend_id: string | null
           status: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at: string | null
         }
@@ -381,6 +382,7 @@ export type Database = {
           last_name: string
           masjid_id: string
           quantity?: number
+          resend_id?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }
@@ -394,6 +396,7 @@ export type Database = {
           last_name?: string
           masjid_id?: string
           quantity?: number
+          resend_id?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }
@@ -465,6 +468,7 @@ export type Database = {
           created_at: string | null
           currency: string
           email: string
+          event_form_submission_id: string | null
           event_id: string
           first_name: string
           id: string
@@ -480,6 +484,7 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email: string
+          event_form_submission_id?: string | null
           event_id: string
           first_name: string
           id?: string
@@ -495,6 +500,7 @@ export type Database = {
           created_at?: string | null
           currency?: string
           email?: string
+          event_form_submission_id?: string | null
           event_id?: string
           first_name?: string
           id?: string
@@ -518,6 +524,13 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_payments_submission_id_fkey"
+            columns: ["event_form_submission_id"]
+            isOneToOne: false
+            referencedRelation: "event_form_submissions"
             referencedColumns: ["id"]
           },
         ]
