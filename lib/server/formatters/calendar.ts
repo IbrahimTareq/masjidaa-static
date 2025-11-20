@@ -53,12 +53,12 @@ export const convertEventsToCalendarEvents = (
       const rule = rrulestr(rruleString);
 
       const now = new Date();
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(now.getMonth() - 6);
-      const sixMonthsFromNow = new Date();
-      sixMonthsFromNow.setMonth(now.getMonth() + 6);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(now.getMonth() - 3);
+      const threeMonthsFromNow = new Date();
+      threeMonthsFromNow.setMonth(now.getMonth() + 3);
 
-      const occurrences = rule.between(sixMonthsAgo, sixMonthsFromNow, true);
+      const occurrences = rule.between(threeMonthsAgo, threeMonthsFromNow, true);
 
       occurrences.forEach((occurrence: Date, index: number) => {
         const calendarEvent: CalendarEvent = {

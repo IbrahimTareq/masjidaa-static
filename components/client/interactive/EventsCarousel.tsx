@@ -1,33 +1,23 @@
 "use client";
 
-import { Tables } from "@/database.types";
+import { ExpandedEvent } from "@/app/(standalone)/[slug]/profile/types";
+import { getEventUrl } from "@/utils/recurrence";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import Link from "next/link";
 import React, { memo, useMemo } from "react";
 
 interface EventsCarouselProps {
-  events: Tables<"events">[];
+  events: ExpandedEvent[];
   slug: string;
 }
-
-const getUpcomingEvents = (events: Tables<"events">[]) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Start of today
-
-  return events
-    .filter((event) => {
-      const eventDate = new Date(event.date);
-      return eventDate >= today; // Events from today onwards
-    })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-};
 
 const EventsCarouselComponent: React.FC<EventsCarouselProps> = ({ events, slug }) => {
   const { formatTime, formatEventDate } = useDateTimeFormat();
 
-  // Memoize the expensive filtering and sorting operations
+  // Events are already filtered, sorted, and expanded by the recurrence utility
+  // Just take the first 4 for the carousel
   const upcomingEvents = useMemo(() => {
-    return events ? getUpcomingEvents(events).slice(0, 4) : [];
+    return events ? events.slice(0, 4) : [];
   }, [events]);
 
   return (
@@ -35,18 +25,29 @@ const EventsCarouselComponent: React.FC<EventsCarouselProps> = ({ events, slug }
       {upcomingEvents.length > 0 ? (
         upcomingEvents.map((event) => {
           const eventDate = formatEventDate(event.date);
+          const eventUrl = getEventUrl(event, slug);
+          
           return (
             <div
               key={event.id}
-              className="bg-theme-gradient rounded-lg p-6 flex flex-col transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl text-white"
+              className="bg-theme-gradient rounded-lg p-6 flex flex-col transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl text-white relative"
             >
+              {/* Recurring event indicator */}
+              {event.isRecurring && (
+                <div className="absolute top-3 right-3">
+                  <span className="inline-flex items-center px-2 py-1 text-xs bg-white/20 text-white rounded-full font-medium backdrop-blur-sm">
+                    ♻ Recurring
+                  </span>
+                </div>
+              )}
+              
               <div className="text-6xl font-light mb-2">
                 {eventDate.day}
               </div>
               <div className="text-sm font-medium mb-6">
                 {eventDate.month}
               </div>
-              <h3 className="text-xl font-medium mb-4">{event.title}</h3>
+              <h3 className="text-xl font-medium mb-4 pr-20">{event.title}</h3>
               {event.start_time && (
                 <div className="flex items-center gap-2 text-sm mb-2">
                   <span>{formatTime(event.start_time)}</span>
@@ -56,8 +57,8 @@ const EventsCarouselComponent: React.FC<EventsCarouselProps> = ({ events, slug }
                 <span>{event.location || "Location TBD"}</span>
               </div>
               <Link
-                href={`/${slug}/event/${event.id}`}
-                className="mt-auto text-sm font-medium border border-white px-4 py-2 rounded hover:bg-white hover:text-[#003B3B] transition-colors uppercase"
+                href={eventUrl}
+                className="mt-auto text-sm font-medium border border-white px-4 py-2 rounded hover:bg-white hover:text-[#003B3B] transition-colors uppercase text-center"
               >
                 Learn More
               </Link>

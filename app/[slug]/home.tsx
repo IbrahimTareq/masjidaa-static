@@ -5,6 +5,7 @@ import { useMasjidContext } from "@/context/masjidContext";
 import { useMasjidSiteSettings } from "@/context/masjidSiteSettingsContext";
 import { Tables } from "@/database.types";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
+import { ExpandedEvent } from "@/app/(standalone)/[slug]/profile/types";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,7 +44,7 @@ const Donation = dynamic(
 
 interface HomeClientProps {
   prayerData: FormattedData;
-  events: Tables<"events">[];
+  events: ExpandedEvent[];
   campaign?: Tables<"donation_campaigns"> | null;
 }
 

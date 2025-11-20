@@ -11,6 +11,7 @@ import { getNearbyMasjids } from "@/lib/server/services/nearbyMasjids";
 import { getMasjidDates } from "@/lib/server/services/masjidDates";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
+import Script from "next/script";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -26,11 +27,11 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL(DOMAIN_NAME),
-    title: `${name} - Complete Profile`,
+    title: `${name} - Profile`,
     description: `Comprehensive profile for ${name}. Prayer times, announcements, events, donations, and more. Stay connected with your community.`,
     openGraph: {
       images: masjid?.logo ?? "/masjidaa.svg",
-      title: `${name} - Complete Profile`,
+      title: `${name} - Profile`,
       description: `Prayer times, events, announcements & donations for ${name}`,
     },
   };
@@ -79,7 +80,12 @@ export default async function Page({
   const now = new Date();
   const upcomingEvents = (events ?? [])
     .filter((event) => {
-      // Use the 'date' field which is the event date
+      // Don't filter out recurring events - they may have future occurrences
+      // even if their original start date is in the past
+      if (event.recurrence && event.recurrence !== 'none') {
+        return true;
+      }
+      // For non-recurring events, only include future ones
       if (event.date) {
         return new Date(event.date) >= now;
       }
@@ -113,10 +119,11 @@ export default async function Page({
 
   return (
     <>
-      <script
+      <Script
+        id={`jsonld-${masjid.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <SummaryClient

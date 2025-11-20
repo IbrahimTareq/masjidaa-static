@@ -5,6 +5,7 @@ import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccoun
 import { getMasjidEventEnrollmentStatus } from "@/lib/server/services/masjidEvent";
 import { getMasjidEventShortCodeById } from "@/lib/server/services/masjidEventShortCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
+import Script from "next/script";
 import EventClient from "./event";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -61,10 +62,11 @@ export default async function Page({
 
   return (
     <>
-      <script
+      <Script
+        id={`jsonld-event-${event.id}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <EventClient

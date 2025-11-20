@@ -1,11 +1,13 @@
 import HomeClient from "@/app/[slug]/home";
+import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidDonationCampaignById } from "@/lib/server/services/masjidDonationCampaign";
 import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
-import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
+import { expandEventsWithRecurrence } from "@/utils/recurrence";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
+import Script from "next/script";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -55,8 +57,10 @@ export default async function Page({
     }),
   ]);
 
-  const siteSettings = siteSettingsResult.settings;
   const campaign = siteSettingsResult.campaign;
+
+  // Expand recurring events to show future occurrences
+  const expandedEvents = expandEventsWithRecurrence(events ?? [], 1);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -80,15 +84,16 @@ export default async function Page({
 
   return (
     <>
-      <script
+      <Script
+        id={`jsonld-${masjid.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <HomeClient
         prayerData={prayerData}
-        events={events ?? []}
+        events={expandedEvents}
         campaign={campaign}
       />
     </>
