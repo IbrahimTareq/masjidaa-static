@@ -59,13 +59,20 @@ export function usePrayerScreen(
     const nowSec = getCurrentTimeInSeconds(config.timeZone);
 
     // If current iqamah exists and hasn't happened yet, show it
-    if (timeCalculations.currentIqamahSec !== null && timeCalculations.currentIqamahSec > nowSec) {
-      return {
-        label: "iqamah",
-        prayer: prayerInfo.current.name,
-        time: prayerInfo.current.iqamahTime,
-        timeInSeconds: timeCalculations.currentIqamahSec,
-      };
+    // Account for day boundary: if iqamah time is much larger than current time,
+    // it means we've crossed midnight and the iqamah has already passed
+    if (timeCalculations.currentIqamahSec !== null) {
+      const timeDiff = timeCalculations.currentIqamahSec - nowSec;
+      // If difference is positive and less than 12 hours (43200 seconds), iqamah is still upcoming
+      // If difference is large (more than 12 hours), we've crossed midnight and it's in the past
+      if (timeDiff > 0 && timeDiff < 43200) {
+        return {
+          label: "iqamah",
+          prayer: prayerInfo.current.name,
+          time: prayerInfo.current.iqamahTime,
+          timeInSeconds: timeCalculations.currentIqamahSec,
+        };
+      }
     }
 
     // Otherwise, show next prayer start time
