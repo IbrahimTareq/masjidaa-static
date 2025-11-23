@@ -23,10 +23,12 @@ export default function IqamahTimesChange({
   return (
     <PrayerLayout headerTitle="Iqamah Time Changes">
       <section className="text-black relative flex flex-col items-center justify-center">
-        <div className="w-full max-w-3xl px-8 z-10 bg-white/90 rounded-lg mx-4 pt-10">
+        <div className="w-full max-w-4xl px-8 z-10 bg-white/90 rounded-lg mx-4 pt-10">
           <div className="text-center mb-8">
             <h2 className="text-4xl font-medium text-gray-700 mb-10">
-              Effective from <span className="font-bold">{formattedDate}</span>
+              Iqamah Time Changes Effective from
+              <br />
+              <span className="font-bold">{formattedDate}</span>
             </h2>
             <div className="w-full flex items-center justify-center mb-4">
               <div className="h-px bg-gray-300 w-20 mx-2"></div>

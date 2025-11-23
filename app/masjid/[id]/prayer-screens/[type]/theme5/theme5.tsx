@@ -35,7 +35,7 @@ export default function PrayerClient({
           {/* Two Column Layout */}
           <div className="grid grid-cols-12 gap-6 lg:gap-12 h-full p-6 sm:p-8 md:p-10 items-center">
             {/* Left Side - Countdown */}
-            <div className="col-span-12 lg:col-span-5 flex flex-col justify-center items-center space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">
+            <div className="col-span-12 lg:col-span-5 flex flex-col justify-center items-center space-y-6 sm:space-y-8 md:space-y-10">
               {/* Masjid Logo */}
               {masjid?.logo && (
                 <div className="w-24 sm:w-32 md:w-40 lg:w-48">

@@ -13,6 +13,21 @@ import { DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+// Helper function to format time with smaller AM/PM
+const formatTimeWithSmallPeriod = (time: string | null) => {
+  if (!time) return null;
+  // Split time and AM/PM (e.g., "4:09 AM" -> ["4:09", "AM"])
+  const parts = time.match(/^(.+?)\s*(AM|PM)$/i);
+  if (parts) {
+    return (
+      <>
+        {parts[1]}<span className="text-[0.5em] ml-0.5">{parts[2]}</span>
+      </>
+    );
+  }
+  return time;
+};
+
 export default function AdvancedSlideshow({
   formattedData,
   slides,
@@ -121,7 +136,7 @@ export default function AdvancedSlideshow({
             {dailyPrayerTimes?.map((prayer, index) => (
               <div
                 key={prayer.name}
-                className={`flex-1 flex flex-col justify-center items-center px-1 sm:px-2 relative ${
+                className={`flex-1 flex flex-col justify-center items-center px-2 relative ${
                   prayer.isActive
                     ? "bg-theme-accent font-bold text-theme-gradient border-t-4 border-theme"
                     : "bg-white text-gray-800 hover:bg-gray-50 transition-colors duration-200"
@@ -133,7 +148,7 @@ export default function AdvancedSlideshow({
                     : ""
                 }`}
               >
-                <div className="font-semibold text-lg sm:text-xl mb-1 text-center leading-tight">
+                <div className="font-semibold text-xl sm:text-2xl mb-1 text-center leading-tight">
                   <span className="block sm:hidden uppercase">
                     {prayer.name}
                   </span>
@@ -145,15 +160,15 @@ export default function AdvancedSlideshow({
                 <div className="flex gap-2 sm:gap-4 text-base sm:text-lg">
                   <div className="text-center">
                     <div className="opacity-60 text-sm font-medium">Starts</div>
-                    <div className="font-semibold text-xl sm:text-2xl">
-                      {prayer.start}
+                    <div className="font-semibold text-xl sm:text-4xl">
+                      {formatTimeWithSmallPeriod(prayer.start)}
                     </div>
                   </div>
                   <div className="w-px bg-gray-200 opacity-60 self-stretch"></div>
                   <div className="text-center">
                     <div className="opacity-60 text-sm font-medium">Iqamah</div>
-                    <div className="font-semibold text-xl sm:text-2xl">
-                      {prayer.iqamah}
+                    <div className="font-semibold text-xl sm:text-4xl">
+                      {formatTimeWithSmallPeriod(prayer.iqamah)}
                     </div>
                   </div>
                 </div>
@@ -178,21 +193,21 @@ export default function AdvancedSlideshow({
         {/* Content container to ensure it appears above the background */}
         <div className="relative z-10 flex flex-col h-full w-full">
           {/* Current Time Section */}
-          <div className="p-8 text-center border-b border-white/20">
-            <div className="text-6xl xl:text-[4rem] font-light mb-4 xl:mb-6 tracking-tighter">
+          <div className="p-6 text-center border-b border-white/20">
+            <div className="text-6xl xl:text-[5rem] font-light mb-4 xl:mb-6 tracking-tighter">
               {time}
             </div>
             <div className="text-base xl:text-lg opacity-90 font-medium">
               <div className="flex flex-col items-center justify-center text-center">
                 <div className="flex gap-2 items-center justify-center">
-                  <span className="text-lg xl:text-2xl font-semibold uppercase">
+                  <span className="text-lg xl:text-4xl font-semibold uppercase">
                     {nextEvent.prayer}
                   </span>
                   &nbsp;{nextEvent.label} in&nbsp;
                 </div>
 
                 <div className="flex gap-2 items-center justify-center">
-                  <span className="text-lg xl:text-2xl font-semibold uppercase">
+                  <span className="text-lg xl:text-4xl font-semibold uppercase">
                     {countdown.hours !== "00" && (
                       <>
                         {countdown.hours}&nbsp;
@@ -218,11 +233,11 @@ export default function AdvancedSlideshow({
           </div>
 
           {/* Dates Section */}
-          <div className="p-6 xl:p-8 text-center border-b border-white/20">
-            <div className="text-base xl:text-lg font-medium mb-1 uppercase">
+          <div className="p-5 xl:p-6 text-center border-b border-white/20">
+            <div className="text-base xl:text-xl font-medium mb-1 uppercase">
               {hijriDate}
             </div>
-            <div className="text-base xl:text-lg font-medium uppercase">
+            <div className="text-base xl:text-xl font-medium uppercase">
               {gregorianDate}
             </div>
           </div>
@@ -245,7 +260,7 @@ export default function AdvancedSlideshow({
                             Starts
                           </div>
                           <div className="text-3xl xl:text-4xl font-semibold">
-                            {session.start}
+                            {formatTimeWithSmallPeriod(session.start)}
                           </div>
                         </div>
                         <div className="w-px bg-white opacity-20 h-16 xl:h-20"></div>
@@ -254,7 +269,7 @@ export default function AdvancedSlideshow({
                             Khutbah
                           </div>
                           <div className="text-3xl xl:text-4xl font-bold">
-                            {session.khutbah}
+                            {formatTimeWithSmallPeriod(session.khutbah)}
                           </div>
                         </div>
                       </div>
@@ -266,9 +281,9 @@ export default function AdvancedSlideshow({
           )}
 
           {/* Logo Section - Takes remaining space */}
-          <div className="flex-1 flex flex-col p-6 xl:px-6">
+          <div className="flex-1 flex flex-col p-4 xl:px-6">
             <div className="text-center mb-4 xl:mb-6">
-              <div className="text-sm xl:text-base opacity-80 font-medium leading-relaxed">
+              <div className="text-sm xl:text-base opacity-80 font-bold">
                 Scan below for prayer notifications, masjid events, and
                 community updates
               </div>
@@ -309,13 +324,13 @@ export default function AdvancedSlideshow({
                     <div>
                       <div className="text-xs opacity-80">Starts</div>
                       <div className="text-sm font-semibold">
-                        {session.start}
+                        {formatTimeWithSmallPeriod(session.start)}
                       </div>
                     </div>
                     <div>
                       <div className="text-xs opacity-80">Khutbah</div>
                       <div className="text-sm font-semibold">
-                        {session.khutbah}
+                        {formatTimeWithSmallPeriod(session.khutbah)}
                       </div>
                     </div>
                   </div>
