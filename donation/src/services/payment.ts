@@ -1,5 +1,7 @@
 "use server";
 
+import { createClient } from "@/utils/supabase/server";
+
 /**
  * Creates a one-time payment intent
  * Server-side implementation to keep API calls secure
@@ -18,13 +20,12 @@ export async function createSinglePaymentIntent(
   giftAidDeclared?: boolean,
   address?: string
 ): Promise<{ client_secret: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
+  const supabase = await createClient();
+  const { data, error } = await supabase.functions.invoke(
+    "stripe-donation-single",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "single",
+      body: {
         amount,
         currency,
         campaign_id: campaignId,
@@ -37,15 +38,15 @@ export async function createSinglePaymentIntent(
         address: address,
         is_anonymous: isAnonymous,
         gift_aid_declared: giftAidDeclared,
-      }),
+      },
     }
   );
-  
-  if (!response.ok) {
+
+  if (error) {
     throw new Error("Failed to create payment intent");
   }
-  
-  return response.json();
+
+  return data as { client_secret: string };
 }
 
 /**
@@ -56,24 +57,23 @@ export async function createRecurringSetupIntent(
   email: string,
   stripeAccountId: string
 ): Promise<{ client_secret: string; customer_id: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
+  const supabase = await createClient();
+  const { data, error } = await supabase.functions.invoke(
+    "stripe-donation-recurring?action=setup",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "recurring.setup",
+      body: {
         email,
         stripe_account_id: stripeAccountId,
-      }),
+      },
     }
   );
-  
-  if (!response.ok) {
+
+  if (error) {
     throw new Error("Failed to create setup intent");
   }
-  
-  return response.json();
+
+  return data as { client_secret: string; customer_id: string };
 }
 
 /**
@@ -102,21 +102,19 @@ export async function finalizeRecurringDonation(
     stripe_customer_id: string;
     stripe_account_id: string;
   }
-): Promise<{ 
-  success: boolean; 
-  subscription_id?: string; 
+): Promise<{
+  success: boolean;
+  subscription_id?: string;
   error?: string;
   details?: Record<string, any>;
 }> {
   try {
-    // Create the subscription
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SUPABASE_API}/stripe-donation`,
+    const supabase = await createClient();
+    const { data, error } = await supabase.functions.invoke(
+      "stripe-donation-recurring?action=start",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "recurring.start",
+        body: {
           masjid_id: donationData.masjid_id,
           campaign_title: donationData.campaign_title,
           campaign_id: donationData.campaign_id,
@@ -135,37 +133,37 @@ export async function finalizeRecurringDonation(
           start_date: recurringData.start_date,
           end_date: recurringData.end_date,
           charge_now: true,
-        }),
+        },
       }
     );
 
-    const data = await response.json() as { error?: string; subscription_id?: string };
-    
-    if (!response.ok) {
-      return { 
-        success: false, 
-        error: data.error || "Could not start recurring donation",
+    if (error) {
+      return {
+        success: false,
+        error: error.message || "Could not start recurring donation",
         details: {
-          status: response.status,
-          response: data
-        }
+          error: error,
+        },
       };
     }
 
-    return { 
-      success: true, 
-      subscription_id: data.subscription_id
+    const responseData = data as { error?: string; subscription_id?: string };
+
+    return {
+      success: true,
+      subscription_id: responseData.subscription_id,
     };
   } catch (error) {
     console.error("Error finalizing recurring donation:", error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "An unexpected error occurred",
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "An unexpected error occurred",
       details: {
         error: "exception",
         message: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined
-      }
+        stack: error instanceof Error ? error.stack : undefined,
+      },
     };
   }
 }
