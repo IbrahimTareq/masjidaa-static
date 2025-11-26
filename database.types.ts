@@ -1450,8 +1450,10 @@ export type Database = {
           fts: unknown
           hijri_date_adjustment: number
           id: string
+          latitude: number
           local_currency: Database["public"]["Enums"]["supported_currency"]
           logo: string | null
+          longitude: number
           name: string
           postcode: string | null
           region: string | null
@@ -1480,8 +1482,10 @@ export type Database = {
           fts?: unknown
           hijri_date_adjustment: number
           id?: string
+          latitude?: number
           local_currency?: Database["public"]["Enums"]["supported_currency"]
           logo?: string | null
+          longitude?: number
           name: string
           postcode?: string | null
           region?: string | null
@@ -1510,8 +1514,10 @@ export type Database = {
           fts?: unknown
           hijri_date_adjustment?: number
           id?: string
+          latitude?: number
           local_currency?: Database["public"]["Enums"]["supported_currency"]
           logo?: string | null
+          longitude?: number
           name?: string
           postcode?: string | null
           region?: string | null
@@ -2144,8 +2150,10 @@ export type Database = {
           fts: unknown
           hijri_date_adjustment: number
           id: string
+          latitude: number
           local_currency: Database["public"]["Enums"]["supported_currency"]
           logo: string | null
+          longitude: number
           name: string
           postcode: string | null
           region: string | null

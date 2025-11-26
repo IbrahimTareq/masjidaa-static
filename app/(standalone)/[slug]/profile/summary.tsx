@@ -1,6 +1,7 @@
 "use client";
 
 import { usePrayerScreen } from "@/hooks/usePrayerScreen";
+import { getDistanceLabel } from "@/utils/distance";
 import { expandEventsWithRecurrence, getEventUrl } from "@/utils/recurrence";
 import { format } from "date-fns";
 import {
@@ -37,6 +38,13 @@ export default function SummaryClient({
 }: SummaryClientProps) {
   const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState("prayer");
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleShareClick = async () => {
+    await navigator.clipboard.writeText(`${window.location.origin}/${masjid.slug}/profile`);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
   // Extract prayer times from the dailyPrayerTimes array
   const dailyPrayers = prayerData.dailyPrayerTimes || [];
@@ -126,8 +134,8 @@ export default function SummaryClient({
                     <span className="font-semibold">
                       {followerCount > 0
                         ? followerCount.toLocaleString()
-                        : "2.4K"}{" "}
-                      followers
+                        : "No"
+                      } {followerCount === 1 ? "follower" : "followers"}
                     </span>
                   </div>
 
@@ -169,7 +177,7 @@ export default function SummaryClient({
                         className="flex items-center gap-1 text-theme hover:underline"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        Website
+                        {masjid.website}
                       </a>
                     )}
                   </div>
@@ -179,10 +187,10 @@ export default function SummaryClient({
                 <div className="flex flex-wrap gap-3 lg:flex-nowrap lg:ml-6">
                   <button
                     onClick={() => setIsFollowed(!isFollowed)}
-                    className={`flex-1 lg:flex-none px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    className={`flex-1 lg:flex-none px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer ${
                       isFollowed
                         ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        : "bg-theme text-white hover:bg-theme-accent"
+                        : "bg-theme text-white"
                     }`}
                   >
                     {isFollowed ? "Following" : "+ Follow"}
@@ -206,8 +214,20 @@ export default function SummaryClient({
                     Contact
                   </Link>
 
-                  <button className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                    <Share2 className="w-5 h-5" />
+                  <button
+                    onClick={handleShareClick}
+                    className={`px-4 py-3 rounded-lg transition-colors cursor-pointer ${
+                      isCopied
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                    title={isCopied ? "Link copied!" : "Copy profile link"}
+                  >
+                    {isCopied ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <Share2 className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -424,7 +444,7 @@ export default function SummaryClient({
                             {nearby.name}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {nearby.distance_miles} mi away
+                            {getDistanceLabel(nearby.distance_meters, masjid.country_code)}
                           </div>
                         </div>
                       </div>

@@ -2,103 +2,120 @@ import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
 
 export interface NearbyMasjid extends Tables<"masjids"> {
-  distance_miles: number;
+  distance_meters: number;
   follower_count: number;
   has_prayer_times: boolean;
 }
 
-/**
- * Calculate distance between two points using Haversine formula
- * Returns distance in miles
- */
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 3959; // Earth's radius in miles
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+interface NearbyMasjidRpcResult {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string | null;
+  city: string;
+  latitude: number;
+  longitude: number;
+  dist_meters: number;
 }
 
+const METERS_PER_KM = 1000;
+
+/**
+ * Find nearby masjids using PostGIS spatial queries.
+ * Uses the nearby_masjids RPC function for efficient distance-based filtering.
+ * Returns distance in meters - use formatDistance() utility for display.
+ */
 export async function getNearbyMasjids(
   masjidId: string,
-  radiusMiles: number = 5,
+  radiusKm: number = 50,
   limit: number = 10
 ): Promise<NearbyMasjid[]> {
   const supabase = await createClient();
 
-  // TODO: Once latitude/longitude fields are added to the masjids table,
-  // replace this with actual distance-based calculation using the Haversine formula
-
-  // For now, return dummy data: just fetch other active masjids in the same region/city
+  // Get current masjid's coordinates
   const { data: currentMasjid, error: masjidError } = await supabase
     .from("masjids")
-    .select("*")
+    .select("latitude, longitude")
     .eq("id", masjidId)
     .maybeSingle();
 
   if (masjidError || !currentMasjid) {
-    console.error("Error fetching current masjid", masjidError);
+    console.error("Error fetching current masjid:", masjidError);
     return [];
   }
 
-  // Get other masjids in the same city/region as a proxy for "nearby"
-  const { data: allMasjids, error: masjidsError } = await supabase
-    .from("masjids")
-    .select("*")
-    .neq("id", masjidId)
-    .eq("active", true)
-    .or(`city.eq.${currentMasjid.city},region.eq.${currentMasjid.region}`)
-    .limit(limit);
+  const { latitude, longitude } = currentMasjid;
 
-  if (masjidsError || !allMasjids) {
-    console.error("Error fetching nearby masjids", masjidsError);
+  // Validate coordinates
+  if (!latitude || !longitude || (latitude === 0 && longitude === 0)) {
     return [];
   }
 
-  const masjidIds = allMasjids.map((m) => m.id);
-
-  if (masjidIds.length === 0) {
-    return [];
-  }
-
-  // Get follower counts for these masjids
-  const { data: followerCounts } = await supabase
-    .from("masjid_followers")
-    .select("masjid_id")
-    .in("masjid_id", masjidIds);
-
-  const followerCountMap = (followerCounts || []).reduce((acc, f) => {
-    acc[f.masjid_id] = (acc[f.masjid_id] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Check if they have prayer times (iqamah times)
-  const { data: iqamahTimes } = await supabase
-    .from("masjid_iqamah_times")
-    .select("masjid_id")
-    .in("masjid_id", masjidIds);
-
-  const hasPrayerTimesSet = new Set(
-    (iqamahTimes || []).map((it) => it.masjid_id)
+  // Call the nearby_masjids RPC function
+  const { data: nearbyResults, error: nearbyError } = await supabase.rpc(
+    "nearby_masjids",
+    {
+      lat: latitude,
+      long: longitude,
+      max_distance_meters: radiusKm * METERS_PER_KM,
+      result_limit: limit + 1,
+    }
   );
 
-  // Return masjids with dummy distance data (1-5 miles range)
-  return allMasjids.map((masjid, index) => ({
-    ...masjid,
-    distance_miles: Math.round((1 + (index * 0.8)) * 10) / 10, // Generate dummy distances: 1.0, 1.8, 2.6, 3.4, etc.
-    follower_count: followerCountMap[masjid.id] || 0,
-    has_prayer_times: hasPrayerTimesSet.has(masjid.id),
-  }));
-}
+  if (nearbyError) {
+    console.error("Error fetching nearby masjids:", nearbyError);
+    return [];
+  }
 
+  if (!nearbyResults?.length) {
+    return [];
+  }
+
+  // Filter out current masjid and apply limit
+  const filteredResults = (nearbyResults as NearbyMasjidRpcResult[])
+    .filter((m) => m.id !== masjidId)
+    .slice(0, limit);
+
+  if (!filteredResults.length) {
+    return [];
+  }
+
+  const masjidIds = filteredResults.map((m) => m.id);
+
+  // Fetch full masjid data, follower counts, and prayer times in parallel
+  const [fullMasjidResult, followerResult, iqamahResult] = await Promise.all([
+    supabase.from("masjids").select("*").in("id", masjidIds),
+    supabase.from("masjid_followers").select("masjid_id").in("masjid_id", masjidIds),
+    supabase.from("masjid_iqamah_times").select("masjid_id").in("masjid_id", masjidIds),
+  ]);
+
+  if (fullMasjidResult.error || !fullMasjidResult.data) {
+    console.error("Error fetching full masjid data:", fullMasjidResult.error);
+    return [];
+  }
+
+  // Create lookup maps
+  const distanceMap = new Map(filteredResults.map((m) => [m.id, m.dist_meters]));
+
+  const followerCountMap = (followerResult.data || []).reduce(
+    (acc, f) => {
+      acc[f.masjid_id] = (acc[f.masjid_id] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const hasPrayerTimesSet = new Set(
+    (iqamahResult.data || []).map((it) => it.masjid_id)
+  );
+
+  // Combine data and sort by distance
+  return fullMasjidResult.data
+    .map((masjid) => ({
+      ...masjid,
+      distance_meters: distanceMap.get(masjid.id) || 0,
+      follower_count: followerCountMap[masjid.id] || 0,
+      has_prayer_times: hasPrayerTimesSet.has(masjid.id),
+    }))
+    .sort((a, b) => a.distance_meters - b.distance_meters);
+}

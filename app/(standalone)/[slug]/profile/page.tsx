@@ -69,7 +69,7 @@ export default async function Page({
     getMasjidSiteSettingsByMasjidId(masjid.id),
     getMasjidFollowerCount(masjid.id),
     getApprovedBusinessAdsByMasjidId(masjid.id),
-    getNearbyMasjids(masjid.id, 5, 10),
+    getNearbyMasjids(masjid.id, 50, 3),
     getMasjidDates(masjid.id),
   ]);
 
