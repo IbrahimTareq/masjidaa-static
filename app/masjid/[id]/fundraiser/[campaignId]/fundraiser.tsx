@@ -2,6 +2,7 @@
 
 import { Tables } from "@/database.types";
 import { useQRCode } from "@/hooks/useQRCode";
+import { useFundraiserRealtime } from "@/hooks/useFundraiserRealtime";
 import { formatCurrency } from "@/utils/currency";
 import { getTimeAgo } from "@/utils/time";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
@@ -62,7 +63,7 @@ function DonorCard({
     >
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-3">
-          <div className="text-3xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-transparent">
+          <div className="text-4xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-transparent">
             {formattedAmount}
           </div>
           <div className="flex items-center gap-1 text-theme/60">
@@ -82,13 +83,32 @@ function DonorCard({
 }
 
 export default function FundraiserDisplay({
-  campaign,
+  campaign: initialCampaign,
   masjid,
-  donationCount,
-  donations,
+  donationCount: initialDonationCount,
+  donations: initialDonations,
 }: FundraiserDisplayProps) {
   const qrRef = useRef<HTMLDivElement>(null);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
+
+  // Use real-time hook for live updates
+  const {
+    campaign,
+    donations,
+    donationCount,
+    loading: realtimeLoading,
+  } = useFundraiserRealtime(initialCampaign.id, {
+    campaign: initialCampaign,
+    donations: initialDonations,
+    donationCount: initialDonationCount,
+  });
+
+  const [animatedAmountRaised, setAnimatedAmountRaised] = useState(campaign.amount_raised);
+  const [animatedPercentage, setAnimatedPercentage] = useState(
+    campaign.target_amount
+      ? Math.min((campaign.amount_raised / campaign.target_amount) * 100, 100)
+      : 0
+  );
 
   useQRCode(
     {
@@ -99,18 +119,11 @@ export default function FundraiserDisplay({
     qrRef
   );
 
-  const progressPercentage = useMemo(() => {
-    if (!campaign.target_amount) return 0;
-    return Math.min(
-      (campaign.amount_raised / campaign.target_amount) * 100,
-      100
-    );
-  }, [campaign.amount_raised, campaign.target_amount]);
-
   const currency = masjid.local_currency;
 
+  // Use animated values for display
   const formattedAmountRaised = formatCurrency({
-    amount: campaign.amount_raised,
+    amount: animatedAmountRaised,
     currency,
     roundDownToWhole: true,
   });
@@ -135,6 +148,41 @@ export default function FundraiserDisplay({
 
     return () => clearTimeout(timeout);
   }, [donations.length, donations[0]?.created_at]);
+
+  // Animate amount raised when donations update
+  useEffect(() => {
+    const targetAmount = campaign.amount_raised;
+    const currentAmount = animatedAmountRaised;
+
+    if (Math.abs(targetAmount - currentAmount) < 0.01) return;
+
+    const duration = 2000; // 2 seconds
+    const startTime = Date.now();
+    const difference = targetAmount - currentAmount;
+
+    const animateValue = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Smooth easing function
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentAnimatedAmount = currentAmount + (difference * easeOutQuart);
+
+      setAnimatedAmountRaised(currentAnimatedAmount);
+
+      // Calculate and update animated percentage
+      const percentage = campaign.target_amount
+        ? Math.min((currentAnimatedAmount / campaign.target_amount) * 100, 100)
+        : 0;
+      setAnimatedPercentage(percentage);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateValue);
+      }
+    };
+
+    requestAnimationFrame(animateValue);
+  }, [campaign.amount_raised, campaign.target_amount]);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-montserrat relative">
@@ -247,7 +295,7 @@ export default function FundraiserDisplay({
                     Raised
                   </span>
                 </div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-white">
+                <div className="text-6xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-white">
                   {formattedAmountRaised}
                 </div>
               </div>
@@ -260,7 +308,7 @@ export default function FundraiserDisplay({
                     Target
                   </span>
                 </div>
-                <div className="text-4xl font-bold text-white">
+                <div className="text-6xl font-bold text-white">
                   {formattedTargetAmount}
                 </div>
               </div>
@@ -270,13 +318,13 @@ export default function FundraiserDisplay({
             <div className="mb-12">
               <div className="flex justify-end items-center mb-4">
                 <span className="text-theme text-3xl font-bold">
-                  {Math.round(progressPercentage)}%
+                  {Math.round(animatedPercentage)}%
                 </span>
               </div>
               <div className="relative h-6 bg-slate-800/80 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
                 <div
                   className="h-full bg-gradient-to-r from-theme via-theme to-theme-accent rounded-full transition-all duration-2000 ease-out relative animate-pulse-glow"
-                  style={{ width: `${progressPercentage}%` }}
+                  style={{ width: `${animatedPercentage}%` }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
                 </div>
@@ -307,7 +355,10 @@ export default function FundraiserDisplay({
                   <Heart className="w-full h-full" />
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white">Live Donations</h2>
+              <h2 className="text-2xl font-bold text-white">Live Donations</h2>
+              {realtimeLoading && (
+                <div className="w-3 h-3 border border-theme border-t-transparent rounded-full animate-spin" />
+              )}
             </div>
           </div>
 
