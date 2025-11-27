@@ -98,7 +98,7 @@ export default function SummaryClient({
             {/* Profile Picture */}
             <div className="absolute -top-16 left-4 md:left-6 lg:left-8">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full bg-white p-2 shadow-lg">
+                <div className="w-32 h-32 rounded-lg bg-white p-2 shadow-lg">
                   {masjid.logo ? (
                     <Image
                       src={masjid.logo}
@@ -107,11 +107,7 @@ export default function SummaryClient({
                       className="rounded-full object-contain"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-theme/10 flex items-center justify-center">
-                      <span className="text-theme text-2xl font-bold">
-                        {masjid.name.charAt(0)}
-                      </span>
-                    </div>
+                    <div className="w-full h-full bg-theme/10 flex items-center justify-center" />
                   )}
                 </div>
               </div>
@@ -235,7 +231,7 @@ export default function SummaryClient({
 
             {/* Navigation Tabs */}
             <div className="mt-6 border-t border-gray-200">
-              <div className="flex gap-8 pt-4 overflow-x-auto overflow-y-hidden">
+              <div className="flex gap-8 pl-1 pt-4 overflow-x-auto overflow-y-hidden">
                 {[
                   {
                     id: "prayer",
