@@ -4,49 +4,63 @@ import { useEffect, useState, useCallback } from "react";
 import { createClient as createBrowserSupabase } from "@/utils/supabase/client";
 import { Tables } from "@/database.types";
 
-type Donation = Tables<"donations">;
+type DonationPublic = Tables<"donations_public">;
 type DonationCampaign = Tables<"donation_campaigns">;
+type FundraiserSession = Tables<"fundraiser_sessions">;
 
 interface FundraiserData {
+  session: FundraiserSession;
   campaign: DonationCampaign;
-  donations: Donation[];
+  donations: DonationPublic[];
   donationCount: number;
 }
 
 /**
  * A hook to provide real-time updates for fundraiser data
- * @param campaignId The ID of the donation campaign
+ * @param sessionId The ID of the fundraiser session
  * @param initialData The initial data to start with
  * @returns Updated fundraiser data and loading state
  */
 export function useFundraiserRealtime(
-  campaignId: string,
+  sessionId: string,
   initialData: FundraiserData
 ) {
   const [data, setData] = useState<FundraiserData>(initialData);
   const [loading, setLoading] = useState(false);
 
+  const campaignId = data.session.campaign_id;
+
   const fetchLatestData = useCallback(async () => {
-    if (!campaignId) return;
+    if (!sessionId) return;
 
     try {
       setLoading(true);
       const supabase = createBrowserSupabase();
 
-      // Fetch updated campaign data
-      const [campaignResult, donationsResult] = await Promise.all([
+      // Fetch updated session, campaign, and donations data
+      const [sessionResult, campaignResult, donationsResult] = await Promise.all([
+        supabase
+          .from("fundraiser_sessions")
+          .select("*")
+          .eq("id", sessionId)
+          .single(),
         supabase
           .from("donation_campaigns")
           .select("*")
           .eq("id", campaignId)
           .single(),
         supabase
-          .from("donations")
+          .from("donations_public")
           .select("*")
           .eq("campaign_id", campaignId)
           .order("created_at", { ascending: false })
           .limit(10), // Get top 10 recent donations
       ]);
+
+      if (sessionResult.error) {
+        console.error("Error fetching session:", sessionResult.error);
+        return;
+      }
 
       if (campaignResult.error) {
         console.error("Error fetching campaign:", campaignResult.error);
@@ -65,6 +79,7 @@ export function useFundraiserRealtime(
         .eq("campaign_id", campaignId);
 
       setData({
+        session: sessionResult.data,
         campaign: campaignResult.data,
         donations: donationsResult.data || [],
         donationCount: count || 0,
@@ -74,15 +89,27 @@ export function useFundraiserRealtime(
     } finally {
       setLoading(false);
     }
-  }, [campaignId]);
+  }, [sessionId, campaignId]);
 
   useEffect(() => {
-    if (!campaignId) return;
+    if (!sessionId || !campaignId) return;
 
     const supabase = createBrowserSupabase();
 
     const channel = supabase
-      .channel(`fundraiser-${campaignId}`)
+      .channel(`fundraiser-${sessionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "fundraiser_sessions",
+          filter: `id=eq.${sessionId}`,
+        },
+        () => {
+          fetchLatestData();
+        }
+      )
       .on(
         "postgres_changes",
         {
@@ -110,10 +137,9 @@ export function useFundraiserRealtime(
       .subscribe();
 
     return () => {
-      console.log(`Unsubscribing from fundraiser updates for campaign ${campaignId}`);
       supabase.removeChannel(channel);
     };
-  }, [campaignId, fetchLatestData]);
+  }, [sessionId, campaignId, fetchLatestData]);
 
   return {
     ...data,
