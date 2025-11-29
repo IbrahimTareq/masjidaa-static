@@ -9,6 +9,7 @@ import { getMasjidFollowerCount } from "@/lib/server/services/masjidFollowers";
 import { getApprovedBusinessAdsByMasjidId } from "@/lib/server/services/businessAd";
 import { getNearbyMasjids } from "@/lib/server/services/nearbyMasjids";
 import { getMasjidDates } from "@/lib/server/services/masjidDates";
+import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
 import Script from "next/script";
@@ -61,6 +62,7 @@ export default async function Page({
     businessAds,
     nearbyMasjids,
     dates,
+    location,
   ] = await Promise.all([
     getServerPrayerData(masjid.id),
     getMasjidAnnouncementsByMasjidId(masjid.id),
@@ -71,6 +73,7 @@ export default async function Page({
     getApprovedBusinessAdsByMasjidId(masjid.id),
     getNearbyMasjids(masjid.id, 50, 3),
     getMasjidDates(masjid.id),
+    getMasjidLocationByMasjidId(masjid.id),
   ]);
 
   // Filter announcements to most recent 5
@@ -107,14 +110,16 @@ export default async function Page({
     description: `Complete profile for ${masjid.name} on Masjidaa – prayer times, events, announcements, donations & community information.`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: masjid.street,
-      addressLocality: masjid.city,
-      addressRegion: masjid.region,
-      postalCode: masjid.postcode,
-      addressCountry: masjid.country,
+      streetAddress: location?.street,
+      addressLocality: location?.city,
+      addressRegion: location?.region,
+      postalCode: location?.postcode,
+      addressCountry: location?.country,
     },
     telephone: masjid.contact_number,
-    hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`,
+    hasMap: location?.address_label
+      ? `https://maps.google.com/maps?q=${encodeURI(location.address_label)}`
+      : undefined,
   };
 
   return (
