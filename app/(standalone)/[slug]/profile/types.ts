@@ -15,6 +15,7 @@ export interface SummaryClientProps {
   businessAds: ApprovedBusinessAd[];
   nearbyMasjids: NearbyMasjid[];
   dates: DisplayDates | null;
+  location: Tables<"masjid_locations"> | null;
 }
 
 export type { ApprovedBusinessAd };

@@ -1,4 +1,5 @@
 import PrayerLayout from "@/components/LayoutWithHeader";
+import { useLocationContext } from "@/context/locationContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { useQRCode } from "@/hooks/useQRCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
@@ -8,6 +9,7 @@ import { useRef } from "react";
 
 export default function DownloadApp() {
   const masjid = useMasjidContext();
+  const location = useLocationContext();
 
   if (!masjid) {
     return <div>Masjid not found</div>;
@@ -95,7 +97,7 @@ export default function DownloadApp() {
                   <div className="text-xs text-gray-600 space-y-1">
                     <p>🌐 {masjid.website}</p>
                     <p>📞 {masjid.contact_number}</p>
-                    <p>📍 {masjid.address_label}</p>
+                    <p>📍 {location?.address_label}</p>
                   </div>
 
                   {/* Action buttons */}

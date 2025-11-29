@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo } from "react";
 import type { Tables } from "@/database.types";
+import { useLocationContext } from "./locationContext";
 
 interface DateTimeConfig {
   timeZone: string;
@@ -22,13 +23,15 @@ export function DateTimeProvider({
   children: React.ReactNode;
   settings?: Tables<"masjid_prayer_settings"> | null;
 }) {
+  const location = useLocationContext();
+  
   const config: DateTimeConfig = useMemo(() => {
     if (!settings) return defaultConfig;
     return {
-      timeZone: settings.timezone || defaultConfig.timeZone,
+      timeZone: location?.timezone || defaultConfig.timeZone,
       is12Hour: settings.time_format === "12",
     };
-  }, [settings]);
+  }, [settings, location]);
 
   return (
     <DateTimeContext.Provider value={config}>

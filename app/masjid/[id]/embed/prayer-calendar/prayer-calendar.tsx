@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocationContext } from "@/context/locationContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { PrayerSchedule } from "@/lib/server/services/masjidPrayers";
 import { BRAND_NAME, DOMAIN_NAME } from "@/utils/shared/constants";
@@ -24,6 +25,7 @@ export default function PrayersCalendar({
   year: number;
   month: number;
 }) {
+  const location = useLocationContext();
   const masjid = useMasjidContext();
 
   // Format month name
@@ -202,12 +204,12 @@ export default function PrayersCalendar({
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             {/* Masjid details - left aligned in a single line */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500 w-full md:w-auto">
-              {masjid?.address_label && (
+              {location?.address_label && (
                 <div className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  <span className="truncate">{masjid.address_label}</span>
+                  <span className="truncate">{location.address_label}</span>
                 </div>
               )}
               {masjid?.contact_number && (

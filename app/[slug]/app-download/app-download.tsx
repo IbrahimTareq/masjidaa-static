@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocationContext } from "@/context/locationContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
 import Image from "next/image";
@@ -7,6 +8,7 @@ import Link from "next/link";
 
 export default function DownloadApp() {
   const masjid = useMasjidContext();
+  const location = useLocationContext();
 
   if (!masjid) {
     return <div>Masjid not found</div>;
@@ -90,7 +92,7 @@ export default function DownloadApp() {
                 <div className="text-[10px] sm:text-xs text-gray-600 space-y-0.5 sm:space-y-1">
                   <p>🌐 {masjid.website}</p>
                   <p>📞 {masjid.contact_number}</p>
-                  <p>📍 {masjid.address_label}</p>
+                  <p>📍 {location?.address_label}</p>
                 </div>
 
                 {/* Action buttons */}

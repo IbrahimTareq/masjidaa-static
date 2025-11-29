@@ -80,12 +80,9 @@ export interface Masjid {
   local_currency: string;
   theme_color_id: string | null;
   active: boolean;
-  address_label: string;
   bg_image: string | null;
-  city: string;
   claimed: boolean;
   contact_number: string | null;
-  country: string;
   created_at: string | null;
   description: string | null;
   website: string | null;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocationContext } from "@/context/locationContext";
 import { useMasjidContext } from "@/context/masjidContext";
 import { Tables } from "@/database.types";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
@@ -15,6 +16,7 @@ export default function SiteWrapper({
   socials: Tables<"masjid_socials"> | null;
 }) {
   const masjid = useMasjidContext();
+  const location = useLocationContext();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -195,7 +197,7 @@ export default function SiteWrapper({
             <div>
               <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Contact Us</h2>
               <address className="not-italic space-y-2 md:space-y-3 text-sm md:text-base text-gray-600">
-                <p>{masjid.address_label}</p>
+                {location?.address_label && <p>{location.address_label}</p>}
                 <p>Phone: {masjid.contact_number || "N/A"}</p>
                 <p className="break-all">Email: {masjid.email || "N/A"}</p>
               </address>

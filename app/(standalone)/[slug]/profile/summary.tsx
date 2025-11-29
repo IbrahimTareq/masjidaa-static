@@ -35,6 +35,7 @@ export default function SummaryClient({
   followerCount,
   businessAds,
   nearbyMasjids,
+  location,
 }: SummaryClientProps) {
   const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState("prayer");
@@ -144,10 +145,10 @@ export default function SummaryClient({
 
                   {/* Contact Info */}
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                    {masjid.address_label && (
+                    {location?.address_label && (
                       <span className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
-                        {masjid.address_label}
+                        {location.address_label}
                       </span>
                     )}
                     {masjid.contact_number && (
@@ -192,16 +193,18 @@ export default function SummaryClient({
                     {isFollowed ? "Following" : "+ Follow"}
                   </button>
 
-                  <a
-                    href={`https://maps.google.com/maps?q=${encodeURIComponent(
-                      masjid.address_label
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 lg:flex-none px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center"
-                  >
-                    Directions
-                  </a>
+                  {location?.address_label && (
+                    <a
+                      href={`https://maps.google.com/maps?q=${encodeURIComponent(
+                        location.address_label
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 lg:flex-none px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center"
+                    >
+                      Directions
+                    </a>
+                  )}
 
                   <Link
                     href={`/${masjid.slug}/contact`}
@@ -440,7 +443,7 @@ export default function SummaryClient({
                             {nearby.name}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {getDistanceLabel(nearby.distance_meters, masjid.country_code)}
+                            {getDistanceLabel(nearby.distance_meters, location?.country_code ?? "GB")}
                           </div>
                         </div>
                       </div>

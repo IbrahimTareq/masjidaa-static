@@ -3,6 +3,7 @@ import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerD
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidDonationCampaignById } from "@/lib/server/services/masjidDonationCampaign";
 import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
+import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
 import { expandEventsWithRecurrence } from "@/utils/recurrence";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
@@ -45,7 +46,7 @@ export default async function Page({
   }
 
   // Parallelize all data fetching with optimized campaign loading
-  const [prayerData, events, siteSettingsResult] = await Promise.all([
+  const [prayerData, events, siteSettingsResult, location] = await Promise.all([
     getServerPrayerData(masjid.id),
     getMasjidEventsByMasjidId(masjid.id),
     // Create a promise that includes the campaign fetch if needed
@@ -55,6 +56,7 @@ export default async function Page({
         : null;
       return { settings, campaign };
     }),
+    getMasjidLocationByMasjidId(masjid.id),
   ]);
 
   const campaign = siteSettingsResult.campaign;
@@ -65,21 +67,23 @@ export default async function Page({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Mosque",
-    name: masjid?.name,
-    url: `${DOMAIN_NAME}/${masjid?.slug}`,
-    sameAs: masjid?.website,
-    logo: masjid?.logo,
-    description: `Masjid profile for ${masjid?.name} on Masjidaa – prayer times, events, announcements & donations.`,
+    name: masjid.name,
+    url: `${DOMAIN_NAME}/${masjid.slug}`,
+    sameAs: masjid.website,
+    logo: masjid.logo,
+    description: `Masjid profile for ${masjid.name} on Masjidaa – prayer times, events, announcements & donations.`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: masjid?.street,
-      addressLocality: masjid?.city,
-      addressRegion: masjid?.region,
-      postalCode: masjid?.postcode,
-      addressCountry: masjid?.country,
+      streetAddress: location?.street,
+      addressLocality: location?.city,
+      addressRegion: location?.region,
+      postalCode: location?.postcode,
+      addressCountry: location?.country,
     },
-    telephone: masjid?.contact_number,
-    hasMap: `https://maps.google.com/maps?q=${encodeURI(masjid.address_label)}`,
+    telephone: masjid.contact_number,
+    hasMap: location?.address_label
+      ? `https://maps.google.com/maps?q=${encodeURI(location.address_label)}`
+      : undefined,
   };
 
   return (

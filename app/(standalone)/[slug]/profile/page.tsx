@@ -142,6 +142,7 @@ export default async function Page({
         businessAds={businessAds}
         nearbyMasjids={nearbyMasjids}
         dates={dates}
+        location={location}
       />
     </>
   );
