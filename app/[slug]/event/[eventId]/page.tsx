@@ -3,7 +3,6 @@ import { getEventForm } from "@/lib/server/actions/eventRegistrationActions";
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
 import { getMasjidEventEnrollmentStatus } from "@/lib/server/services/masjidEvent";
-import { getMasjidEventShortCodeById } from "@/lib/server/services/masjidEventShortCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import Script from "next/script";
 import EventClient from "./event";
@@ -21,13 +20,12 @@ export default async function Page({
   const eventDate = (await searchParams).eventDate;
 
   // Parallelize initial data fetching
-  const [event, shortCode, masjid] = await Promise.all([
+  const [event, masjid] = await Promise.all([
     getEvent(eventId),
-    getMasjidEventShortCodeById(eventId),
     getMasjidBySlug(slug),
   ]);
 
-  const eventLink = `${DOMAIN_NAME}/r/${shortCode}`;
+  const eventLink = `${DOMAIN_NAME}/event/${eventId}?eventDate=${eventDate}`;
 
   if (!event) {
     return <div>Event not found</div>;

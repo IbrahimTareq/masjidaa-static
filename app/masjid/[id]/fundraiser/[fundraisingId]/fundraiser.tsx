@@ -76,10 +76,10 @@ function DonorCard({
   });
 
   const cardClasses = [
-    "relative rounded-2xl p-5 transition-all duration-700 backdrop-blur-sm border border-white/5",
+    "relative rounded-2xl p-5 transition-all duration-700 backdrop-blur-sm border",
     isHighlighted
-      ? "bg-gradient-to-r from-theme/40 via-theme/30 to-theme/40 ring-2 ring-theme/50 shadow-2xl shadow-theme/20 scale-105"
-      : "bg-slate-900/60 hover:bg-slate-800/70",
+      ? "bg-gradient-to-r from-theme/40 via-theme/30 to-theme/40 ring-2 ring-theme/50 shadow-2xl shadow-theme/20 scale-105 border-theme/50"
+      : "bg-slate-900/60 hover:bg-slate-800/70 border-theme/15",
     isNew && "animate-slide-in",
     "hover:scale-102 transform-gpu",
   ]
@@ -120,7 +120,7 @@ function StatCard({
   isAnimated = false,
 }: StatCardProps) {
   return (
-    <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/5">
+    <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl p-6 border border-theme/20">
       <div className="flex items-center gap-3 mb-3">
         <Icon className="w-6 h-6 text-theme" />
         <span className="text-slate-400 text-sm font-medium uppercase tracking-wide">
@@ -169,21 +169,21 @@ function BackgroundElements() {
     {
       size: "w-96 h-96",
       position: "top-20 left-20",
-      color: "bg-theme/5",
+      color: "bg-theme/10",
       blur: "blur-3xl",
       delay: "0s",
     },
     {
       size: "w-80 h-80",
       position: "bottom-20 right-20",
-      color: "bg-theme-accent/5",
+      color: "bg-theme-gradient/8",
       blur: "blur-3xl",
       delay: "2s",
     },
     {
       size: "w-60 h-60",
       position: "top-1/2 left-1/3",
-      color: "bg-theme/5",
+      color: "bg-theme-accent/6",
       blur: "blur-2xl",
       delay: "4s",
     },
@@ -237,6 +237,7 @@ function ClosedFundraiserDisplay({
 }: ClosedFundraiserProps) {
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-montserrat relative overflow-auto">
+
       {/* Keyframe animations */}
       <style jsx>{`
         @keyframes float {
@@ -499,6 +500,7 @@ export default function FundraiserDisplay({
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-montserrat relative">
+
       {/* Confetti overlay */}
       {showConfetti && (
         <Confetti
@@ -589,7 +591,7 @@ export default function FundraiserDisplay({
               {/* QR Code */}
               <div className="flex flex-col items-center">
                 <div className="relative group">
-                  <div className="bg-white rounded-3xl p-3 shadow-2xl transform transition-transform group-hover:scale-105">
+                  <div className="bg-white rounded-3xl p-3 shadow-2xl border-4 border-theme/30 transform transition-transform group-hover:scale-105">
                     <div ref={qrRef} className="qr-code-container scale-110" />
                   </div>
                 </div>
@@ -626,9 +628,9 @@ export default function FundraiserDisplay({
         </div>
 
         {/* Live Donations Feed */}
-        <aside className="w-96 bg-slate-950/80 backdrop-blur-xl border-l border-white/5 flex flex-col">
+        <aside className="w-96 bg-theme-gradient/90 backdrop-blur-xl border-l border-theme/20 flex flex-col">
           {/* Feed Header */}
-          <header className="p-6 border-b border-white/5">
+          <header className="p-6 border-b border-theme-accent/20">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Heart className="w-6 h-6 text-theme" />
