@@ -3,7 +3,7 @@
 import { useLocationContext } from "@/context/locationContext";
 import { useMasjidContext } from "@/context/masjidContext";
 
-const ContactUs = () => {
+const ContactClient = () => {
   const masjid = useMasjidContext();
   const location = useLocationContext();
 
@@ -96,4 +96,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactClient;

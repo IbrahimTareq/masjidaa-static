@@ -45,21 +45,18 @@ export default async function Page({
     return <div>Masjid not found</div>;
   }
 
-  // Parallelize all data fetching with optimized campaign loading
-  const [prayerData, events, siteSettingsResult, location] = await Promise.all([
+  // Parallelize all data fetching - first fetch independent data
+  const [prayerData, events, settings, location] = await Promise.all([
     getServerPrayerData(masjid.id),
     getMasjidEventsByMasjidId(masjid.id),
-    // Create a promise that includes the campaign fetch if needed
-    getMasjidSiteSettingsByMasjidId(masjid.id).then(async (settings) => {
-      const campaign = settings?.featured_campaign_id
-        ? await getMasjidDonationCampaignById(settings.featured_campaign_id)
-        : null;
-      return { settings, campaign };
-    }),
+    getMasjidSiteSettingsByMasjidId(masjid.id),
     getMasjidLocationByMasjidId(masjid.id),
   ]);
 
-  const campaign = siteSettingsResult.campaign;
+  // Conditionally fetch campaign if settings specify a featured campaign
+  const campaign = settings?.featured_campaign_id
+    ? await getMasjidDonationCampaignById(settings.featured_campaign_id)
+    : null;
 
   // Expand recurring events to show future occurrences
   const expandedEvents = expandEventsWithRecurrence(events ?? [], 1);

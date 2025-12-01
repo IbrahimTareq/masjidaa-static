@@ -14,16 +14,16 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string; slug: string }>;
+  params: Promise<{ eventId: string; slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { id, slug } = await params;
+  const { eventId, slug } = await params;
   const eventDate = (await searchParams).eventDate;
 
   // Parallelize initial data fetching
   const [event, shortCode, masjid] = await Promise.all([
-    getEvent(id),
-    getMasjidEventShortCodeById(id),
+    getEvent(eventId),
+    getMasjidEventShortCodeById(eventId),
     getMasjidBySlug(slug),
   ]);
 

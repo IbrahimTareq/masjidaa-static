@@ -25,7 +25,7 @@ interface DonationDisplayProps {
   donations: Tables<"donations">[];
 }
 
-export default function DonationDisplay({
+export default function DonationClient({
   campaign,
   bankAccount,
   theme,

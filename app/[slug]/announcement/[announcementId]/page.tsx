@@ -6,11 +6,11 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export default async function Page({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ announcementId: string }>;
 }) {
-  const { id } = await params;
+  const { announcementId } = await params;
 
-  const announcement = await getAnnouncement(id);
+  const announcement = await getAnnouncement(announcementId);
 
   if (!announcement) {
     return <div>Announcement not found</div>;

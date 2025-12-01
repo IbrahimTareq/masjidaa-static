@@ -4,7 +4,7 @@ import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccoun
 import { getShortLinkById } from "@/lib/server/services/shortLink";
 import { getMasjidThemeById } from "@/lib/server/services/masjidTheme";
 
-import DonationDisplay from "@/app/[slug]/donation/[id]/donation";
+import DonationClient from "@/app/[slug]/donation/[donationId]/donation";
 import { getDonationCount } from "@/lib/server/services/donationCount";
 import { getDonationCountMonthly } from "@/lib/server/services/donationCountMonthly";
 import { getDonationsByCampaignId } from "@/lib/server/services/donations";
@@ -14,12 +14,12 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export default async function DonationCampaignPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ donationId: string }>;
 }) {
-  const { id } = await params;
+  const { donationId } = await params;
 
   // Fetch campaign data
-  const campaign = await getDonationCampaign(id);
+  const campaign = await getDonationCampaign(donationId);
   if (!campaign) {
     return <div className="p-8 text-center">Campaign not found</div>;
   }
@@ -38,7 +38,7 @@ export default async function DonationCampaignPage({
   ]);
 
   return (
-    <DonationDisplay
+    <DonationClient
       campaign={campaign}
       bankAccount={bankAccount}
       theme={theme}

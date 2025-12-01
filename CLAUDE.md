@@ -128,6 +128,66 @@ The application uses Supabase with TypeScript types auto-generated from the sche
 - **Production**: Manual deployment with `npm run deploy` to `masjidaa.com`
 - Uses OpenNext for Cloudflare Pages compatibility
 
+### Code Organization Standards (Updated 2024-12)
+
+#### Route Parameter Naming
+- **Use qualified parameter names** for better type safety and clarity:
+  - `[donationId]` for donation-specific routes
+  - `[eventId]` for event-specific routes
+  - `[announcementId]` for announcement-specific routes
+  - Keep `[id]` only for primary entity routes (e.g., `masjid/[id]`)
+  - Keep `[slug]` for human-readable identifiers
+
+#### Component Naming Convention
+- **Client components must use `{Feature}Client` naming pattern:**
+  ```typescript
+  // ✅ CORRECT
+  export default function EventsClient({ ... }) { ... }
+  export default function DonationClient({ ... }) { ... }
+  export default function AnnouncementsClient({ ... }) { ... }
+
+  // ❌ INCORRECT
+  export default function Events({ ... }) { ... }
+  export default function DonationDisplay({ ... }) { ... }
+  ```
+
+#### File Organization Pattern
+- **Follow consistent route structure:**
+  ```
+  app/[slug]/{feature}/
+  ├── page.tsx              # Server component (data fetching, metadata)
+  └── {feature}.tsx         # Client component (UI, interactivity)
+  ```
+- **Server components handle:**
+  - Data fetching with `Promise.all()` for parallel operations
+  - Metadata generation with `generateMetadata()`
+  - Error handling and validation
+  - JSON-LD schema injection
+- **Client components handle:**
+  - User interactions and state management
+  - Context consumption
+  - UI rendering with "use client" directive
+
+#### Data Fetching Standards
+- **Always use `Promise.all()` for independent parallel operations:**
+  ```typescript
+  // ✅ CORRECT - Parallel execution
+  const [prayerData, events, settings, location] = await Promise.all([
+    getServerPrayerData(masjid.id),
+    getMasjidEventsByMasjidId(masjid.id),
+    getMasjidSiteSettingsByMasjidId(masjid.id),
+    getMasjidLocationByMasjidId(masjid.id),
+  ]);
+
+  // ❌ INCORRECT - Sequential execution with .then() chains
+  const result = await getSetting().then(async (settings) => {
+    const data = await getData(settings.id);
+    return { settings, data };
+  });
+  ```
+- **Sequential operations only when data dependencies exist**
+- **Use React's `cache()` wrapper for database operations**
+
 ### Server Components & Caching
 - Prefer server components for data fetching
 - Use React's `cache()` wrapper for database calls in services

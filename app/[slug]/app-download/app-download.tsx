@@ -6,7 +6,7 @@ import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DownloadApp() {
+export default function AppDownloadClient() {
   const masjid = useMasjidContext();
   const location = useLocationContext();
 

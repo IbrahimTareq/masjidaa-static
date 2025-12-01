@@ -3,7 +3,7 @@
 import { Donations as DonationsComponent } from "@/components/client/interactive/Donations";
 import { Tables } from "@/database.types";
 
-export default function Donations({
+export default function DonationsClient({
   masjid,
   campaigns,
   slug,
