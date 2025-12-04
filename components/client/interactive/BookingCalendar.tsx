@@ -5,13 +5,18 @@ import { Tables } from "@/database.types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 
+interface BookingTypeForCalendar {
+  min_advance_booking_hours?: number | null;
+  max_advance_booking_days?: number | null;
+}
+
 interface BookingCalendarProps {
   availabilities: Tables<"booking_availabilities">[];
   existingBookings: Tables<"bookings">[];
   blackouts: Tables<"booking_blackouts">[];
   onDateSelect: (date: string) => void;
   timezone?: string;
-  bookingType: Tables<"booking_types">;
+  bookingType: BookingTypeForCalendar;
 }
 
 interface CalendarDay {

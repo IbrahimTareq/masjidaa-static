@@ -5,12 +5,16 @@ import { Tables } from "@/database.types";
 import { BookingFormData } from "@/utils/booking/validation";
 import { User, Mail, Phone, MessageSquare, CreditCard, AlertCircle, Clock } from "lucide-react";
 
+interface BookingTypeForForm {
+  price?: number | null;
+}
+
 interface BookingFormProps {
   formData: BookingFormData;
   onFormDataChange: (data: BookingFormData) => void;
   onSubmit: (data: BookingFormData) => void;
   errors: Record<string, string>;
-  bookingType: Tables<"booking_types">;
+  bookingType: BookingTypeForForm;
   submitting: boolean;
 }
 

@@ -25,6 +25,8 @@ interface BookingTypeDTO {
   price: number | null;
   duration_minutes: number | null;
   long_description: string | null;
+  min_advance_booking_hours: number | null;
+  max_advance_booking_days: number | null;
 }
 
 interface BookingClientProps {

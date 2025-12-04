@@ -11,12 +11,17 @@ interface TimeSlot {
   available: boolean;
 }
 
+interface BookingTypeForTimeSlot {
+  duration_minutes?: number | null;
+}
+
 interface TimeSlotPickerProps {
   date: string;
   slots: TimeSlot[];
   loading: boolean;
   onSlotSelect: (slot: TimeSlot) => void;
-  bookingType: Tables<"booking_types">;
+  bookingType: BookingTypeForTimeSlot;
+  timezone?: string;
 }
 
 const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
@@ -186,7 +191,7 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
 interface TimeSlotButtonProps {
   slot: TimeSlot;
   onSelect: (slot: TimeSlot) => void;
-  bookingType: Tables<"booking_types">;
+  bookingType: BookingTypeForTimeSlot;
 }
 
 const TimeSlotButton: React.FC<TimeSlotButtonProps> = ({

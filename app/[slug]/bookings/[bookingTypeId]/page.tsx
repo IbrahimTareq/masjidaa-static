@@ -19,6 +19,8 @@ interface BookingTypeDTO {
   price: number | null;
   duration_minutes: number | null;
   long_description: string | null;
+  min_advance_booking_hours: number | null;
+  max_advance_booking_days: number | null;
 }
 
 export const revalidate = 60;
@@ -172,6 +174,8 @@ export default async function BookingTypePage({ params }: PageProps) {
     price: bookingType.price,
     duration_minutes: bookingType.duration_minutes,
     long_description: bookingType.long_description,
+    min_advance_booking_hours: bookingType.min_advance_booking_hours,
+    max_advance_booking_days: bookingType.max_advance_booking_days,
   };
 
   return (

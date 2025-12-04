@@ -22,9 +22,14 @@ const PHONE_PATTERN = /^[\d\s\-\(\)\.\+]+$/;
 const TIME_PATTERN = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
 
+interface BookingTypeForValidation {
+  min_advance_booking_hours?: number | null;
+  max_advance_booking_days?: number | null;
+}
+
 export function validateCompleteBookingForm(
   formData: BookingFormData,
-  bookingType: Tables<"booking_types">
+  bookingType: BookingTypeForValidation
 ): ValidationResult {
   const errors: Record<string, string> = {};
 
