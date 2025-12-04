@@ -53,6 +53,7 @@ export default function SiteWrapper({
               <NavLink href={`/${masjid.slug}/announcements`}>
                 Announcements
               </NavLink>
+              <NavLink href={`/${masjid.slug}/bookings`}>Bookings</NavLink>
               <NavLink href={`/${masjid.slug}/services`}>Services</NavLink>
               <NavLink href={`/${masjid.slug}/donations`}>Donations</NavLink>
               <NavLink href={`/${masjid.slug}/contact`}>Contact</NavLink>
@@ -113,6 +114,9 @@ export default function SiteWrapper({
               <NavLink href={`/${masjid.slug}/announcements`} mobile>
                 Announcements
               </NavLink>
+              <NavLink href={`/${masjid.slug}/bookings`} mobile>
+                Bookings
+              </NavLink>
               <NavLink href={`/${masjid.slug}/services`} mobile>
                 Services
               </NavLink>
@@ -168,6 +172,11 @@ export default function SiteWrapper({
                 <li>
                   <FooterLink href={`/${masjid.slug}/announcements`}>
                     Announcements
+                  </FooterLink>
+                </li>
+                <li>
+                  <FooterLink href={`/${masjid.slug}/bookings`}>
+                    Bookings
                   </FooterLink>
                 </li>
                 <li>

@@ -1,5 +1,6 @@
 import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
+import { getMasjidLocationByMasjidId } from "./masjidLocation";
 
 export interface NearbyMasjid extends Tables<"masjids"> {
   distance_meters: number;
@@ -32,19 +33,15 @@ export async function getNearbyMasjids(
 ): Promise<NearbyMasjid[]> {
   const supabase = await createClient();
 
-  // Get current masjid's coordinates
-  const { data: currentMasjid, error: masjidError } = await supabase
-    .from("masjids")
-    .select("latitude, longitude")
-    .eq("id", masjidId)
-    .maybeSingle();
+  // Get current masjid's coordinates from masjid_locations table
+  const currentMasjidLocation = await getMasjidLocationByMasjidId(masjidId);
 
-  if (masjidError || !currentMasjid) {
-    console.error("Error fetching current masjid:", masjidError);
+  if (!currentMasjidLocation) {
+    console.error("Error fetching current masjid location");
     return [];
   }
 
-  const { latitude, longitude } = currentMasjid;
+  const { latitude, longitude } = currentMasjidLocation;
 
   // Validate coordinates
   if (!latitude || !longitude || (latitude === 0 && longitude === 0)) {

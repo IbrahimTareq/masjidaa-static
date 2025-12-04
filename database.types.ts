@@ -6,6 +6,12 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Shared booking system interfaces
+export interface TimeSlot {
+  start_time: string;
+  end_time: string;
+}
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -174,6 +180,225 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      booking_availabilities: {
+        Row: {
+          booking_type_id: string
+          created_at: string | null
+          day_of_week: Database["public"]["Enums"]["day_of_week"]
+          end_time: string
+          id: string
+          is_active: boolean
+          start_time: string
+          updated_at: string | null
+        }
+        Insert: {
+          booking_type_id: string
+          created_at?: string | null
+          day_of_week: Database["public"]["Enums"]["day_of_week"]
+          end_time: string
+          id?: string
+          is_active?: boolean
+          start_time: string
+          updated_at?: string | null
+        }
+        Update: {
+          booking_type_id?: string
+          created_at?: string | null
+          day_of_week?: Database["public"]["Enums"]["day_of_week"]
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          start_time?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_availabilities_booking_type_id_fkey"
+            columns: ["booking_type_id"]
+            isOneToOne: false
+            referencedRelation: "booking_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_blackouts: {
+        Row: {
+          booking_type_id: string
+          created_at: string | null
+          description: string | null
+          end_date: string
+          end_time: string | null
+          id: string
+          is_active: boolean
+          start_date: string
+          start_time: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          booking_type_id: string
+          created_at?: string | null
+          description?: string | null
+          end_date: string
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          start_date: string
+          start_time?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          booking_type_id?: string
+          created_at?: string | null
+          description?: string | null
+          end_date?: string
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          start_time?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_blackouts_booking_type_id_fkey"
+            columns: ["booking_type_id"]
+            isOneToOne: false
+            referencedRelation: "booking_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_types: {
+        Row: {
+          buffer_minutes: number
+          created_at: string | null
+          duration_minutes: number
+          id: string
+          is_active: boolean
+          long_description: string | null
+          masjid_id: string
+          max_advance_booking_days: number | null
+          min_advance_booking_hours: number | null
+          name: string
+          price: number | null
+          short_description: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buffer_minutes?: number
+          created_at?: string | null
+          duration_minutes: number
+          id?: string
+          is_active?: boolean
+          long_description?: string | null
+          masjid_id: string
+          max_advance_booking_days?: number | null
+          min_advance_booking_hours?: number | null
+          name: string
+          price?: number | null
+          short_description?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buffer_minutes?: number
+          created_at?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          long_description?: string | null
+          masjid_id?: string
+          max_advance_booking_days?: number | null
+          min_advance_booking_hours?: number | null
+          name?: string
+          price?: number | null
+          short_description?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_types_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          admin_notes: string | null
+          booking_date: string
+          booking_type_id: string
+          confirmation_email_sent: boolean
+          created_at: string | null
+          end_time: string
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          id: string
+          masjid_id: string
+          notes: string | null
+          reminder_email_sent: boolean
+          start_time: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          booking_date: string
+          booking_type_id: string
+          confirmation_email_sent?: boolean
+          created_at?: string | null
+          end_time: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          masjid_id: string
+          notes?: string | null
+          reminder_email_sent?: boolean
+          start_time: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          booking_date?: string
+          booking_type_id?: string
+          confirmation_email_sent?: boolean
+          created_at?: string | null
+          end_time?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          masjid_id?: string
+          notes?: string | null
+          reminder_email_sent?: boolean
+          start_time?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_booking_type_id_fkey"
+            columns: ["booking_type_id"]
+            isOneToOne: false
+            referencedRelation: "booking_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       businesses: {
         Row: {
@@ -2316,36 +2541,24 @@ export type Database = {
       search_masjids: {
         Args: { search: string }
         Returns: {
-          active: boolean
-          bg_image: string | null
-          claimed: boolean
-          contact_number: string | null
-          created_at: string | null
-          description: string | null
-          email: string | null
-          fts: unknown
-          hijri_date_adjustment: number
+          address_label: string
+          city: string
+          country: Database["public"]["Enums"]["supported_country_name"]
           id: string
-          local_currency: Database["public"]["Enums"]["supported_currency"]
-          logo: string | null
+          logo: string
           name: string
           slug: string
-          subscription_id: string | null
-          theme_color_id: string | null
-          updated_at: string | null
-          verified: boolean
-          website: string | null
         }[]
-        SetofOptions: {
-          from: "*"
-          to: "masjids"
-          isOneToOne: false
-          isSetofReturn: true
-        }
       }
     }
     Enums: {
       bank_account_status: "pending" | "active" | "disabled"
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "completed"
+        | "no_show"
       calculation_method:
         | "MuslimWorldLeague"
         | "NorthAmerica"
@@ -2361,6 +2574,14 @@ export type Database = {
         | "Tehran"
         | "Other"
       contact_method: "email" | "phone"
+      day_of_week:
+        | "sunday"
+        | "monday"
+        | "tuesday"
+        | "wednesday"
+        | "thursday"
+        | "friday"
+        | "saturday"
       donation_type: "one-off" | "recurring"
       event_form_submission_status:
         | "confirmed"
@@ -2387,7 +2608,7 @@ export type Database = {
         | "events"
         | "announcements"
         | "general"
-      prayer_time_status: "known" | "unknown" | "not_available"
+      prayer_time_status: "known" | "unknown" | "not_prayed"
       qna_question_status: "pending" | "approved" | "rejected" | "answered"
       recurring_donation_status: "active" | "paused" | "canceled"
       scheme_types:
@@ -2573,6 +2794,13 @@ export const Constants = {
   public: {
     Enums: {
       bank_account_status: ["pending", "active", "disabled"],
+      booking_status: [
+        "pending",
+        "confirmed",
+        "cancelled",
+        "completed",
+        "no_show",
+      ],
       calculation_method: [
         "MuslimWorldLeague",
         "NorthAmerica",
@@ -2589,6 +2817,15 @@ export const Constants = {
         "Other",
       ],
       contact_method: ["email", "phone"],
+      day_of_week: [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ],
       donation_type: ["one-off", "recurring"],
       event_form_submission_status: [
         "confirmed",
@@ -2618,7 +2855,7 @@ export const Constants = {
         "announcements",
         "general",
       ],
-      prayer_time_status: ["known", "unknown", "not_available"],
+      prayer_time_status: ["known", "unknown", "not_prayed"],
       qna_question_status: ["pending", "approved", "rejected", "answered"],
       recurring_donation_status: ["active", "paused", "canceled"],
       scheme_types: [
