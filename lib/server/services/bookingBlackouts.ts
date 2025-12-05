@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
-import { Tables, TimeSlot } from "@/database.types";
+import { Tables } from "@/database.types";
+import { TimeSlot } from "./bookingAvailability";
 
 export const getActiveBlackoutsByTypeId = cache(async (
   bookingTypeId: string

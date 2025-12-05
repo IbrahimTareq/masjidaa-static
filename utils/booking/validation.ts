@@ -1,9 +1,9 @@
 import { Tables } from "@/database.types";
 
 export interface BookingFormData {
-  guest_name: string;
-  guest_email: string;
-  guest_phone?: string;
+  name: string;
+  email: string;
+  phone?: string;
   notes?: string;
   booking_date: string;
   start_time: string;
@@ -33,38 +33,38 @@ export function validateCompleteBookingForm(
 ): ValidationResult {
   const errors: Record<string, string> = {};
 
-  // Validate guest name
-  const name = formData.guest_name?.trim();
+  // Validate name
+  const name = formData.name?.trim();
   if (!name) {
-    errors.guest_name = "Name is required";
+    errors.name = "Name is required";
   } else if (name.length < 2) {
-    errors.guest_name = "Name must be at least 2 characters long";
+    errors.name = "Name must be at least 2 characters long";
   } else if (name.length > 100) {
-    errors.guest_name = "Name must be less than 100 characters";
+    errors.name = "Name must be less than 100 characters";
   } else if (!NAME_PATTERN.test(name)) {
-    errors.guest_name = "Name can only contain letters, spaces, hyphens, and apostrophes";
+    errors.name = "Name can only contain letters, spaces, hyphens, and apostrophes";
   }
 
-  // Validate guest email
-  const email = formData.guest_email?.trim();
+  // Validate email
+  const email = formData.email?.trim();
   if (!email) {
-    errors.guest_email = "Email is required";
+    errors.email = "Email is required";
   } else if (!EMAIL_PATTERN.test(email)) {
-    errors.guest_email = "Please enter a valid email address";
+    errors.email = "Please enter a valid email address";
   } else if (email.length > 255) {
-    errors.guest_email = "Email must be less than 255 characters";
+    errors.email = "Email must be less than 255 characters";
   }
 
-  // Validate guest phone (optional)
-  const phone = formData.guest_phone?.trim();
+  // Validate phone (optional)
+  const phone = formData.phone?.trim();
   if (phone) {
     const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
     if (cleanPhone.length < 10) {
-      errors.guest_phone = "Phone number must be at least 10 digits";
+      errors.phone = "Phone number must be at least 10 digits";
     } else if (cleanPhone.length > 15) {
-      errors.guest_phone = "Phone number must be less than 15 digits";
+      errors.phone = "Phone number must be less than 15 digits";
     } else if (!PHONE_PATTERN.test(phone)) {
-      errors.guest_phone = "Please enter a valid phone number";
+      errors.phone = "Please enter a valid phone number";
     }
   }
 
@@ -144,9 +144,9 @@ export function validateCompleteBookingForm(
 
 export function sanitizeBookingFormData(formData: BookingFormData): BookingFormData {
   return {
-    guest_name: formData.guest_name.trim(),
-    guest_email: formData.guest_email.trim().toLowerCase(),
-    guest_phone: formData.guest_phone?.trim() || undefined,
+    name: formData.name.trim(),
+    email: formData.email.trim().toLowerCase(),
+    phone: formData.phone?.trim() || undefined,
     notes: formData.notes?.trim() || undefined,
     booking_date: formData.booking_date,
     start_time: formData.start_time,

@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Tables } from "@/database.types";
-import { formatDurationForDisplay } from "@/utils/booking/availability";
-import { formatCurrencyWithSymbol } from "@/utils/currency";
-import { Clock, Calendar, Users, MapPin, CheckCircle2 } from "lucide-react";
+import { BookingTypesList } from "@/components/client/interactive/BookingTypesList";
+import { Calendar } from "lucide-react";
 
 interface BookingsClientProps {
   masjid: Tables<"masjids">;
@@ -86,125 +84,14 @@ const BookingsClient: React.FC<BookingsClientProps> = ({
       {/* Content Section */}
       <section className="py-12 md:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0">
-          {/* Booking Types Grid */}
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {bookingTypes.map((bookingType) => (
-              <BookingTypeCard
-                key={bookingType.id}
-                bookingType={bookingType}
-                masjid={masjid}
-                slug={slug}
-              />
-            ))}
-          </div>
+          <BookingTypesList
+            bookingTypes={bookingTypes}
+            currency={masjid.local_currency || "AUD"}
+            slug={slug}
+            emptyMessage={`No booking services are currently available at ${masjid.name}.`}
+          />
         </div>
       </section>
-    </div>
-  );
-};
-
-interface BookingTypeCardProps {
-  bookingType: Tables<"booking_types">;
-  masjid: Tables<"masjids">;
-  slug: string;
-}
-
-const BookingTypeCard: React.FC<BookingTypeCardProps> = ({
-  bookingType,
-  masjid,
-  slug,
-}) => {
-  const duration = formatDurationForDisplay(bookingType.duration_minutes || 30);
-  const hasPrice = bookingType.price && bookingType.price > 0;
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
-      <div className="p-6 h-full flex flex-col">
-        {/* Content that can grow */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex items-start justify-between mb-4">
-            <h3 className="text-xl font-semibold text-gray-900">
-              {bookingType.name}
-            </h3>
-            {hasPrice && (
-              <div className="text-right">
-                <div className="text-2xl font-bold text-theme">
-                  {formatCurrencyWithSymbol({
-                    amount: bookingType.price || 0,
-                    currency: masjid.local_currency || "AUD",
-                    decimals: 2,
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {bookingType.short_description && (
-            <p className="text-gray-600 mb-6 line-clamp-3">
-              {bookingType.short_description}
-            </p>
-          )}
-
-          {/* Service Details */}
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center space-x-3 text-gray-600">
-              <Clock className="h-5 w-5" />
-              <span>{duration} per session</span>
-            </div>
-
-            {!hasPrice && (
-              <div className="flex items-center space-x-3 text-green-600">
-                <CheckCircle2 className="h-5 w-5" />
-                <span>Free service</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Booking Requirements - At bottom above button */}
-        {(bookingType.min_advance_booking_hours ||
-          bookingType.max_advance_booking_days) && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">
-              Booking Requirements:
-            </h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              {bookingType.min_advance_booking_hours && (
-                <li>
-                  • Book at least{" "}
-                  {bookingType.min_advance_booking_hours < 24
-                    ? `${bookingType.min_advance_booking_hours} hours`
-                    : `${Math.floor(
-                        bookingType.min_advance_booking_hours / 24
-                      )} day${
-                        Math.floor(bookingType.min_advance_booking_hours / 24) >
-                        1
-                          ? "s"
-                          : ""
-                      }`}{" "}
-                  in advance
-                </li>
-              )}
-              {bookingType.max_advance_booking_days && (
-                <li>
-                  • Book up to {bookingType.max_advance_booking_days} day
-                  {bookingType.max_advance_booking_days > 1 ? "s" : ""} in
-                  advance
-                </li>
-              )}
-            </ul>
-          </div>
-        )}
-
-        {/* Book Now Button - Always at bottom */}
-        <Link
-          href={`/${slug}/bookings/${bookingType.id}`}
-          className="w-full bg-theme text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-        >
-          <Calendar className="h-5 w-5" />
-          <span>Book Now</span>
-        </Link>
-      </div>
     </div>
   );
 };

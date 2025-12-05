@@ -1,6 +1,5 @@
 "use client";
 
-import { Tables } from "@/database.types";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { CheckCircle2, Clock } from "lucide-react";
 import React from "react";
@@ -32,7 +31,6 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
   bookingType,
   timezone,
 }) => {
-  const { formatTime } = useDateTimeFormat();
   // Group slots by time of day
   const groupedSlots = React.useMemo(() => {
     const groups: {
@@ -61,7 +59,6 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
   }, [slots]);
 
   const availableSlots = slots.filter((slot) => slot.available);
-  const unavailableSlots = slots.filter((slot) => !slot.available);
 
   if (loading) {
     return (
@@ -98,24 +95,6 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
           All time slots for this date are currently unavailable. Please choose
           a different date.
         </p>
-
-        {unavailableSlots.length > 0 && (
-          <div className="max-w-md mx-auto">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">
-              Unavailable times:
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              {unavailableSlots.map((slot, index) => (
-                <div
-                  key={index}
-                  className="p-3 bg-gray-100 border border-gray-200 rounded-lg text-center text-sm text-gray-500"
-                >
-                  {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -165,25 +144,6 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
         {renderTimeGroup("afternoon", groupedSlots.afternoon)}
         {renderTimeGroup("evening", groupedSlots.evening)}
       </div>
-
-      {/* Show unavailable slots if any */}
-      {unavailableSlots.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h4 className="text-sm font-medium text-gray-700 mb-3">
-            Unavailable times ({unavailableSlots.length}):
-          </h4>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-            {unavailableSlots.map((slot, index) => (
-              <div
-                key={`unavailable-${index}`}
-                className="p-2 bg-gray-100 border border-gray-200 rounded-lg text-center text-xs text-gray-500"
-              >
-                {formatTime(slot.start_time)}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

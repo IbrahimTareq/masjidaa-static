@@ -8,6 +8,8 @@ import { useDateTimeConfig } from "@/context/dateTimeContext";
 interface BookingTypeForCalendar {
   min_advance_booking_hours?: number | null;
   max_advance_booking_days?: number | null;
+  duration_minutes?: number | null;
+  buffer_minutes?: number | null;
 }
 
 interface BookingCalendarProps {
@@ -28,6 +30,7 @@ interface CalendarDay {
   isSelectable: boolean;
   hasBookings: boolean;
   isBlackedOut: boolean;
+  isFullyBooked: boolean;
 }
 
 const BookingCalendar: React.FC<BookingCalendarProps> = ({
@@ -109,6 +112,49 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
     return days;
   }, [blackouts]);
 
+  // Helper to convert time string to minutes
+  const timeToMinutes = (timeStr: string): number => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Calculate total slots per day of week based on availabilities
+  const slotsPerDayOfWeek = useMemo(() => {
+    const slots: Record<string, number> = {};
+    const durationMinutes = bookingType.duration_minutes || 30;
+    const bufferMinutes = bookingType.buffer_minutes || 0;
+
+    availabilities.forEach(availability => {
+      if (availability.day_of_week && availability.start_time && availability.end_time) {
+        const dayOfWeek = availability.day_of_week;
+        const startMinutes = timeToMinutes(availability.start_time);
+        const endMinutes = timeToMinutes(availability.end_time);
+        
+        // Calculate number of slots for this availability window
+        let slotCount = 0;
+        let currentMinute = startMinutes;
+        while (currentMinute + durationMinutes <= endMinutes) {
+          slotCount++;
+          currentMinute += durationMinutes + bufferMinutes;
+        }
+        
+        slots[dayOfWeek] = (slots[dayOfWeek] || 0) + slotCount;
+      }
+    });
+    return slots;
+  }, [availabilities, bookingType.duration_minutes, bookingType.buffer_minutes]);
+
+  // Count bookings per date
+  const bookingsPerDate = useMemo(() => {
+    const counts: Record<string, number> = {};
+    existingBookings.forEach(booking => {
+      if (booking.booking_date && ['pending', 'confirmed'].includes(booking.status || '')) {
+        counts[booking.booking_date] = (counts[booking.booking_date] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [existingBookings]);
+
   // Generate calendar days for current month view
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -141,6 +187,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       const hasAvailability = availableDays.has(dayOfWeek);
       const hasBookings = daysWithBookings.has(dateString);
       const isBlackedOut = blackoutDays.has(dateString);
+      
+      // Check if all slots are booked for this date
+      const totalSlots = slotsPerDayOfWeek[dayOfWeek] || 0;
+      const bookedSlots = bookingsPerDate[dateString] || 0;
+      const isFullyBooked = hasAvailability && totalSlots > 0 && bookedSlots >= totalSlots;
 
       // Check if date is selectable
       const isSelectable =
@@ -148,7 +199,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         current >= minDate &&
         current <= maxDate &&
         hasAvailability &&
-        !isBlackedOut;
+        !isBlackedOut &&
+        !isFullyBooked;
 
       days.push({
         date: new Date(current),
@@ -159,13 +211,14 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         isSelectable,
         hasBookings,
         isBlackedOut,
+        isFullyBooked,
       });
 
       current.setDate(current.getDate() + 1);
     }
 
     return days;
-  }, [currentDate, availableDays, daysWithBookings, blackoutDays, minDate, maxDate]);
+  }, [currentDate, availableDays, daysWithBookings, blackoutDays, minDate, maxDate, slotsPerDayOfWeek, bookingsPerDate]);
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
@@ -258,10 +311,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
               {day.date.getDate()}
             </div>
 
-            {/* Available date indicator */}
-            {day.isCurrentMonth && day.isSelectable && !day.isToday && (
+            {/* Availability indicator */}
+            {day.isCurrentMonth && day.hasAvailability && !day.isToday && (
               <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-                <div className="w-1 h-1 bg-theme rounded-full"></div>
+                <div className={`w-1 h-1 rounded-full ${day.isSelectable ? 'bg-theme' : 'bg-gray-300'}`}></div>
               </div>
             )}
           </div>

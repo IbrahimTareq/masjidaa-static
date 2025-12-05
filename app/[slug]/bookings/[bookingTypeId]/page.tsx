@@ -1,16 +1,17 @@
-import { Metadata } from "next";
-import { getMasjidBySlug } from "@/lib/server/services/masjid";
-import { getBookingTypeById } from "@/lib/server/services/bookingTypes";
 import { getBookingAvailabilitiesByTypeId } from "@/lib/server/services/bookingAvailabilities";
-import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
 import { getActiveBlackoutsByTypeId } from "@/lib/server/services/bookingBlackouts";
+import { getBookingsByTypeId } from "@/lib/server/services/bookings";
+import { getBookingTypeById } from "@/lib/server/services/bookingTypes";
+import { getMasjidBySlug } from "@/lib/server/services/masjid";
+import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
+import { Metadata } from "next";
 import BookingClient from "./booking";
-import { Tables } from "@/database.types";
 
 // Lightweight DTOs for client-side transfer
 interface MasjidDTO {
   id: string;
   name: string;
+  local_currency: string;
 }
 
 interface BookingTypeDTO {
@@ -18,6 +19,7 @@ interface BookingTypeDTO {
   name: string;
   price: number | null;
   duration_minutes: number | null;
+  buffer_minutes: number | null;
   long_description: string | null;
   min_advance_booking_hours: number | null;
   max_advance_booking_days: number | null;
@@ -156,16 +158,18 @@ export default async function BookingTypePage({ params }: PageProps) {
   }
 
   // Parallel fetch related data
-  const [availabilities, location, blackouts] = await Promise.all([
+  const [availabilities, location, blackouts, existingBookings] = await Promise.all([
     getBookingAvailabilitiesByTypeId(bookingTypeId),
     getMasjidLocationByMasjidId(masjid.id),
     getActiveBlackoutsByTypeId(bookingTypeId),
+    getBookingsByTypeId(bookingTypeId),
   ]);
 
   // Create optimized DTOs for client transfer
   const masjidDTO: MasjidDTO = {
     id: masjid.id,
     name: masjid.name,
+    local_currency: masjid.local_currency,
   };
 
   const bookingTypeDTO: BookingTypeDTO = {
@@ -173,6 +177,7 @@ export default async function BookingTypePage({ params }: PageProps) {
     name: bookingType.name,
     price: bookingType.price,
     duration_minutes: bookingType.duration_minutes,
+    buffer_minutes: bookingType.buffer_minutes,
     long_description: bookingType.long_description,
     min_advance_booking_hours: bookingType.min_advance_booking_hours,
     max_advance_booking_days: bookingType.max_advance_booking_days,
@@ -184,6 +189,7 @@ export default async function BookingTypePage({ params }: PageProps) {
       bookingType={bookingTypeDTO}
       availabilities={availabilities || []}
       blackouts={blackouts || []}
+      existingBookings={existingBookings || []}
       location={location}
       slug={slug}
     />

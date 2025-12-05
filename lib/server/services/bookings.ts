@@ -1,14 +1,28 @@
-import { cache } from "react";
+import { Tables, TablesInsert } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
-import { Tables, TablesInsert, TimeSlot } from "@/database.types";
+import { cache } from "react";
 
+export const getBookingsByTypeId = cache(async (
+  bookingTypeId: string
+): Promise<Tables<"bookings">[]> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("booking_type_id", bookingTypeId)
+    .in("status", ["pending", "confirmed"])
+    .order("booking_date", { ascending: true });
 
-
-
+  if (error) {
+    console.error("Error fetching bookings by type:", error);
+    return [];
+  }
+  return data || [];
+});
 
 export const createBooking = async (
   bookingData: TablesInsert<"bookings">
-): Promise<Tables<"bookings"> | null> => {
+): Promise<{ data: Tables<"bookings"> | null; error: string | null }> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("bookings")
@@ -18,12 +32,10 @@ export const createBooking = async (
 
   if (error) {
     console.error("Error creating booking:", error);
-    return null;
+    return { data: null, error: error.message };
   }
-  return data;
+  return { data, error: null };
 };
-
-
 
 export const isTimeSlotBooked = async (
   bookingTypeId: string,
@@ -50,46 +62,50 @@ export const isTimeSlotBooked = async (
   return (data?.length || 0) > 0;
 };
 
+export const getBulkBookingStatusForTimeSlots = cache(
+  async (
+    bookingTypeId: string,
+    date: string,
+    timeSlots: { start_time: string; end_time: string }[]
+  ): Promise<Record<string, boolean>> => {
+    const supabase = await createClient();
 
-export const getBulkBookingStatusForTimeSlots = cache(async (
-  bookingTypeId: string,
-  date: string,
-  timeSlots: TimeSlot[]
-): Promise<Record<string, boolean>> => {
-  const supabase = await createClient();
+    // Get all bookings for the date in one query
+    const { data: bookings, error } = await supabase
+      .from("bookings")
+      .select("start_time, end_time")
+      .eq("booking_type_id", bookingTypeId)
+      .eq("booking_date", date)
+      .in("status", ["pending", "confirmed"]);
 
-  // Get all bookings for the date in one query
-  const { data: bookings, error } = await supabase
-    .from("bookings")
-    .select("start_time, end_time")
-    .eq("booking_type_id", bookingTypeId)
-    .eq("booking_date", date)
-    .in("status", ["pending", "confirmed"]);
+    if (error) {
+      console.error("Error fetching bulk booking status:", error);
+      // Return all slots as booked for safety
+      return timeSlots.reduce((acc, slot) => {
+        acc[`${slot.start_time}-${slot.end_time}`] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+    }
 
-  if (error) {
-    console.error("Error fetching bulk booking status:", error);
-    // Return all slots as booked for safety
-    return timeSlots.reduce((acc, slot) => {
-      acc[`${slot.start_time}-${slot.end_time}`] = true;
-      return acc;
-    }, {} as Record<string, boolean>);
-  }
+    const existingBookings = bookings || [];
+    const slotStatus: Record<string, boolean> = {};
 
-  const existingBookings = bookings || [];
-  const slotStatus: Record<string, boolean> = {};
+    // Check each time slot against existing bookings
+    timeSlots.forEach((slot) => {
+      const slotKey = `${slot.start_time}-${slot.end_time}`;
 
-  // Check each time slot against existing bookings
-  timeSlots.forEach((slot) => {
-    const slotKey = `${slot.start_time}-${slot.end_time}`;
+      // Check if this slot overlaps with any existing booking
+      const isBooked = existingBookings.some((booking) => {
+        // Time slots overlap if: startA < endB AND endA > startB
+        return (
+          booking.start_time < slot.end_time &&
+          booking.end_time > slot.start_time
+        );
+      });
 
-    // Check if this slot overlaps with any existing booking
-    const isBooked = existingBookings.some((booking) => {
-      // Time slots overlap if: startA < endB AND endA > startB
-      return booking.start_time < slot.end_time && booking.end_time > slot.start_time;
+      slotStatus[slotKey] = isBooked;
     });
 
-    slotStatus[slotKey] = isBooked;
-  });
-
-  return slotStatus;
-});
+    return slotStatus;
+  }
+);

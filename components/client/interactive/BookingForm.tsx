@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Tables } from "@/database.types";
 import { BookingFormData } from "@/utils/booking/validation";
-import { User, Mail, Phone, MessageSquare, CreditCard, AlertCircle, Clock } from "lucide-react";
+import { formatCurrencyWithSymbol } from "@/utils/currency";
+import { AlertCircle, CreditCard, Mail, MessageSquare, Phone, User } from "lucide-react";
+import React, { useState } from "react";
 
 interface BookingTypeForForm {
   price?: number | null;
@@ -16,6 +16,7 @@ interface BookingFormProps {
   errors: Record<string, string>;
   bookingType: BookingTypeForForm;
   submitting: boolean;
+  currency: string;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -25,6 +26,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   errors,
   bookingType,
   submitting,
+  currency,
 }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -58,7 +60,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
         <div className="grid gap-4 sm:grid-cols-2 text-black">
           {/* Full Name */}
           <div className="sm:col-span-2">
-            <label htmlFor="guest_name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name *
             </label>
             <div className="relative">
@@ -67,25 +69,25 @@ const BookingForm: React.FC<BookingFormProps> = ({
               </div>
               <input
                 type="text"
-                id="guest_name"
-                value={formData.guest_name}
-                onChange={(e) => handleInputChange('guest_name', e.target.value)}
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
                 className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-theme focus:border-theme ${
-                  errors.guest_name ? 'border-red-300' : 'border-gray-300'
+                  errors.name ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your full name"
                 disabled={submitting}
                 required
               />
             </div>
-            {errors.guest_name && (
-              <p className="mt-1 text-sm text-red-600">{errors.guest_name}</p>
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
             )}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="guest_email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address *
             </label>
             <div className="relative">
@@ -94,25 +96,25 @@ const BookingForm: React.FC<BookingFormProps> = ({
               </div>
               <input
                 type="email"
-                id="guest_email"
-                value={formData.guest_email}
-                onChange={(e) => handleInputChange('guest_email', e.target.value)}
+                id="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-theme focus:border-theme ${
-                  errors.guest_email ? 'border-red-300' : 'border-gray-300'
+                  errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your email address"
                 disabled={submitting}
                 required
               />
             </div>
-            {errors.guest_email && (
-              <p className="mt-1 text-sm text-red-600">{errors.guest_email}</p>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
 
           {/* Phone */}
           <div>
-            <label htmlFor="guest_phone" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
             </label>
             <div className="relative">
@@ -121,18 +123,18 @@ const BookingForm: React.FC<BookingFormProps> = ({
               </div>
               <input
                 type="tel"
-                id="guest_phone"
-                value={formData.guest_phone || ''}
-                onChange={(e) => handleInputChange('guest_phone', e.target.value)}
+                id="phone"
+                value={formData.phone || ''}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
                 className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-theme focus:border-theme ${
-                  errors.guest_phone ? 'border-red-300' : 'border-gray-300'
+                  errors.phone ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your phone number"
                 disabled={submitting}
               />
             </div>
-            {errors.guest_phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.guest_phone}</p>
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
             )}
             <p className="mt-1 text-xs text-gray-500">
               Optional - for appointment reminders
@@ -178,7 +180,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
             Payment Information
           </h4>
           <div className="text-2xl font-bold text-theme mb-2">
-            £{bookingType.price?.toFixed(2)}
+            {formatCurrencyWithSymbol({
+              amount: bookingType.price || 0,
+              currency: currency,
+              decimals: 2,
+            })}
           </div>
           <p className="text-sm text-gray-600">
             Payment will be processed immediately upon booking confirmation.
@@ -235,10 +241,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
         <button
           type="submit"
           disabled={!acceptedTerms || submitting}
-          className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors ${
+          className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer ${
             !acceptedTerms || submitting
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-theme hover:bg-theme-accent text-white'
+              : 'bg-theme text-white'
           }`}
         >
           {submitting ? (

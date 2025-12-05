@@ -1,4 +1,3 @@
-import { TimeSlot } from "@/database.types";
 import {
   addMinutesToTimeString,
   minutesToTimeString,
@@ -9,6 +8,11 @@ import { getAvailabilitiesForDay } from "./bookingAvailabilities";
 import { getBulkBlackoutStatusForTimeSlots } from "./bookingBlackouts";
 import { getBulkBookingStatusForTimeSlots, isTimeSlotBooked } from "./bookings";
 import { getBookingTypeById } from "./bookingTypes";
+
+export interface TimeSlot {
+  start_time: string;
+  end_time: string;
+}
 
 export interface AvailableTimeSlot extends TimeSlot {
   available: boolean;
@@ -196,8 +200,13 @@ export const isSlotAvailable = async (
 
   return availabilities.some((availability) => {
     if (!availability.start_time || !availability.end_time) return false;
+    // Use numeric comparison to avoid time format mismatch (HH:MM vs HH:MM:SS)
+    const slotStartMinutes = timeStringToMinutes(startTime);
+    const slotEndMinutes = timeStringToMinutes(endTime);
+    const availStartMinutes = timeStringToMinutes(availability.start_time);
+    const availEndMinutes = timeStringToMinutes(availability.end_time);
     return (
-      startTime >= availability.start_time && endTime <= availability.end_time
+      slotStartMinutes >= availStartMinutes && slotEndMinutes <= availEndMinutes
     );
   });
 };

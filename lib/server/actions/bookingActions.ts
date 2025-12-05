@@ -71,25 +71,29 @@ export async function submitBookingAction(
     const bookingData: TablesInsert<"bookings"> = {
       masjid_id: formData.masjid_id,
       booking_type_id: formData.booking_type_id,
+      booking_form_id: bookingType.booking_form_id || null,
       booking_date: sanitizedData.booking_date,
       start_time: sanitizedData.start_time,
       end_time: endTime,
-      guest_name: sanitizedData.guest_name,
-      guest_email: sanitizedData.guest_email,
-      guest_phone: sanitizedData.guest_phone || null,
+      name: sanitizedData.name,
+      email: sanitizedData.email,
+      phone: sanitizedData.phone || null,
       notes: sanitizedData.notes || null,
-      status: "confirmed",
-      confirmation_email_sent: false,
-      reminder_email_sent: false,
       admin_notes: null,
+      data: {
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone || null,
+        notes: sanitizedData.notes || null,
+      },
     };
 
     // Create the booking
-    const booking = await createBooking(bookingData);
-    if (!booking) {
+    const { data: booking, error: createError } = await createBooking(bookingData);
+    if (createError || !booking) {
       return {
         success: false,
-        error: "Failed to create booking. Please try again.",
+        error: createError || "Failed to create booking. Please try again.",
       };
     }
 
@@ -155,21 +159,6 @@ export async function cancelBookingAction(
       };
     }
 
-    // Check if booking can be cancelled
-    if (booking.status === "cancelled") {
-      return {
-        success: false,
-        error: "This booking is already cancelled",
-      };
-    }
-
-    if (booking.status === "completed") {
-      return {
-        success: false,
-        error: "Cannot cancel a completed booking",
-      };
-    }
-
     // Check if booking is in the past
     const now = new Date();
     const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time}`);
@@ -181,21 +170,13 @@ export async function cancelBookingAction(
       };
     }
 
-    // Update booking status
-    const updateData: Partial<Tables<"bookings">> = {
-      status: "cancelled",
-    };
-
-    if (reason) {
-      updateData.admin_notes = reason;
-    }
-
-    const { error: updateError } = await supabase
+    // Delete the booking
+    const { error: deleteError } = await supabase
       .from("bookings")
-      .update(updateData)
+      .delete()
       .eq("id", bookingId);
 
-    if (updateError) {
+    if (deleteError) {
       return {
         success: false,
         error: "Failed to cancel booking",
@@ -204,7 +185,7 @@ export async function cancelBookingAction(
 
     return {
       success: true,
-      booking: { ...booking, status: "cancelled", admin_notes: reason || booking.admin_notes },
+      booking,
     };
   } catch (error) {
     console.error("Error cancelling booking:", error);
@@ -284,30 +265,5 @@ export async function getBookingDetailsAction(
       success: false,
       error: "Failed to load booking details",
     };
-  }
-}
-
-export async function updateBookingNotificationStatus(
-  bookingId: string,
-  field: 'confirmation_email_sent' | 'reminder_email_sent',
-  value: boolean
-): Promise<boolean> {
-  try {
-    const supabase = await createClient();
-
-    const { error } = await supabase
-      .from("bookings")
-      .update({ [field]: value })
-      .eq("id", bookingId);
-
-    if (error) {
-      console.error(`Error updating ${field}:`, error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error(`Error updating ${field}:`, error);
-    return false;
   }
 }

@@ -74,7 +74,7 @@ const createTooltipContent = (event: EventApi): string => {
     : "";
 
   const description = event.extendedProps.description
-    ? `<p class="text-xs text-gray-300 mb-1"><span class="font-medium">Description:</span> ${event.extendedProps.description}</p>`
+    ? `<p class="text-xs text-gray-300 mb-1 line-clamp-3"><span class="font-medium">Description:</span> ${event.extendedProps.description}</p>`
     : "";
 
   const location = event.extendedProps.location

@@ -6,12 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-// Shared booking system interfaces
-export interface TimeSlot {
-  start_time: string;
-  end_time: string;
-}
-
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -272,53 +266,101 @@ export type Database = {
           },
         ]
       }
+      booking_forms: {
+        Row: {
+          created_at: string | null
+          id: string
+          masjid_id: string
+          name: string
+          schema: Json
+          ui_schema: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          masjid_id: string
+          name: string
+          schema: Json
+          ui_schema?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          masjid_id?: string
+          name?: string
+          schema?: Json
+          ui_schema?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_forms_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_types: {
         Row: {
+          booking_form_id: string | null
           buffer_minutes: number
           created_at: string | null
           duration_minutes: number
           id: string
           is_active: boolean
-          long_description: string | null
+          long_description: string
           masjid_id: string
           max_advance_booking_days: number | null
           min_advance_booking_hours: number | null
           name: string
           price: number | null
-          short_description: string | null
+          short_description: string
           updated_at: string | null
         }
         Insert: {
+          booking_form_id?: string | null
           buffer_minutes?: number
           created_at?: string | null
           duration_minutes: number
           id?: string
           is_active?: boolean
-          long_description?: string | null
+          long_description: string
           masjid_id: string
           max_advance_booking_days?: number | null
           min_advance_booking_hours?: number | null
           name: string
           price?: number | null
-          short_description?: string | null
+          short_description: string
           updated_at?: string | null
         }
         Update: {
+          booking_form_id?: string | null
           buffer_minutes?: number
           created_at?: string | null
           duration_minutes?: number
           id?: string
           is_active?: boolean
-          long_description?: string | null
+          long_description?: string
           masjid_id?: string
           max_advance_booking_days?: number | null
           min_advance_booking_hours?: number | null
           name?: string
           price?: number | null
-          short_description?: string | null
+          short_description?: string
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "booking_types_booking_form_id_fkey"
+            columns: ["booking_form_id"]
+            isOneToOne: false
+            referencedRelation: "booking_forms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "booking_types_masjid_id_fkey"
             columns: ["masjid_id"]
@@ -332,17 +374,18 @@ export type Database = {
         Row: {
           admin_notes: string | null
           booking_date: string
+          booking_form_id: string | null
           booking_type_id: string
-          confirmation_email_sent: boolean
           created_at: string | null
+          data: Json
+          email: string | null
           end_time: string
-          guest_email: string | null
-          guest_name: string | null
-          guest_phone: string | null
           id: string
           masjid_id: string
+          name: string | null
           notes: string | null
-          reminder_email_sent: boolean
+          phone: string | null
+          resend_id: string | null
           start_time: string
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string | null
@@ -350,17 +393,18 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           booking_date: string
+          booking_form_id?: string | null
           booking_type_id: string
-          confirmation_email_sent?: boolean
           created_at?: string | null
+          data: Json
+          email?: string | null
           end_time: string
-          guest_email?: string | null
-          guest_name?: string | null
-          guest_phone?: string | null
           id?: string
           masjid_id: string
+          name?: string | null
           notes?: string | null
-          reminder_email_sent?: boolean
+          phone?: string | null
+          resend_id?: string | null
           start_time: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
@@ -368,22 +412,30 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           booking_date?: string
+          booking_form_id?: string | null
           booking_type_id?: string
-          confirmation_email_sent?: boolean
           created_at?: string | null
+          data?: Json
+          email?: string | null
           end_time?: string
-          guest_email?: string | null
-          guest_name?: string | null
-          guest_phone?: string | null
           id?: string
           masjid_id?: string
+          name?: string | null
           notes?: string | null
-          reminder_email_sent?: boolean
+          phone?: string | null
+          resend_id?: string | null
           start_time?: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_booking_form_id_fkey"
+            columns: ["booking_form_id"]
+            isOneToOne: false
+            referencedRelation: "booking_forms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_booking_type_id_fkey"
             columns: ["booking_type_id"]
@@ -2553,6 +2605,7 @@ export type Database = {
     }
     Enums: {
       bank_account_status: "pending" | "active" | "disabled"
+      booking_form_submission_status: "submitted" | "confirmed" | "cancelled"
       booking_status:
         | "pending"
         | "confirmed"
@@ -2794,6 +2847,7 @@ export const Constants = {
   public: {
     Enums: {
       bank_account_status: ["pending", "active", "disabled"],
+      booking_form_submission_status: ["submitted", "confirmed", "cancelled"],
       booking_status: [
         "pending",
         "confirmed",
