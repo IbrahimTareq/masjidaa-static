@@ -19,6 +19,10 @@ module.exports = {
         montserrat: ["var(--font-montserrat)"],
         "source-sans-3": ["var(--font-source-sans-3)"],
       },
+      screens: {
+        '3xl': '1920px',
+        '4xl': '2560px',
+      },
     },
   },
   plugins: [],
