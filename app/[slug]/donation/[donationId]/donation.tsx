@@ -67,69 +67,6 @@ export default function DonationClient({
                 campaign={campaign}
                 onImageClick={() => setIsImagePreviewOpen(true)}
               />
-              <div className="w-full flex flex-col mt-6 md:mt-0">
-                {/* Recent Supporters Section */}
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-4 md:p-5">
-                  <h3 className="text-base md:text-md font-semibold mb-4">
-                    Recent donors
-                  </h3>
-                  <div className="space-y-3 md:space-y-4">
-                    {donations.length > 0 ? (
-                      donations.map((donation, index) => {
-                        const displayName = donation.is_anonymous
-                          ? "Anonymous"
-                          : `${donation.donor_first_name} ${donation.donor_last_name}`;
-
-                        const donationDate = donation.created_at
-                          ? new Date(donation.created_at)
-                          : new Date();
-                        const timeAgo = getTimeAgo(donationDate);
-
-                        return (
-                          <div
-                            key={`${donation.campaign_id}-${index}`}
-                            className="flex items-center gap-3"
-                          >
-                            <div
-                              className={`w-12 h-12 rounded-full flex items-center justify-center bg-theme`}
-                            >
-                              <HeartHandshake
-                                size={20}
-                                className="text-white"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium">{displayName}</div>
-                              <div className="text-gray-600 flex gap-1">
-                                {donation.currency.toUpperCase()}&nbsp;
-                                {formatCurrencyWithSymbol({
-                                  amount: donation.amount,
-                                  currency: donation.currency,
-                                })}
-                                &nbsp;•&nbsp;{timeAgo}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <div className="flex items-center justify-center py-6 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200">
-                            <HeartHandshake
-                              size={24}
-                              className="text-gray-500"
-                            />
-                          </div>
-                          <p className="text-gray-600 font-medium">
-                            Become an early donor, your support matters
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="flex flex-col gap-4 mt-6 md:mt-0">
@@ -220,6 +157,70 @@ export default function DonationClient({
                   <div className="text-sm md:text-base text-gray-500">
                     "{hadith.text}"
                     <br />- {hadith.source}
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col mt-6 md:mt-0">
+                {/* Recent Supporters Section */}
+                <div className="bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden p-4 md:p-5">
+                  <h3 className="text-base md:text-md font-semibold mb-4">
+                    Recent donors
+                  </h3>
+                  <div className="space-y-3 md:space-y-4">
+                    {donations.length > 0 ? (
+                      donations.map((donation, index) => {
+                        const displayName = donation.is_anonymous
+                          ? "Anonymous"
+                          : `${donation.donor_first_name} ${donation.donor_last_name}`;
+
+                        const donationDate = donation.created_at
+                          ? new Date(donation.created_at)
+                          : new Date();
+                        const timeAgo = getTimeAgo(donationDate);
+
+                        return (
+                          <div
+                            key={`${donation.campaign_id}-${index}`}
+                            className="flex items-center gap-3"
+                          >
+                            <div
+                              className={`w-12 h-12 rounded-full flex items-center justify-center bg-theme`}
+                            >
+                              <HeartHandshake
+                                size={20}
+                                className="text-white"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium">{displayName}</div>
+                              <div className="text-gray-600 flex gap-1">
+                                {donation.currency.toUpperCase()}&nbsp;
+                                {formatCurrencyWithSymbol({
+                                  amount: donation.amount,
+                                  currency: donation.currency,
+                                })}
+                                &nbsp;•&nbsp;{timeAgo}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="flex items-center justify-center py-6 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200">
+                            <HeartHandshake
+                              size={24}
+                              className="text-gray-500"
+                            />
+                          </div>
+                          <p className="text-gray-600 font-medium">
+                            Become an early donor, your support matters
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

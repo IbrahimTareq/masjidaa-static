@@ -17,6 +17,7 @@ export async function createSinglePaymentIntent(
   firstName: string,
   lastName: string,
   isAnonymous: boolean,
+  feeCovered: boolean,
   giftAidDeclared?: boolean,
   address?: string
 ): Promise<{ client_secret: string }> {
@@ -37,6 +38,7 @@ export async function createSinglePaymentIntent(
         last_name: lastName,
         address: address,
         is_anonymous: isAnonymous,
+        fee_covered: feeCovered,
         gift_aid_declared: giftAidDeclared,
       },
     }
@@ -92,6 +94,7 @@ export async function finalizeRecurringDonation(
     is_anonymous: boolean;
     amount_cents: number;
     currency: string;
+    fee_covered: boolean;
     address?: string;
     gift_aid_declared?: boolean;
   },
@@ -129,6 +132,7 @@ export async function finalizeRecurringDonation(
           stripe_payment_method_id: paymentMethodId,
           currency: donationData.currency,
           amount_cents: donationData.amount_cents,
+          fee_covered: donationData.fee_covered,
           frequency: recurringData.frequency,
           start_date: recurringData.start_date,
           end_date: recurringData.end_date,

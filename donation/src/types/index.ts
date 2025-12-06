@@ -11,6 +11,7 @@ export interface DonationMeta {
   is_anonymous: boolean;
   amount_cents: number;
   currency: string;
+  fee_covered: boolean;
   gift_aid_declared?: boolean;
   address?: string;
 }

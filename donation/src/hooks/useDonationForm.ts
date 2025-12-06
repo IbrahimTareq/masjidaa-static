@@ -241,6 +241,7 @@ export function useDonationForm({
         is_anonymous: info.isAnonymous,
         amount_cents: amountInCents,
         currency: info.currency.toLowerCase(),
+        fee_covered: tempDonationData.coverFee,
         gift_aid_declared: giftAidDeclared,
       };
       
@@ -260,6 +261,7 @@ export function useDonationForm({
           info.firstName,
           info.lastName,
           info.isAnonymous,
+          tempDonationData.coverFee,
           giftAidDeclared,
           info.address
         );

@@ -125,6 +125,7 @@ export function useDonationPayment({
           is_anonymous: donationMeta.is_anonymous,
           amount_cents: donationMeta.amount_cents,
           currency: donationMeta.currency,
+          fee_covered: donationMeta.fee_covered,
           address: donationMeta.address,
           gift_aid_declared: donationMeta.gift_aid_declared
         },
