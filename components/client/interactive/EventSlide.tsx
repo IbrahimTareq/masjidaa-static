@@ -1,9 +1,8 @@
 "use client";
 
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, Clock } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
-import PrayerLayout from "@/components/LayoutWithHeader";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import type { Tables } from "@/database.types";
 import { getEvent } from "@/lib/server/actions/eventActions";
@@ -52,10 +51,14 @@ export default function EventSlide({ eventId }: EventSlideProps) {
       const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
       const eventUrl = `${currentUrl}/${masjidSlug}/event/${eventId}`;
 
-      // Create QR code with styling
+      // Calculate responsive QR code size based on viewport
+      const viewportWidth = window.innerWidth;
+      const qrSize = Math.min(Math.max(viewportWidth * 0.18, 220), 400);
+
+      // Create QR code with responsive styling
       const qrCode = new QRCodeStyling({
-        width: 200,
-        height: 200,
+        width: qrSize,
+        height: qrSize,
         type: "svg",
         data: eventUrl,
         dotsOptions: {
@@ -82,135 +85,207 @@ export default function EventSlide({ eventId }: EventSlideProps) {
   // Loading state
   if (loading) {
     return (
-      <PrayerLayout headerTitle="Event">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading event...</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading event...</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
   // Error state
   if (error || !event) {
     return (
-      <PrayerLayout headerTitle="Event">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Event not found</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Event not found</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
   // Render event
   return (
-    <PrayerLayout headerTitle="Event">
-      <div className="bg-white relative h-full w-full flex flex-col">
-        <div className="relative z-10 h-full flex-1">
-          {/* Main Content */}
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 h-full">
-            <div className="lg:flex lg:gap-12 h-full">
-              {/* Left Column - Event Details */}
-              <div className="flex-1 mb-8 lg:mb-0">
-                {/* Title */}
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-8">
-                  {event.title}
-                </h1>
+    <div className="w-full overflow-x-hidden bg-white min-h-screen font-montserrat">
+      {/* Hero Section */}
+      <div className="w-full bg-white">
+        <div
+          className="mx-auto px-[2vw] py-[3vh]"
+          style={{
+            maxWidth: 'clamp(800px, 90vw, 1400px)',
+          }}
+        >
+          <div className="text-center">
+            <h1
+              className="font-bold text-gray-900 leading-tight break-words mb-[2vh]"
+              style={{
+                fontSize: 'clamp(1.75rem, 4vw, 4rem)',
+              }}
+            >
+              {event.title}
+            </h1>
 
-                {/* Quick Info Cards */}
-                <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                  {/* Date & Time Card */}
-                  <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                    <div className="flex items-start">
-                      <Calendar className="w-6 h-6 text-theme mr-4 mt-1 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">
-                          Date & Time
-                        </h3>
-                        <p className="text-lg text-gray-800">
-                          {formatDate(event.date)}
-                        </p>
-                        <p className="text-gray-600">
-                          {event.start_time && formatTime(event.start_time)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Location Card */}
-                  <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                    <div className="flex items-start">
-                      <MapPin className="w-6 h-6 text-theme mr-4 mt-1 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">
-                          Location
-                        </h3>
-                        <p className="text-lg text-gray-800">
-                          {event.location}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description & QR Code */}
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 mb-8">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    {/* Description */}
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-3">
-                        About this Event
-                      </h3>
-                      <div
-                        className="text-gray-700 leading-relaxed whitespace-pre-line overflow-hidden"
-                        style={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: 9,
-                          WebkitBoxOrient: "vertical",
-                        }}
-                      >
-                        {event.description}
-                      </div>
-                    </div>
-
-                    {/* QR Code */}
-                    <div className="text-center">
-                      <h3 className="font-semibold text-gray-900 mb-3">
-                        Scan for More Details
-                      </h3>
-                      <div className="flex justify-center">
-                        <div ref={qrRef} className="qr-code-container" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* Key Event Info - Responsive */}
+            <div
+              className="flex flex-col lg:flex-row items-center justify-center text-gray-700 flex-wrap"
+              style={{
+                gap: 'clamp(1rem, 2vw, 3rem)',
+              }}
+            >
+              <div className="flex items-center gap-[0.5vw]">
+                <Calendar
+                  className="text-theme flex-shrink-0"
+                  style={{
+                    width: 'clamp(1.25rem, 1.5vw, 2rem)',
+                    height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                  }}
+                />
+                <span
+                  className="font-medium"
+                  style={{
+                    fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                  }}
+                >
+                  {formatDate(event.date)}
+                </span>
               </div>
-
-              {/* Right Column - Event Image */}
-              <div className="lg:w-[480px]">
-                <div className="aspect-[5/6] rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100">
-                  {event.image ? (
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-full object-contain p-4"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Calendar className="w-24 h-24 sm:w-40 sm:h-40 text-gray-300" />
-                    </div>
-                  )}
+              {event.start_time && (
+                <div className="flex items-center gap-[0.5vw]">
+                  <Clock
+                    className="text-theme flex-shrink-0"
+                    style={{
+                      width: 'clamp(1.25rem, 1.5vw, 2rem)',
+                      height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                    }}
+                  />
+                  <span
+                    className="font-medium"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                    }}
+                  >
+                    {formatTime(event.start_time)}
+                  </span>
                 </div>
-              </div>
+              )}
+              {event.location && (
+                <div className="flex items-center gap-[0.5vw]">
+                  <MapPin
+                    className="text-theme flex-shrink-0"
+                    style={{
+                      width: 'clamp(1.25rem, 1.5vw, 2rem)',
+                      height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                    }}
+                  />
+                  <span
+                    className="font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                    }}
+                  >
+                    {event.location}
+                  </span>
+                </div>
+              )}
             </div>
-          </main>
+          </div>
         </div>
       </div>
-    </PrayerLayout>
+
+      {/* Main Content */}
+      <div className="w-full bg-gray-50">
+        <div
+          className="mx-auto px-[2vw] py-[4vh]"
+          style={{
+            maxWidth: 'clamp(800px, 90vw, 1400px)',
+          }}
+        >
+          <div
+            className="grid grid-cols-1 xl:grid-cols-3"
+            style={{
+              gap: 'clamp(1.5rem, 2vw, 3rem)',
+            }}
+          >
+            {/* Main Content - Description */}
+            <div className="xl:col-span-2 w-full min-w-0">
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full"
+                style={{
+                  padding: 'clamp(1.5rem, 2vw, 3rem)',
+                }}
+              >
+                <h2
+                  className="font-bold text-gray-900 mb-[2vh]"
+                  style={{
+                    fontSize: 'clamp(1.25rem, 2vw, 2rem)',
+                  }}
+                >
+                  About this event
+                </h2>
+                {event.description ? (
+                  <div className="w-full">
+                    <p
+                      className="text-gray-700 leading-relaxed whitespace-pre-line break-words overflow-hidden"
+                      style={{
+                        fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
+                        lineHeight: '1.7',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 7,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {event.description}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-center py-[4vh]">
+                    <Calendar
+                      className="text-gray-300 mx-auto mb-4"
+                      style={{
+                        width: 'clamp(3rem, 4vw, 6rem)',
+                        height: 'clamp(3rem, 4vw, 6rem)',
+                      }}
+                    />
+                    <p
+                      className="text-gray-500"
+                      style={{
+                        fontSize: 'clamp(1rem, 1.1vw, 1.25rem)',
+                      }}
+                    >
+                      No description available for this event
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="xl:col-span-1 w-full min-w-0">
+              {/* QR Code */}
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
+                style={{
+                  padding: 'clamp(1rem, 1.5vw, 2rem)',
+                }}
+              >
+                <div className="flex justify-center mb-[1vh]">
+                  <div ref={qrRef} className="qr-code-container" />
+                </div>
+                <p
+                  className="text-gray-600 leading-relaxed"
+                  style={{
+                    fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
+                  }}
+                >
+                  Scan QR code for more information
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

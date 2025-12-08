@@ -10,6 +10,10 @@ const staticSlideComponents: Record<string, React.ComponentType> = {
   download_app: lazy(() => import("@/components/client/ui/StaticSlides/DownloadApp")),
   post_adhan_dua: lazy(() => import("@/components/client/ui/StaticSlides/PostAdhanDua")),
   post_prayer_duas: lazy(() => import("@/components/client/ui/StaticSlides/PostPrayerDuas")),
+  hadith_of_the_day: lazy(() => import("@/components/client/ui/StaticSlides/HadithOfTheDay")),
+  dua_of_the_day: lazy(() => import("@/components/client/ui/StaticSlides/DuaOfTheDay")),
+  verse_of_the_day: lazy(() => import("@/components/client/ui/StaticSlides/VerseOfTheDay")),
+  ramadan_countdown: lazy(() => import("@/components/client/ui/StaticSlides/RamadanCountdown")),
 };
 
 interface StaticScreenSlideProps {

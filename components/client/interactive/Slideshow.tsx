@@ -157,7 +157,7 @@ export default function Slideshow({ slides }: SlideshowProps) {
       <Swiper
         modules={[Autoplay]}
         autoplay={{
-          delay: 8000,
+          delay: 98000,
           disableOnInteraction: false,
         }}
         loop={slides.length > 1}

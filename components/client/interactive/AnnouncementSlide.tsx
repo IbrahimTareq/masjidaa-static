@@ -3,7 +3,6 @@
 import { Bell } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
-import PrayerLayout from "@/components/LayoutWithHeader";
 import { getAnnouncement } from "@/lib/server/actions/announcementActions";
 import type { Tables } from "@/database.types";
 
@@ -53,10 +52,14 @@ export default function AnnouncementSlide({
       const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
       const announcementUrl = `${currentUrl}/${masjidSlug}/announcement/${announcementId}`;
 
-      // Create QR code with styling
+      // Calculate responsive QR code size based on viewport
+      const viewportWidth = window.innerWidth;
+      const qrSize = Math.min(Math.max(viewportWidth * 0.18, 220), 400);
+
+      // Create QR code with responsive styling
       const qrCode = new QRCodeStyling({
-        width: 200,
-        height: 200,
+        width: qrSize,
+        height: qrSize,
         type: "svg",
         data: announcementUrl,
         dotsOptions: {
@@ -80,74 +83,146 @@ export default function AnnouncementSlide({
     }
   }, [announcement, announcementId]);
 
+  // Loading state
   if (loading) {
     return (
-      <PrayerLayout headerTitle="Announcement">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 lg:w-24 lg:h-24 xl:w-32 xl:h-32 border-4 lg:border-6 xl:border-8 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4 lg:mb-6 xl:mb-8"></div>
-            <p className="text-gray-600 text-base lg:text-lg xl:text-xl 2xl:text-2xl">Loading announcement...</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading announcement...</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
+  // Error state
   if (error || !announcement) {
     return (
-      <PrayerLayout headerTitle="Announcement">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <Bell className="w-16 h-16 lg:w-24 lg:h-24 xl:w-32 xl:h-32 2xl:w-40 2xl:h-40 3xl:w-48 3xl:h-48 text-gray-400 mx-auto mb-4 lg:mb-6 xl:mb-8" />
-            <p className="text-gray-600 text-base lg:text-lg xl:text-xl 2xl:text-2xl">Announcement not found</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Announcement not found</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
+  // Render announcement
   return (
-    <PrayerLayout headerTitle="Announcement">
-      <div className="bg-white relative h-full w-full flex flex-col">
-        <div className="relative z-10 h-full flex-1">
-          {/* Main Content */}
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 3xl:px-20 py-4 lg:py-6 xl:py-8 2xl:py-10 3xl:py-12 h-full">
-            {/* Announcement Details - Full Width */}
-            <div className="h-full">
-              {/* Title */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold tracking-tight text-gray-900 mb-4 lg:mb-6 xl:mb-8 2xl:mb-10 3xl:mb-12">
-                {announcement.title}
-              </h1>
+    <div className="w-full overflow-x-hidden bg-white min-h-screen font-montserrat">
+      {/* Hero Section */}
+      <div className="w-full bg-white">
+        <div
+          className="mx-auto px-[2vw] py-[3vh]"
+          style={{
+            maxWidth: 'clamp(800px, 90vw, 1400px)',
+          }}
+        >
+          <div className="text-center">
+            <h1
+              className="font-bold text-gray-900 leading-tight break-words mb-[2vh]"
+              style={{
+                fontSize: 'clamp(1.75rem, 4vw, 4rem)',
+              }}
+            >
+              {announcement.title}
+            </h1>
+          </div>
+        </div>
+      </div>
 
-              {/* Description & QR Code */}
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 lg:p-6 xl:p-8 2xl:p-10 3xl:p-12 border border-gray-100 mb-6 lg:mb-8 xl:mb-10 2xl:mb-12 3xl:mb-16">
-                <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-16">
-                  {/* Description */}
-                  <div>
-                    <div
-                      className="text-gray-700 text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl leading-relaxed whitespace-pre-line overflow-hidden"
+      {/* Main Content */}
+      <div className="w-full bg-gray-50">
+        <div
+          className="mx-auto px-[2vw] py-[4vh]"
+          style={{
+            maxWidth: 'clamp(800px, 90vw, 1400px)',
+          }}
+        >
+          <div
+            className="grid grid-cols-1 xl:grid-cols-3"
+            style={{
+              gap: 'clamp(1.5rem, 2vw, 3rem)',
+            }}
+          >
+            {/* Main Content - Description */}
+            <div className="xl:col-span-2 w-full min-w-0">
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full"
+                style={{
+                  padding: 'clamp(1.5rem, 2vw, 3rem)',
+                }}
+              >
+                <h2
+                  className="font-bold text-gray-900 mb-[2vh]"
+                  style={{
+                    fontSize: 'clamp(1.25rem, 2vw, 2rem)',
+                  }}
+                >
+                  About this announcement
+                </h2>
+                {announcement.description ? (
+                  <div className="w-full">
+                    <p
+                      className="text-gray-700 leading-relaxed whitespace-pre-line break-words overflow-hidden"
                       style={{
-                        display: "-webkit-box",
+                        fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
+                        lineHeight: '1.7',
+                        display: '-webkit-box',
                         WebkitLineClamp: 7,
-                        WebkitBoxOrient: "vertical",
+                        WebkitBoxOrient: 'vertical',
                       }}
                     >
                       {announcement.description}
-                    </div>
+                    </p>
                   </div>
-
-                  {/* QR Code */}
-                  <div className="text-center">
-                    <div className="flex justify-center">
-                      <div ref={qrRef} className="qr-code-container" />
-                    </div>
+                ) : (
+                  <div className="text-center py-[4vh]">
+                    <Bell
+                      className="text-gray-300 mx-auto mb-4"
+                      style={{
+                        width: 'clamp(3rem, 4vw, 6rem)',
+                        height: 'clamp(3rem, 4vw, 6rem)',
+                      }}
+                    />
+                    <p
+                      className="text-gray-500"
+                      style={{
+                        fontSize: 'clamp(1rem, 1.1vw, 1.25rem)',
+                      }}
+                    >
+                      No description available for this announcement
+                    </p>
                   </div>
-                </div>
+                )}
               </div>
             </div>
-          </main>
+
+            {/* Sidebar */}
+            <div className="xl:col-span-1 w-full min-w-0">
+              {/* QR Code */}
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
+                style={{
+                  padding: 'clamp(1rem, 1.5vw, 2rem)',
+                }}
+              >
+                <div className="flex justify-center mb-[1vh]">
+                  <div ref={qrRef} className="qr-code-container" />
+                </div>
+                <p
+                  className="text-gray-600 leading-relaxed"
+                  style={{
+                    fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
+                  }}
+                >
+                  Scan QR code for more information
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </PrayerLayout>
+    </div>
   );
 }

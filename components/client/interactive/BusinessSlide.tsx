@@ -64,102 +64,144 @@ export default function BusinessSlide({ adId }: BusinessSlideProps) {
 
   if (loading) {
     return (
-      <PrayerLayout headerTitle="Business Ad">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading business ad...</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading business ad...</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
   if (error || !businessAd) {
     return (
-      <PrayerLayout headerTitle="Business Ad">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Business Ad not found</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Business Ad not found</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
   // Render the business ad
   return (
-    <section className="relative h-full w-full bg-white text-black font-montserrat py-10">
-      {/* Hero Section */}
-      <div className="w-full">
-        <div className="flex flex-col md:flex-row items-start justify-between w-full px-15 py-5 mx-auto">
-          {/* Business Info */}
-          <div className="w-full md:w-1/2 mb-8 md:mb-0">
-            <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
-              {businessAd.name}{" "}
-              <span className="text-gray-500 text-sm">(Sponsored Ad)</span>
-            </p>
+    <div className="w-full overflow-hidden bg-gray-900 min-h-screen font-montserrat relative">
+      {/* Full-Screen Background Image */}
+      <div className="absolute inset-0">
+        {businessAd.image ? (
+          <Image
+            src={businessAd.image}
+            alt={businessAd.name || "Business Ad"}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center transition-colors duration-500"
+            style={{ backgroundColor: bgColor }}
+          >
+            <Bell
+              className="text-white/30"
+              style={{
+                width: 'clamp(8rem, 12vw, 12rem)',
+                height: 'clamp(8rem, 12vw, 12rem)',
+              }}
+            />
+          </div>
+        )}
+      </div>
 
-            {/* Contact Details */}
-            <div className="text-gray-700 text-sm md:text-lg leading-relaxed space-y-2">
-              {/* Row 1: Website + Phone */}
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-theme" />
-                  {businessAd.website}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-theme" />
-                  {businessAd.contact_number}
-                </div>
-              </div>
+      {/* Lighter Dark Overlay - More image visibility */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20"></div>
 
-              {/* Row 2: Email + Address */}
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-theme" />
-                  {businessAd.contact_email}
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-theme" />
-                  <span>{businessAd.address}</span>
-                </div>
-              </div>
+      {/* Content Overlay - Top Left */}
+      <div className="relative z-10 min-h-screen flex items-start justify-start">
+        <div
+          className="max-w-xl text-white"
+          style={{
+            padding: 'clamp(1.5rem, 3vw, 3rem)',
+            paddingTop: 'clamp(2rem, 4vh, 4rem)',
+          }}
+        >
+          {/* Sponsored Label Above Business Name */}
+          <div
+            className="mb-2"
+            style={{
+              marginBottom: 'clamp(0.5rem, 1vh, 0.75rem)',
+            }}
+          >
+            <div
+              className="inline-block bg-white/25 backdrop-blur-sm rounded-full px-3 py-1 border border-white/40"
+              style={{
+                fontSize: 'clamp(0.75rem, 1vw, 1rem)',
+              }}
+            >
+              <span className="text-white font-medium">Sponsored</span>
             </div>
           </div>
 
-          {/* Ad Message */}
-          <div className="w-full md:w-2/3 md:pl-8 text-right max-w-3xl">
-            <p className="text-3xl text-gray-500">{businessAd.message}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Image Section */}
-      <div className="w-full">
-        <div className="w-full mx-auto px-15">
+          {/* Business Name */}
           <div
-            className="w-full rounded-2xl overflow-hidden flex items-center justify-center transition-colors duration-500"
-            style={{ backgroundColor: bgColor }}
+            style={{
+              marginBottom: 'clamp(1rem, 2vh, 2rem)',
+            }}
           >
-            {businessAd.image ? (
-              <Image
-                src={businessAd.image}
-                alt={businessAd.name || "Business Ad"}
-                className="w-full h-auto object-contain"
-                width={1200}
-                height={600}
-                style={{ maxHeight: "600px", objectFit: "contain" }}
-              />
-            ) : (
-              <div className="w-full h-[600px] bg-gray-100 flex items-center justify-center">
-                <Bell className="w-16 h-16 text-gray-300" />
-              </div>
-            )}
+            <h1
+              className="font-bold leading-none break-words text-white"
+              style={{
+                fontSize: 'clamp(2rem, 4.5vw, 5rem)',
+                lineHeight: '0.95',
+                textShadow: '0 4px 12px rgba(0,0,0,0.7)',
+              }}
+            >
+              {businessAd.name}
+            </h1>
           </div>
+
+          {/* Ad Message */}
+          {businessAd.message && (
+            <div
+              style={{
+                marginBottom: 'clamp(1.5rem, 2vh, 2rem)',
+              }}
+            >
+              <p
+                className="text-white/95 leading-tight break-words font-semibold drop-shadow-md"
+                style={{
+                  fontSize: 'clamp(1.125rem, 2vw, 2.25rem)',
+                  lineHeight: '1.3',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                "{businessAd.message}"
+              </p>
+            </div>
+          )}
+
+          {/* Address Only */}
+          {businessAd.address && (
+            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-2 border border-white/30 w-fit">
+              <MapPin
+                className="text-white flex-shrink-0 drop-shadow-sm"
+                style={{
+                  width: 'clamp(1rem, 1.2vw, 1.25rem)',
+                  height: 'clamp(1rem, 1.2vw, 1.25rem)',
+                }}
+              />
+              <span
+                className="text-white font-medium break-words"
+                style={{
+                  fontSize: 'clamp(0.875rem, 1.2vw, 1.25rem)',
+                }}
+              >
+                {businessAd.address}
+              </span>
+            </div>
+          )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

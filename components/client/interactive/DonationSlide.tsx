@@ -3,12 +3,11 @@
 import PrayerLayout from "@/components/LayoutWithHeader";
 import { useMasjidContext } from "@/context/masjidContext";
 import type { Tables } from "@/database.types";
-import { useQRCode } from "@/hooks/useQRCode";
-import { useRandomHadith } from "@/hooks/useRandomHadith";
 import { getDonationCampaign } from "@/lib/server/actions/donationCampaignActions";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import getSymbolFromCurrency from "currency-symbol-map";
 import { Calendar } from "lucide-react";
+import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
 
 interface DonationSlideProps {
@@ -25,7 +24,6 @@ export default function DonationSlide({
   const qrRef = useRef<HTMLDivElement>(null);
 
   const masjid = useMasjidContext();
-  const { hadith } = useRandomHadith();
   const currencySymbol = getSymbolFromCurrency(masjid?.local_currency || "AUD");
 
   // Fetch event data
@@ -49,129 +47,229 @@ export default function DonationSlide({
     fetchDonationCampaign();
   }, [donationCampaignId]);
 
-  useQRCode(
-    {
-      data: `${DOMAIN_NAME}/${masjid?.slug}/donation/${donationCampaignId}`,
-      width: 300,
-      height: 300,
-    },
-    qrRef
-  );
+  // Generate QR code when donation campaign is loaded
+  useEffect(() => {
+    if (donationCampaign && donationCampaignId && qrRef.current && masjid) {
+      // Clear previous QR code
+      qrRef.current.innerHTML = "";
+
+      const donationUrl = `${DOMAIN_NAME}/${masjid.slug}/donation/${donationCampaignId}`;
+
+      // Calculate responsive QR code size based on viewport
+      const viewportWidth = window.innerWidth;
+      const qrSize = Math.min(Math.max(viewportWidth * 0.18, 220), 400);
+
+      // Create QR code with responsive styling
+      const qrCode = new QRCodeStyling({
+        width: qrSize,
+        height: qrSize,
+        type: "svg",
+        data: donationUrl,
+        dotsOptions: {
+          color: "#374151", // gray-700
+          type: "rounded",
+        },
+        backgroundOptions: {
+          color: "#ffffff",
+        },
+        cornersSquareOptions: {
+          color: "#374151",
+          type: "rounded",
+        },
+        cornersDotOptions: {
+          color: "#374151",
+          type: "rounded",
+        },
+      });
+
+      qrCode.append(qrRef.current);
+    }
+  }, [donationCampaign, donationCampaignId, masjid]);
 
   // Loading state
   if (loading) {
     return (
-      <PrayerLayout headerTitle="Donation">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading event...</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-theme border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading donation campaign...</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
   // Error state
   if (error || !donationCampaign) {
     return (
-      <PrayerLayout headerTitle="Donation">
-        <div className="h-full bg-white flex items-center justify-center">
-          <div className="text-center">
-            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Donation campaign not found</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Donation campaign not found</p>
         </div>
-      </PrayerLayout>
+      </div>
     );
   }
 
-  // Render event
+  // Render donation
   return (
-    <PrayerLayout headerTitle="Donation">
-      <div className="bg-white relative h-full w-full flex flex-col">
-        <div className="relative z-10 h-full flex-1">
-          {/* Main Content */}
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 h-full">
-            <div className="lg:flex lg:gap-12 h-full">
-              {/* Left Column - Event Details */}
-              <div className="flex-1 mb-8 lg:mb-0">
-                {/* Title */}
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-8">
-                  {donationCampaign.name}
-                </h1>
+    <div className="w-full overflow-x-hidden bg-white min-h-screen font-montserrat">
+      {/* Hero Section */}
+      <div className="w-full bg-white">
+        <div
+          className="mx-auto px-[2vw] py-[3vh]"
+          style={{
+            maxWidth: "clamp(800px, 90vw, 1400px)",
+          }}
+        >
+          <div className="text-center">
+            <h1
+              className="font-bold text-gray-900 leading-tight break-words mb-[2vh]"
+              style={{
+                fontSize: "clamp(1.75rem, 4vw, 4rem)",
+              }}
+            >
+              {donationCampaign.name}
+            </h1>
+          </div>
+        </div>
+      </div>
 
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 mb-8">
-                  <div>
+      {/* Main Content */}
+      <div className="w-full bg-gray-50">
+        <div
+          className="mx-auto px-[2vw] py-[4vh]"
+          style={{
+            maxWidth: "clamp(800px, 90vw, 1400px)",
+          }}
+        >
+          <div
+            className="grid grid-cols-1 xl:grid-cols-3"
+            style={{
+              gap: "clamp(1.5rem, 2vw, 3rem)",
+            }}
+          >
+            {/* Main Content - Description and Progress */}
+            <div className="xl:col-span-2 w-full min-w-0">
+              {/* Description */}
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full mb-[2vh]"
+                style={{
+                  padding: "clamp(1.5rem, 2vw, 3rem)",
+                }}
+              >
+                <p
+                  className="font-bold text-gray-900 mb-[2vh]"
+                  style={{
+                    fontSize: "clamp(1.25rem, 2vw, 2rem)",
+                  }}
+                >
+                  {currencySymbol}
+                  {donationCampaign.amount_raised.toLocaleString()} raised of{" "}
+                  {currencySymbol}
+                  {donationCampaign.target_amount.toLocaleString()}
+                </p>
+
+                {/* Progress Bar */}
+                <div className="flex items-center gap-[1vw] mb-[2vh]">
+                  <div
+                    className="flex-1 bg-gray-200 rounded-full"
+                    style={{
+                      height: "clamp(0.75rem, 1vw, 1.25rem)",
+                    }}
+                  >
                     <div
-                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden truncate"
+                      className="bg-theme rounded-full transition-all duration-500"
                       style={{
+                        width: `${Math.min(
+                          100,
+                          (donationCampaign.amount_raised /
+                            donationCampaign.target_amount) *
+                            100
+                        )}%`,
+                        height: "100%",
+                      }}
+                    ></div>
+                  </div>
+                  <p
+                    className="text-theme font-bold flex-shrink-0"
+                    style={{
+                      fontSize: "clamp(1.125rem, 1.5vw, 1.875rem)",
+                    }}
+                  >
+                    {Math.round(
+                      (donationCampaign.amount_raised /
+                        donationCampaign.target_amount) *
+                        100
+                    )}
+                    %
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-gray-200 mb-[2vh]"></div>
+
+                {donationCampaign.description ? (
+                  <div className="w-full">
+                    <p
+                      className="text-gray-700 leading-relaxed whitespace-pre-line break-words overflow-hidden"
+                      style={{
+                        fontSize: "clamp(1.125rem, 1.5vw, 1.75rem)",
+                        lineHeight: "1.6",
                         display: "-webkit-box",
-                        WebkitLineClamp: 7,
+                        WebkitLineClamp: 6,
                         WebkitBoxOrient: "vertical",
                       }}
                     >
                       {donationCampaign.description}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100 mb-8">
-                  <div>
-                    <div
-                      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line overflow-hidden italic"
-                      style={{
-                        display: "-webkit-box",
-                        WebkitLineClamp: 9,
-                        WebkitBoxOrient: "vertical",
-                      }}
-                    >
-                      <p className="mt-2">{hadith.text}</p>
-                      <p className="font-light mt-2">- {hadith.source}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column - Event Image */}
-              <div className="lg:w-[480px] flex flex-col mt-18">
-                <div className="justify-center items-center py-2 mb-4">
-                  <div className="mt-auto">
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                      <div
-                        className="bg-theme h-2 rounded-full"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            (donationCampaign.amount_raised /
-                              donationCampaign.target_amount) *
-                              100
-                          )}%`,
-                        }}
-                      ></div>
-                    </div>
-
-                    <p className="font-medium text-lg truncate">
-                      {currencySymbol}
-                      {donationCampaign.amount_raised} donated of&nbsp;
-                      {currencySymbol}
-                      {donationCampaign.target_amount}
                     </p>
                   </div>
-                </div>
-                <div className="rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
-                  <h3 className="font-semibold text-gray-900 text-2xl text-center mb-4">
-                    Scan to donate
-                  </h3>
-                  <div className="flex justify-center items-center py-2">
-                    <div ref={qrRef} className="qr-code-container scale-110" />
+                ) : (
+                  <div className="text-center py-[4vh]">
+                    <Calendar
+                      className="text-gray-300 mx-auto mb-4"
+                      style={{
+                        width: "clamp(3rem, 4vw, 6rem)",
+                        height: "clamp(3rem, 4vw, 6rem)",
+                      }}
+                    />
+                    <p
+                      className="text-gray-500"
+                      style={{
+                        fontSize: "clamp(1rem, 1.1vw, 1.25rem)",
+                      }}
+                    >
+                      No description available for this campaign
+                    </p>
                   </div>
-                </div>
+                )}
               </div>
             </div>
-          </main>
+
+            {/* Sidebar */}
+            <div className="xl:col-span-1 w-full min-w-0">
+              {/* QR Code */}
+              <div
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
+                style={{
+                  padding: "clamp(1rem, 1.5vw, 2rem)",
+                }}
+              >
+                <div className="flex justify-center mb-[1vh]">
+                  <div ref={qrRef} className="qr-code-container" />
+                </div>
+                <p
+                  className="text-gray-600 leading-relaxed"
+                  style={{
+                    fontSize: "clamp(1.125rem, 1.4vw, 1.625rem)",
+                  }}
+                >
+                  Scan to donate
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </PrayerLayout>
+    </div>
   );
 }

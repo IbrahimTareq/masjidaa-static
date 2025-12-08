@@ -1,0 +1,173 @@
+/**
+ * Slideshow Container Query System
+ *
+ * Provides responsive scaling based on container dimensions
+ * rather than viewport size, ensuring consistent content sizing
+ * across different layout contexts.
+ */
+
+/* Base slideshow container styles */
+.slideshow-container {
+  /* Enable container queries */
+  container-type: size;
+  container-name: slideshow;
+
+  /* CSS custom properties for dynamic scaling */
+  --base-font-size: 1rem;
+  --base-padding: 1rem;
+  --base-margin: 0.5rem;
+  --base-border-radius: 0.5rem;
+
+  /* Scale factors applied dynamically */
+  --font-scale: calc(var(--layout-scale-factor, 1) * var(--container-scale, 1));
+  --spacing-scale: calc(var(--layout-scale-factor, 1) * var(--container-scale, 1));
+}
+
+/* Container query breakpoints for different slideshow sizes */
+
+/* Small slideshow containers (< 600px width) */
+@container slideshow (max-width: 600px) {
+  .slideshow-container {
+    --container-scale: 0.7;
+  }
+
+  .slideshow-content {
+    --font-size-xs: calc(0.75rem * var(--font-scale));
+    --font-size-sm: calc(0.875rem * var(--font-scale));
+    --font-size-base: calc(1rem * var(--font-scale));
+    --font-size-lg: calc(1.125rem * var(--font-scale));
+    --font-size-xl: calc(1.25rem * var(--font-scale));
+    --font-size-2xl: calc(1.5rem * var(--font-scale));
+    --font-size-3xl: calc(1.875rem * var(--font-scale));
+    --font-size-4xl: calc(2.25rem * var(--font-scale));
+    --font-size-5xl: calc(3rem * var(--font-scale));
+    --font-size-6xl: calc(3.75rem * var(--font-scale));
+  }
+}
+
+/* Medium slideshow containers (600px - 1000px) */
+@container slideshow (min-width: 600px) and (max-width: 1000px) {
+  .slideshow-container {
+    --container-scale: 0.85;
+  }
+
+  .slideshow-content {
+    --font-size-xs: calc(0.75rem * var(--font-scale));
+    --font-size-sm: calc(0.875rem * var(--font-scale));
+    --font-size-base: calc(1rem * var(--font-scale));
+    --font-size-lg: calc(1.125rem * var(--font-scale));
+    --font-size-xl: calc(1.25rem * var(--font-scale));
+    --font-size-2xl: calc(1.5rem * var(--font-scale));
+    --font-size-3xl: calc(1.875rem * var(--font-scale));
+    --font-size-4xl: calc(2.25rem * var(--font-scale));
+    --font-size-5xl: calc(3rem * var(--font-scale));
+    --font-size-6xl: calc(3.75rem * var(--font-scale));
+  }
+}
+
+/* Large slideshow containers (1000px - 1400px) */
+@container slideshow (min-width: 1000px) and (max-width: 1400px) {
+  .slideshow-container {
+    --container-scale: 1;
+  }
+
+  .slideshow-content {
+    --font-size-xs: calc(0.75rem * var(--font-scale));
+    --font-size-sm: calc(0.875rem * var(--font-scale));
+    --font-size-base: calc(1rem * var(--font-scale));
+    --font-size-lg: calc(1.125rem * var(--font-scale));
+    --font-size-xl: calc(1.25rem * var(--font-scale));
+    --font-size-2xl: calc(1.5rem * var(--font-scale));
+    --font-size-3xl: calc(1.875rem * var(--font-scale));
+    --font-size-4xl: calc(2.25rem * var(--font-scale));
+    --font-size-5xl: calc(3rem * var(--font-scale));
+    --font-size-6xl: calc(3.75rem * var(--font-scale));
+  }
+}
+
+/* Extra large slideshow containers (> 1400px) */
+@container slideshow (min-width: 1400px) {
+  .slideshow-container {
+    --container-scale: 1.15;
+  }
+
+  .slideshow-content {
+    --font-size-xs: calc(0.75rem * var(--font-scale));
+    --font-size-sm: calc(0.875rem * var(--font-scale));
+    --font-size-base: calc(1rem * var(--font-scale));
+    --font-size-lg: calc(1.125rem * var(--font-scale));
+    --font-size-xl: calc(1.25rem * var(--font-scale));
+    --font-size-2xl: calc(1.5rem * var(--font-scale));
+    --font-size-3xl: calc(1.875rem * var(--font-scale));
+    --font-size-4xl: calc(2.25rem * var(--font-scale));
+    --font-size-5xl: calc(3rem * var(--font-scale));
+    --font-size-6xl: calc(3.75rem * var(--font-scale));
+  }
+}
+
+/* Utility classes for container-responsive sizing */
+.slideshow-text-xs { font-size: var(--font-size-xs); }
+.slideshow-text-sm { font-size: var(--font-size-sm); }
+.slideshow-text-base { font-size: var(--font-size-base); }
+.slideshow-text-lg { font-size: var(--font-size-lg); }
+.slideshow-text-xl { font-size: var(--font-size-xl); }
+.slideshow-text-2xl { font-size: var(--font-size-2xl); }
+.slideshow-text-3xl { font-size: var(--font-size-3xl); }
+.slideshow-text-4xl { font-size: var(--font-size-4xl); }
+.slideshow-text-5xl { font-size: var(--font-size-5xl); }
+.slideshow-text-6xl { font-size: var(--font-size-6xl); }
+
+/* Spacing utilities that scale with container */
+.slideshow-p-1 { padding: calc(0.25rem * var(--spacing-scale)); }
+.slideshow-p-2 { padding: calc(0.5rem * var(--spacing-scale)); }
+.slideshow-p-3 { padding: calc(0.75rem * var(--spacing-scale)); }
+.slideshow-p-4 { padding: calc(1rem * var(--spacing-scale)); }
+.slideshow-p-6 { padding: calc(1.5rem * var(--spacing-scale)); }
+.slideshow-p-8 { padding: calc(2rem * var(--spacing-scale)); }
+.slideshow-p-12 { padding: calc(3rem * var(--spacing-scale)); }
+.slideshow-p-16 { padding: calc(4rem * var(--spacing-scale)); }
+
+.slideshow-m-1 { margin: calc(0.25rem * var(--spacing-scale)); }
+.slideshow-m-2 { margin: calc(0.5rem * var(--spacing-scale)); }
+.slideshow-m-3 { margin: calc(0.75rem * var(--spacing-scale)); }
+.slideshow-m-4 { margin: calc(1rem * var(--spacing-scale)); }
+.slideshow-m-6 { margin: calc(1.5rem * var(--spacing-scale)); }
+.slideshow-m-8 { margin: calc(2rem * var(--spacing-scale)); }
+
+/* Gap utilities */
+.slideshow-gap-1 { gap: calc(0.25rem * var(--spacing-scale)); }
+.slideshow-gap-2 { gap: calc(0.5rem * var(--spacing-scale)); }
+.slideshow-gap-4 { gap: calc(1rem * var(--spacing-scale)); }
+.slideshow-gap-6 { gap: calc(1.5rem * var(--spacing-scale)); }
+
+/* Border radius that scales */
+.slideshow-rounded { border-radius: calc(0.25rem * var(--spacing-scale)); }
+.slideshow-rounded-md { border-radius: calc(0.375rem * var(--spacing-scale)); }
+.slideshow-rounded-lg { border-radius: calc(0.5rem * var(--spacing-scale)); }
+.slideshow-rounded-xl { border-radius: calc(0.75rem * var(--spacing-scale)); }
+.slideshow-rounded-2xl { border-radius: calc(1rem * var(--spacing-scale)); }
+
+/* Layout-specific overrides */
+.slideshow-container--advanced {
+  /* Advanced layout tends to have smaller containers, so compensate */
+  --layout-scale-factor: 1.15;
+}
+
+.slideshow-container--simple {
+  /* Simple layout is the reference, no additional scaling */
+  --layout-scale-factor: 1;
+}
+
+/* Debug utilities (remove in production) */
+.slideshow-container[data-debug="true"]::before {
+  content: attr(data-layout) " - " attr(data-dimensions);
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  z-index: 1000;
+  pointer-events: none;
+}

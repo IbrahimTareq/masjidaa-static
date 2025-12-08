@@ -17,52 +17,85 @@ export default function JummahSunnah() {
       text: "The taking of bath on Friday is compulsory for every Muslim who has attained the age of puberty and also cleaning of teeth with Siwak and using perfume, if available.",
       source: "Sahih Bukhari",
     },
-    {
-      number: 4,
-      text: 'If you say to your companion when the Imam is preaching on Friday, "Be quiet and listen," you have engaged in idle talk.',
-      source: "Sahih Bukhari",
-    },
-    {
-      number: 5,
-      text: "When Friday comes, the angels sit at the doors of the mosque and record who comes to the Jumu'ah prayer. Then, when the imam comes out, the angels close their records.",
-      source: "Sahih Bukhari",
-    },
   ];
 
   return (
     <PrayerLayout headerTitle="Jummah Sunnan">
-      <main className="px-4 py-6">
-        {/* Title Section */}
-        <div className="text-center mb-8">
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-600">
-            Prophet Muhammad ﷺ said:
-          </p>
-        </div>
+      <div className="w-full overflow-x-hidden bg-white h-full flex items-center justify-center">
+        <div
+          className="w-full mx-auto px-[2vw] py-[1.5vh]"
+          style={{
+            maxWidth: 'clamp(800px, 95vw, 1600px)',
+          }}
+        >
+          {/* Title Section */}
+          <div className="text-center mb-[1.5vh]">
+            <p
+              className="font-bold text-gray-600"
+              style={{
+                fontSize: 'clamp(1.125rem, 2vw, 2.5rem)',
+              }}
+            >
+              Prophet Muhammad ﷺ said:
+            </p>
+          </div>
 
-        {/* Hadiths Grid */}
-        <div className="w-full mx-auto space-y-2">
-          {sunnahPoints.map((point) => (
-            <div key={point.number} className="flex gap-4 p-2">
-              {/* Number Circle */}
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-theme text-white rounded-full flex items-center justify-center font-bold text-xl sm:text-2xl">
-                  {point.number}
+          {/* Hadiths List */}
+          <div
+            className="w-full mx-auto"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(1rem, 1.5vh, 1.75rem)',
+            }}
+          >
+            {sunnahPoints.map((point) => (
+              <div
+                key={point.number}
+                className="flex gap-[1.2vw] items-start"
+                style={{
+                  padding: 'clamp(0.5rem, 1vw, 1.25rem)',
+                }}
+              >
+                {/* Number Circle */}
+                <div className="flex-shrink-0">
+                  <div
+                    className="bg-theme text-white rounded-full flex items-center justify-center font-bold"
+                    style={{
+                      width: 'clamp(2rem, 3vw, 3.5rem)',
+                      height: 'clamp(2rem, 3vw, 3.5rem)',
+                      fontSize: 'clamp(1rem, 1.5vw, 1.875rem)',
+                    }}
+                  >
+                    {point.number}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-gray-700 font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    "{point.text}"
+                    <span
+                      className="text-gray-500 italic block mt-[0.25vh]"
+                      style={{
+                        fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      }}
+                    >
+                      - {point.source}
+                    </span>
+                  </p>
                 </div>
               </div>
-
-              {/* Content */}
-              <div className="flex-1">
-                <p className="text-sm sm:text-base lg:text-xl text-gray-700 font-medium leading-relaxed mb-2">
-                  "{point.text}"&nbsp;
-                  <span className="text-md text-gray-500 italic">
-                    - {point.source}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </main>
+      </div>
     </PrayerLayout>
   );
 }

@@ -3,130 +3,180 @@ import PrayerLayout from "@/components/LayoutWithHeader";
 export default function PostPrayerDuas() {
   return (
     <PrayerLayout headerTitle="Supplication After Prayer">
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col px-4">
-        <div className="space-y-4">
-          {/* Astaghfirullah */}
-          <div className="border-b border-gray-100 pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-8">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  Astaghfirullaaha, Astaghfirullaaha, Astaghfirullaaha
-                  <span className="text-theme font-medium ml-2">
-                    (3 times)
-                  </span>
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  I seek the forgiveness of Allah
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  أَسْتَغْفِرُ اللَّه ، أَسْتَغْفِرُ اللَّه ، أَسْتَغْفِرُ اللَّه
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Allahumma antas-salam */}
-          <div className="border-b border-gray-100 pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-4">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  Allahumma Antas-Salam wa minkas-salam Tabarakta ya Dhal-jalali wal-ikram
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  O Allah, You are peace, peace comes from You. Blessed are You O Possessor of Glory and Honour.
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Allahumma a'inni */}
-          <div className="border-b border-gray-100 pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-8">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  Allahumma a'inni alaa dhikrika, wa shukrika, wa husni 'ibaadatik
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  O Allah, help me to remember You, to thank You, and to worship You in the best way
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ
-                </p>
+      <div className="w-full overflow-x-hidden bg-white h-full flex items-center justify-center">
+        <div
+          className="w-full mx-auto px-[2vw] py-[1.5vh]"
+          style={{
+            maxWidth: 'clamp(800px, 95vw, 1600px)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(1rem, 1.5vh, 1.75rem)',
+            }}
+          >
+            {/* Astaghfirullah */}
+            <div className="border-b border-gray-100 pb-[1vh]">
+              <div className="flex gap-[2vw]">
+                <div className="flex-[1.5]">
+                  <p
+                    className="text-gray-800 font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    Astaghfirullaaha, Astaghfirullaaha, Astaghfirullaaha
+                    <span className="text-theme font-medium ml-[0.5vw]">
+                      (3 times)
+                    </span>
+                  </p>
+                  <p
+                    className="text-gray-600 mt-[0.5vh] break-words"
+                    style={{
+                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    I seek the forgiveness of Allah
+                  </p>
+                </div>
+                <div className="flex-1 text-right">
+                  <p
+                    className="font-serif text-gray-800 break-words"
+                    style={{
+                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      lineHeight: '1.4',
+                      fontFamily: '"Amiri", "Times New Roman", serif',
+                    }}
+                  >
+                    أَسْتَغْفِرُ اللَّه ، أَسْتَغْفِرُ اللَّه ، أَسْتَغْفِرُ اللَّه
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Subhanallah */}
-          <div className="border-b border-gray-100 pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-8">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  SubhaanAllah, Alhamdulillah, AllahuAkbar
-                  <span className="text-theme font-medium ml-2">
-                    (33 times each)
-                  </span>
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  Glorified be Allah, All Praise is due to Allah and Allah is the Most Great
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ
-                </p>
+            {/* Allahumma antas-salam */}
+            <div className="border-b border-gray-100 pb-[1vh]">
+              <div className="flex gap-[2vw]">
+                <div className="flex-[1.5]">
+                  <p
+                    className="text-gray-800 font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    Allahumma Antas-Salam wa minkas-salam Tabarakta ya Dhal-jalali wal-ikram
+                  </p>
+                  <p
+                    className="text-gray-600 mt-[0.5vh] break-words"
+                    style={{
+                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    O Allah, You are peace, peace comes from You. Blessed are You O Possessor of Glory and Honour.
+                  </p>
+                </div>
+                <div className="flex-1 text-right">
+                  <p
+                    className="font-serif text-gray-800 break-words"
+                    style={{
+                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      lineHeight: '1.4',
+                      fontFamily: '"Amiri", "Times New Roman", serif',
+                    }}
+                  >
+                    اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* La ilaha illallah */}
-          <div className="border-b border-gray-100 pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-8">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  Laa ilaaha illal-laahu wahdahu laa shareeka lah, lahul-mulku wa lahul-hamdu wa Huwa alaa kulli shay in Qadeer
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  None has the right to be worshipped but Allah alone, He has no partner, His is the dominion and His is the praise, and He is able to do all things.
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ
-                </p>
+            {/* Subhanallah */}
+            <div className="border-b border-gray-100 pb-[1vh]">
+              <div className="flex gap-[2vw]">
+                <div className="flex-[1.5]">
+                  <p
+                    className="text-gray-800 font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    SubhaanAllah, Alhamdulillah, AllahuAkbar
+                    <span className="text-theme font-medium ml-[0.5vw]">
+                      (33 times each)
+                    </span>
+                  </p>
+                  <p
+                    className="text-gray-600 mt-[0.5vh] break-words"
+                    style={{
+                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    Glorified be Allah, All Praise is due to Allah and Allah is the Most Great
+                  </p>
+                </div>
+                <div className="flex-1 text-right">
+                  <p
+                    className="font-serif text-gray-800 break-words"
+                    style={{
+                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      lineHeight: '1.4',
+                      fontFamily: '"Amiri", "Times New Roman", serif',
+                    }}
+                  >
+                    سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Ayatul Kursi */}
-          <div className="pb-3">
-            <div className="flex">
-              <div className="flex-[1.5] pr-8">
-                <p className="text-base sm:text-lg text-gray-800 font-medium whitespace-pre-line">
-                  Recite Ayatul Kursi
-                </p>
-                <p className="text-sm lg:text-base text-gray-500 mt-2 whitespace-pre-line">
-                  The Verse of the Throne (2:255)
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-2xl lg:text-3xl font-serif whitespace-pre-line leading-relaxed text-gray-800">
-                  آية الكرسي
-                </p>
+            {/* Ayatul Kursi */}
+            <div className="pb-[1vh]">
+              <div className="flex gap-[2vw]">
+                <div className="flex-[1.5]">
+                  <p
+                    className="text-gray-800 font-medium break-words"
+                    style={{
+                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    Recite Ayatul Kursi
+                  </p>
+                  <p
+                    className="text-gray-600 mt-[0.5vh] break-words"
+                    style={{
+                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    The Verse of the Throne (2:255)
+                  </p>
+                </div>
+                <div className="flex-1 text-right">
+                  <p
+                    className="font-serif text-gray-800 break-words"
+                    style={{
+                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      lineHeight: '1.4',
+                      fontFamily: '"Amiri", "Times New Roman", serif',
+                    }}
+                  >
+                    آية الكرسي
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </PrayerLayout>
   );
 }
