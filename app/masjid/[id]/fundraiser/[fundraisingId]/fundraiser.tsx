@@ -452,13 +452,16 @@ export default function FundraiserDisplay({
     if (Math.abs(targetAmount - currentAmount) < 0.01) return;
 
     const startTime = Date.now();
-    const difference = targetAmount - currentAmount;
+    const startAmount = currentAmount;
+    const difference = targetAmount - startAmount;
+
+    let animationFrameId: number;
 
     const animateValue = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
       const easeProgress = easeOutQuart(progress);
-      const newAmount = currentAmount + difference * easeProgress;
+      const newAmount = startAmount + difference * easeProgress;
 
       setAnimatedAmountRaised(newAmount);
 
@@ -471,18 +474,22 @@ export default function FundraiserDisplay({
       }
 
       if (progress < 1) {
-        requestAnimationFrame(animateValue);
+        animationFrameId = requestAnimationFrame(animateValue);
+      } else {
+        // Ensure we end exactly at the target amount
+        setAnimatedAmountRaised(targetAmount);
       }
     };
 
-    requestAnimationFrame(animateValue);
-  }, [
-    campaign.amount_raised,
-    hasReachedTarget,
-    triggerConfetti,
-    animatedAmountRaised,
-    campaign.target_amount,
-  ]);
+    animationFrameId = requestAnimationFrame(animateValue);
+
+    // Cleanup function to cancel animation if component unmounts or effect re-runs
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [campaign.amount_raised, hasReachedTarget, triggerConfetti, campaign.target_amount]);
 
   // Render closed state if session is not open
   if (!isOpen) {
