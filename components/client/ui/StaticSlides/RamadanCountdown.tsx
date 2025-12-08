@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-// Test date - Ramadan 2025 (approximately March 1, 2025)
-const RAMADAN_START_DATE = new Date("2026-03-01T00:00:00");
+const RAMADAN_START_DATE = new Date("2026-02-16T00:00:00");
 
 interface TimeRemaining {
   days: number;

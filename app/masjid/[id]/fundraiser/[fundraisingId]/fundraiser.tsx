@@ -76,7 +76,7 @@ function DonorCard({
   });
 
   const cardClasses = [
-    "relative rounded-2xl p-5 transition-all duration-700 backdrop-blur-sm border",
+    "relative rounded-xl lg:rounded-2xl p-3 lg:p-5 transition-all duration-700 backdrop-blur-sm border",
     isHighlighted
       ? "bg-gradient-to-r from-theme/40 via-theme/30 to-theme/40 ring-2 ring-theme/50 shadow-2xl shadow-theme/20 scale-105 border-theme/50"
       : "bg-slate-900/60 hover:bg-slate-800/70 border-theme/15",
@@ -89,17 +89,17 @@ function DonorCard({
   return (
     <div className={cardClasses}>
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-4xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-transparent">
+        <div className="flex items-center justify-between mb-2 lg:mb-3">
+          <div className="text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-transparent">
             {formattedAmount}
           </div>
           <div className="flex items-center gap-1 text-theme/60">
-            <Heart className="w-4 h-4 fill-current" />
+            <Heart className="w-3 h-3 lg:w-4 lg:h-4 fill-current" />
           </div>
         </div>
-        <div className="space-y-1">
-          <div className="text-lg text-white font-semibold">{displayName}</div>
-          <div className="text-sm text-slate-400 capitalize">{timeAgo}</div>
+        <div className="space-y-0.5 lg:space-y-1">
+          <div className="text-base lg:text-lg text-white font-semibold leading-tight">{displayName}</div>
+          <div className="text-xs lg:text-sm text-slate-400 capitalize">{timeAgo}</div>
         </div>
       </div>
     </div>
@@ -120,15 +120,15 @@ function StatCard({
   isAnimated = false,
 }: StatCardProps) {
   return (
-    <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl p-6 border border-theme/20">
-      <div className="flex items-center gap-3 mb-3">
-        <Icon className="w-6 h-6 text-theme" />
-        <span className="text-slate-400 text-sm font-medium uppercase tracking-wide">
+    <div className="bg-slate-900/50 backdrop-blur-xl rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-theme/20">
+      <div className="flex items-center gap-2 lg:gap-3 mb-2 lg:mb-3">
+        <Icon className="w-5 h-5 lg:w-6 lg:h-6 text-theme" />
+        <span className="text-slate-400 text-xs lg:text-sm font-medium uppercase tracking-wide">
           {label}
         </span>
       </div>
       <div
-        className={`text-6xl font-bold ${
+        className={`text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold ${
           isAnimated
             ? "bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-white"
             : "text-white"
@@ -146,8 +146,8 @@ interface ProgressBarProps {
 
 function ProgressBar({ percentage }: ProgressBarProps) {
   return (
-    <div className="mb-12">
-      <div className="relative h-6 bg-slate-800/80 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
+    <div className="mb-4 lg:mb-6 xl:mb-8">
+      <div className="relative h-3 lg:h-4 xl:h-6 bg-slate-800/80 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
         <div
           className="h-full bg-gradient-to-r from-theme via-theme to-theme-accent rounded-full transition-all duration-2000 ease-out relative animate-pulse-glow"
           style={{ width: `${percentage}%` }}
@@ -155,8 +155,8 @@ function ProgressBar({ percentage }: ProgressBarProps) {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
         </div>
       </div>
-      <div className="flex justify-end items-center mt-4">
-        <span className="text-theme text-4xl font-bold">
+      <div className="flex justify-end items-center mt-2 lg:mt-3 xl:mt-4">
+        <span className="text-theme text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold">
           {Math.round(percentage)}%
         </span>
       </div>
@@ -167,24 +167,24 @@ function ProgressBar({ percentage }: ProgressBarProps) {
 function BackgroundElements() {
   const elements = [
     {
-      size: "w-96 h-96",
-      position: "top-20 left-20",
+      size: "w-64 h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96",
+      position: "top-10 left-10 lg:top-20 lg:left-20",
       color: "bg-theme/10",
-      blur: "blur-3xl",
+      blur: "blur-2xl lg:blur-3xl",
       delay: "0s",
     },
     {
-      size: "w-80 h-80",
-      position: "bottom-20 right-20",
+      size: "w-48 h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80",
+      position: "bottom-10 right-10 lg:bottom-20 lg:right-20",
       color: "bg-theme-gradient/8",
-      blur: "blur-3xl",
+      blur: "blur-2xl lg:blur-3xl",
       delay: "2s",
     },
     {
-      size: "w-60 h-60",
-      position: "top-1/2 left-1/3",
+      size: "w-40 h-40 lg:w-48 lg:h-48 xl:w-60 xl:h-60",
+      position: "top-1/2 left-1/4 lg:left-1/3",
       color: "bg-theme-accent/6",
-      blur: "blur-2xl",
+      blur: "blur-xl lg:blur-2xl",
       delay: "4s",
     },
   ];
@@ -256,94 +256,94 @@ function ClosedFundraiserDisplay({
 
       <BackgroundElements />
 
-      <div className="min-h-screen flex flex-col justify-center relative z-10 py-8 px-6">
-        <div className="max-w-5xl w-full mx-auto">
+      <div className="min-h-screen flex flex-col justify-center relative z-10 py-6 lg:py-8 px-4 lg:px-6">
+        <div className="max-w-4xl lg:max-w-5xl w-full mx-auto">
           {/* Closed badge */}
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-2 px-5 py-2.5 bg-slate-800/80 rounded-full border border-white/10 backdrop-blur-sm">
-              <CheckCircle2 className="w-5 h-5 text-theme" />
-              <span className="text-white text-lg font-semibold uppercase tracking-wide">
+          <div className="flex justify-center mb-4 lg:mb-6">
+            <div className="flex items-center gap-2 px-4 lg:px-5 py-2 lg:py-2.5 bg-slate-800/80 rounded-full border border-white/10 backdrop-blur-sm">
+              <CheckCircle2 className="w-4 h-4 lg:w-5 lg:h-5 text-theme" />
+              <span className="text-white text-base lg:text-lg font-semibold uppercase tracking-wide">
                 Fundraiser Closed
               </span>
             </div>
           </div>
 
           {/* Masjid name */}
-          <p className="text-center text-slate-400 text-xl font-medium tracking-wide uppercase mb-3">
+          <p className="text-center text-slate-400 text-lg lg:text-xl font-medium tracking-wide uppercase mb-2 lg:mb-3">
             {masjid.name}
           </p>
 
           {/* Campaign title */}
-          <h1 className="text-5xl xl:text-6xl font-bold text-white leading-tight mb-4 text-center">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white leading-tight mb-3 lg:mb-4 text-center">
             {session.title || campaign.name}
           </h1>
 
           {/* Description */}
           {(session.description || campaign.description) && (
-            <p className="text-slate-300 text-xl leading-relaxed text-center mx-auto mb-8 line-clamp-5">
+            <p className="text-slate-300 text-base lg:text-lg xl:text-xl leading-relaxed text-center mx-auto mb-6 lg:mb-8 line-clamp-4 lg:line-clamp-5 max-w-4xl">
               {session.description || campaign.description}
             </p>
           )}
 
           {/* Final stats card */}
-          <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 md:p-8 border border-white/5 mb-6">
+          <div className="bg-slate-900/60 backdrop-blur-xl rounded-xl lg:rounded-2xl p-4 lg:p-6 xl:p-8 border border-white/5 mb-4 lg:mb-6">
             {/* Stats row */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-around gap-6 mb-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-around gap-4 lg:gap-6 mb-4 lg:mb-6">
               {/* Amount Raised */}
               <div className="text-center flex-1">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-theme" />
-                  <span className="text-slate-400 text-md font-medium uppercase tracking-wide">
+                  <TrendingUp className="w-4 h-4 lg:w-5 lg:h-5 text-theme" />
+                  <span className="text-slate-400 text-sm lg:text-base font-medium uppercase tracking-wide">
                     Total Raised
                   </span>
                 </div>
-                <div className="text-5xl xl:text-6xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-white">
+                <div className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold bg-gradient-to-r from-theme to-theme-accent bg-clip-text text-white">
                   {formattedAmountRaised}
                 </div>
               </div>
 
               {/* Divider */}
-              <div className="hidden md:block w-px h-16 bg-slate-700/50" />
+              <div className="hidden lg:block w-px h-12 lg:h-16 bg-slate-700/50" />
 
               {/* Target */}
               <div className="text-center flex-1">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Target className="w-5 h-5 text-theme" />
-                  <span className="text-slate-400 text-md font-medium uppercase tracking-wide">
+                  <Target className="w-4 h-4 lg:w-5 lg:h-5 text-theme" />
+                  <span className="text-slate-400 text-sm lg:text-base font-medium uppercase tracking-wide">
                     Target
                   </span>
                 </div>
-                <div className="text-5xl xl:text-6xl font-bold text-white">
+                <div className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white">
                   {formattedTargetAmount}
                 </div>
               </div>
             </div>
 
             {/* Progress bar */}
-            <div className="relative h-4 bg-slate-800/80 rounded-full overflow-hidden border border-white/5 mb-2">
+            <div className="relative h-3 lg:h-4 bg-slate-800/80 rounded-full overflow-hidden border border-white/5 mb-2">
               <div
                 className="h-full bg-gradient-to-r from-theme via-theme to-theme-accent rounded-full transition-all duration-500"
                 style={{ width: `${percentage}%` }}
               />
             </div>
             <div className="flex justify-end">
-              <span className="text-theme text-2xl font-bold">
+              <span className="text-theme text-xl lg:text-2xl font-bold">
                 {Math.round(percentage)}%
               </span>
             </div>
           </div>
 
           {/* Thank you message */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 text-slate-400 text-lg">
+          <div className="text-center mb-6 lg:mb-8 px-4">
+            <div className="inline-flex items-center gap-2 text-slate-400 text-base lg:text-lg">
               <Heart className="w-4 h-4 text-theme fill-current" />
-              <span>JazakumAllahu khayran to all who contributed. May Allah multiply your rewards.</span>
+              <span className="leading-relaxed">JazakumAllahu khayran to all who contributed. May Allah multiply your rewards.</span>
             </div>
           </div>
 
           {/* Powered by */}
           <div className="text-center">
-            <p className="text-slate-500 text-base">
+            <p className="text-slate-500 text-sm lg:text-base">
               Powered by <span className="font-bold text-theme">Masjidaa</span>
             </p>
           </div>
@@ -499,7 +499,7 @@ export default function FundraiserDisplay({
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-montserrat relative">
+    <div className="min-h-screen w-screen overflow-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-montserrat relative">
 
       {/* Confetti overlay */}
       {showConfetti && (
@@ -558,48 +558,46 @@ export default function FundraiserDisplay({
 
       <BackgroundElements />
 
-      <div className="flex h-full">
+      <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Campaign Details Section */}
-        <div className="flex-1 flex flex-col justify-between p-12 relative z-10">
+        <div className="flex-1 flex flex-col justify-between p-3 lg:p-6 xl:p-8 2xl:p-12 relative z-10">
           <div>
             {/* Header */}
-            <header className="mb-8 grid grid-cols-3 gap-12 items-center">
-              <div className="col-span-2">
+            <header className="mb-4 lg:mb-6 xl:mb-8 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 xl:gap-12 items-center">
+              <div className="lg:col-span-2">
                 {/* Live indicator */}
-                <div className="flex items-center gap-3 mb-4">
-                  <p className="text-slate-400 text-xl font-medium tracking-wide uppercase">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-3 mb-2 lg:mb-3">
+                  <p className="text-slate-400 text-base lg:text-lg xl:text-xl font-medium tracking-wide uppercase">
                     {masjid.name}
                   </p>
-                  <div className="w-px h-6 bg-slate-600" />
-                  <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                  <span className="text-red-400 text-lg font-medium uppercase animate-pulse">
+                  <div className="w-px h-3 lg:h-4 xl:h-6 bg-slate-600" />
+                  <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-red-400 animate-pulse" />
+                  <span className="text-red-400 text-sm lg:text-base xl:text-lg font-medium uppercase animate-pulse">
                     Live fundraising
                   </span>
                 </div>
 
                 {/* Campaign title and description */}
-                <h1 className="text-6xl xl:text-7xl font-bold text-white leading-tight mb-6 bg-gradient-to-r from-white via-theme/10 to-white bg-clip-text">
+                <h1 className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl font-bold text-white leading-tight mb-3 lg:mb-4 xl:mb-6 bg-gradient-to-r from-white via-theme/10 to-white bg-clip-text">
                   {campaign.name}
                 </h1>
                 {campaign.description && (
-                  <p className="text-slate-300 text-xl leading-relaxed line-clamp-6">
+                  <p className="text-sm lg:text-base xl:text-lg 2xl:text-xl leading-relaxed line-clamp-3 lg:line-clamp-4 xl:line-clamp-6 text-slate-300">
                     {campaign.description}
                   </p>
                 )}
               </div>
 
               {/* QR Code */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center lg:items-end order-first lg:order-last">
                 <div className="relative group">
-                  <div className="bg-white rounded-3xl p-3 shadow-2xl border-4 border-theme/30 transform transition-transform group-hover:scale-105">
-                    <div ref={qrRef} className="qr-code-container scale-110" />
-                  </div>
+                  <div ref={qrRef} className="qr-code-container scale-40 lg:scale-50 xl:scale-65 2xl:scale-80" />
                 </div>
               </div>
             </header>
 
             {/* Statistics */}
-            <div className="grid grid-cols-2 gap-8 mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 xl:gap-6 2xl:gap-8 mb-4 lg:mb-6 xl:mb-8 2xl:mb-10">
               <StatCard
                 icon={TrendingUp}
                 label="Raised"
@@ -617,9 +615,9 @@ export default function FundraiserDisplay({
           </div>
 
           {/* Footer */}
-          <footer className="flex items-end justify-between">
+          <footer className="flex items-end justify-between mt-6 lg:mt-0">
             <div className="text-right">
-              <p className="text-slate-500 text-lg">
+              <p className="text-slate-500 text-base lg:text-lg">
                 Powered by{" "}
                 <span className="font-bold text-theme">Masjidaa</span>
               </p>
@@ -628,15 +626,15 @@ export default function FundraiserDisplay({
         </div>
 
         {/* Live Donations Feed */}
-        <aside className="w-96 bg-theme-gradient/90 backdrop-blur-xl border-l border-theme/20 flex flex-col">
+        <aside className="w-full lg:w-80 xl:w-96 bg-theme-gradient/90 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-theme/20 flex flex-col">
           {/* Feed Header */}
-          <header className="p-6 border-b border-theme-accent/20">
-            <div className="flex items-center gap-3">
+          <header className="p-4 lg:p-6 border-b border-theme-accent/20">
+            <div className="flex items-center gap-2 lg:gap-3">
               <div className="relative">
-                <Heart className="w-6 h-6 text-theme" />
-                <Heart className="absolute inset-0 w-6 h-6 text-theme-accent animate-ping opacity-30" />
+                <Heart className="w-5 h-5 lg:w-6 lg:h-6 text-theme" />
+                <Heart className="absolute inset-0 w-5 h-5 lg:w-6 lg:h-6 text-theme-accent animate-ping opacity-30" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Live Donations</h2>
+              <h2 className="text-xl lg:text-2xl font-bold text-white">Live Donations</h2>
               {realtimeLoading && (
                 <div className="w-3 h-3 border border-theme border-t-transparent rounded-full animate-spin" />
               )}
@@ -645,7 +643,7 @@ export default function FundraiserDisplay({
 
           {/* Donations List */}
           <div className="flex-1 overflow-hidden">
-            <div className="p-6 space-y-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+            <div className="p-4 lg:p-6 space-y-3 lg:space-y-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
               {visibleDonations.length > 0 ? (
                 visibleDonations.map((donation, index) => (
                   <DonorCard

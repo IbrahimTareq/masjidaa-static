@@ -108,12 +108,45 @@ const VERSE_DATA = [
 ];
 
 export default function VerseOfTheDay() {
-  // Get a random verse on component mount
+  // Get a verse based on the current date (changes daily at midnight)
   const [verse, setVerse] = useState(VERSE_DATA[0]);
 
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * VERSE_DATA.length);
-    setVerse(VERSE_DATA[randomIndex]);
+    const updateVerse = () => {
+      // Get day of year (0-365) to deterministically select a verse
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now.getTime() - start.getTime();
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+      
+      // Use modulo to cycle through all verses
+      const verseIndex = dayOfYear % VERSE_DATA.length;
+      setVerse(VERSE_DATA[verseIndex]);
+    };
+
+    // Update verse immediately
+    updateVerse();
+
+    // Calculate milliseconds until midnight
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    // Update at midnight
+    const midnightTimer = setTimeout(() => {
+      updateVerse();
+      // Set up daily interval after first midnight update
+      const dailyInterval = setInterval(updateVerse, 24 * 60 * 60 * 1000);
+      
+      // Cleanup function for the interval
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+
+    // Cleanup function for the timeout
+    return () => clearTimeout(midnightTimer);
   }, []);
 
   return (

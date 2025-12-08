@@ -110,12 +110,45 @@ const DUA_DATA = [
 ];
 
 export default function DuaOfTheDay() {
-  // Get a random dua on component mount
+  // Get a dua based on the current date (changes daily at midnight)
   const [dua, setDua] = useState(DUA_DATA[0]);
 
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * DUA_DATA.length);
-    setDua(DUA_DATA[randomIndex]);
+    const updateDua = () => {
+      // Get day of year (0-365) to deterministically select a dua
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now.getTime() - start.getTime();
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+      
+      // Use modulo to cycle through all duas
+      const duaIndex = dayOfYear % DUA_DATA.length;
+      setDua(DUA_DATA[duaIndex]);
+    };
+
+    // Update dua immediately
+    updateDua();
+
+    // Calculate milliseconds until midnight
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    // Update at midnight
+    const midnightTimer = setTimeout(() => {
+      updateDua();
+      // Set up daily interval after first midnight update
+      const dailyInterval = setInterval(updateDua, 24 * 60 * 60 * 1000);
+      
+      // Cleanup function for the interval
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+
+    // Cleanup function for the timeout
+    return () => clearTimeout(midnightTimer);
   }, []);
 
   return (

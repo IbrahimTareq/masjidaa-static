@@ -50,7 +50,12 @@ export default function PrayerScreens({
   }, [hasUpdates]);
 
   return (
-    <div className="h-screen p-2 sm:p-4 lg:p-5 bg-gradient-to-br from-theme to-theme flex flex-col relative">
+    <div
+      className="h-screen bg-gradient-to-br from-theme to-theme flex flex-col relative"
+      style={{
+        padding: 'clamp(0.5rem, 1vw, 1.25rem)',
+      }}
+    >
       {/* Dimming overlay */}
       {isDimmed && (
         <div
@@ -59,8 +64,9 @@ export default function PrayerScreens({
         >
           {/* Progress indicator for remaining dim time */}
           <div
-            className="absolute top-0 left-0 right-0 h-1 bg-theme-accent"
+            className="absolute top-0 left-0 right-0 bg-theme-accent"
             style={{
+              height: 'clamp(0.25rem, 0.4vh, 0.5rem)',
               width: `${remainingPercent}%`,
               transition: "width 1s linear",
             }}
@@ -68,7 +74,12 @@ export default function PrayerScreens({
         </div>
       )}
 
-      <div className="flex-1 w-full rounded-t-2xl rounded-b-2xl sm:rounded-t-3xl sm:rounded-b-3xl overflow-hidden">
+      <div
+        className="flex-1 w-full overflow-hidden"
+        style={{
+          borderRadius: 'clamp(1rem, 2vw, 2rem)',
+        }}
+      >
         {children}
       </div>
     </div>

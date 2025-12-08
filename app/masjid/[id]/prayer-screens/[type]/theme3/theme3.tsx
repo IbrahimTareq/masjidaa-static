@@ -11,6 +11,21 @@ import { SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+// Helper function to format time with smaller AM/PM
+const formatTimeWithSmallPeriod = (time: string | null) => {
+  if (!time) return null;
+  const parts = time.match(/^(.+?)\s*(AM|PM)$/i);
+  if (parts) {
+    return (
+      <>
+        {parts[1]}
+        <span className="text-[0.5em] ml-0.5">{parts[2]}</span>
+      </>
+    );
+  }
+  return time;
+};
+
 interface DateSectionProps {
   className?: string;
   hijriDate: string;
@@ -22,11 +37,11 @@ const DateSection: React.FC<DateSectionProps> = ({
   gregorianDate,
 }) => {
   return (
-    <div className={`text-center`}>
-      <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-medium tracking-wider uppercase text-theme mb-1 lg:mb-2">
+    <div className="text-center">
+      <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold mb-3 lg:mb-4 uppercase leading-tight">
         {hijriDate}
       </div>
-      <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-medium tracking-wider uppercase text-theme">
+      <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight">
         {gregorianDate}
       </div>
     </div>
@@ -36,60 +51,56 @@ const DateSection: React.FC<DateSectionProps> = ({
 interface TimeSectionProps {
   nextEvent: NextEvent;
   countdown: CountdownDisplay;
-  isMobile?: boolean;
 }
 
-const TimeSection: React.FC<TimeSectionProps> = ({
-  nextEvent,
-  countdown,
-  isMobile = false,
-}) => {
+const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown }) => {
   const config = useDateTimeConfig();
-
-  const timeClasses = isMobile
-    ? "text-4xl sm:text-5xl"
-    : "text-5xl xl:text-8xl";
-
-  const labelClasses = isMobile
-    ? "text-sm sm:text-base"
-    : "text-base xl:text-xl";
-
-  const numberClasses = isMobile
-    ? "text-lg sm:text-xl"
-    : "text-2xl xl:text-3xl";
 
   return (
     <div className="text-center">
-      <div className={`${timeClasses} font-light text-gray-800 mb-2 lg:mb-4`}>
-        {formatCurrentTime({
-          config: {
-            timeZone: config.timeZone,
-            is12Hour: config.is12Hour,
-          },
-        })}
+      <div className="text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light mb-3 lg:mb-4 tracking-tight leading-none">
+        {formatTimeWithSmallPeriod(
+          formatCurrentTime({
+            config: {
+              timeZone: config.timeZone,
+              is12Hour: config.is12Hour,
+            },
+          })
+        )}
       </div>
-      <div className={`${labelClasses} font-medium text-gray-600 uppercase`}>
-        {nextEvent.prayer} {nextEvent.label} in&nbsp;
-        {countdown.hours !== "00" && (
-          <>
-            <span className={`${numberClasses} font-semibold text-gray-800`}>
-              {countdown.hours}
-            </span>
-            <span className="text-base">HR</span>&nbsp;
-          </>
-        )}
-        {countdown.minutes !== "00" && (
-          <>
-            <span className={`${numberClasses} font-semibold text-gray-800`}>
-              {countdown.minutes}
-            </span>
-            <span className="text-base">MIN</span>&nbsp;
-          </>
-        )}
-        <span className={`${numberClasses} font-semibold text-gray-800`}>
-          {countdown.seconds}
-        </span>
-        <span className="text-base">SEC</span>
+      <div className="text-base lg:text-lg xl:text-2xl 2xl:text-3xl font-medium uppercase opacity-95">
+        <div className="flex flex-col items-center justify-center text-center gap-1 lg:gap-2">
+          <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight">
+            {nextEvent.prayer} {nextEvent.label}
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-1 lg:gap-2 leading-tight">
+            {countdown.hours !== "00" && (
+              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+                {countdown.hours}
+                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                  h
+                </span>
+              </span>
+            )}
+            {countdown.minutes !== "00" && (
+              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+                {countdown.minutes}
+                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                  m
+                </span>
+              </span>
+            )}
+            {countdown.seconds !== "00" && (
+              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+                {countdown.seconds}
+                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                  s
+                </span>
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -108,216 +119,167 @@ export default function PrayerClient({
     gregorianDate,
   } = formattedData;
   const masjid = useMasjidContext();
-  
+  const config = useDateTimeConfig();
+
   // Use the custom hook to manage prayer screen logic
   const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
-    <div className="font-sans h-screen">
-      <div className="max-w-7xl 2xl:max-w-full mx-auto h-full w-full">
-        <div className="bg-white p-4 sm:p-6 xl:pb-18 shadow-2xl h-full flex flex-col">
-          {/* Mobile Sidebar Content - Shows first on mobile */}
-          <div className="lg:hidden mb-6 space-y-4">
-            {/* Dates */}
-            <DateSection
-              hijriDate={hijriDate || ""}
-              gregorianDate={gregorianDate || ""}
-            />
-
-            {/* Current Time */}
-            <TimeSection
-              nextEvent={nextEvent}
-              countdown={countdown}
-              isMobile
-            />
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
-            {/* Prayer Times Table */}
-            <div className="flex-1 lg:flex-[2] min-h-0 lg:border-r lg:border-gray-300 lg:pr-6">
-              <div className="h-full flex flex-col overflow-hidden">
-                {/* Table Header */}
-                <div className="bg-white px-4 py-3 border-b border-gray-200">
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="text-left">
-                      <span className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold tracking-wider uppercase opacity-60"></span>
-                    </div>
-                    <div className="text-center relative">
-                      <span className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold tracking-wider uppercase opacity-60">
-                        Starts
-                      </span>
-                      <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
-                    </div>
-                    <div className="text-center relative">
-                      <span className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold tracking-wider uppercase opacity-60">
-                        Iqamah
-                      </span>
-                      <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
-                    </div>
-                  </div>
+    <div className="font-sans h-screen w-screen overflow-hidden flex flex-row">
+      {/* Left Content - Prayer Times Table */}
+      <div className="flex-1 bg-white flex flex-col rounded-4xl">
+        {/* Prayer Times Table */}
+        <div className="flex-1 min-h-0 p-6 xl:p-8">
+          <div className="h-full flex flex-col overflow-hidden">
+            {/* Table Header */}
+            <div className="bg-white px-6 py-4 border-b border-gray-200">
+              <div className="grid grid-cols-3 gap-6 text-center">
+                <div className="text-left">
+                  <span className="text-lg xl:text-2xl 2xl:text-3xl font-bold tracking-wider uppercase text-gray-600"></span>
                 </div>
+                <div className="text-center relative">
+                  <span className="text-lg xl:text-2xl 2xl:text-3xl font-bold tracking-wider uppercase text-gray-600">
+                    Starts
+                  </span>
+                  <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
+                </div>
+                <div className="text-center relative">
+                  <span className="text-lg xl:text-2xl 2xl:text-3xl font-bold tracking-wider uppercase text-gray-600">
+                    Iqamah
+                  </span>
+                  <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
+                </div>
+              </div>
+            </div>
 
-                {/* Prayer Rows */}
-                <div className="flex-1 flex flex-col">
-                  {dailyPrayerTimes?.map((prayer) => {
-                    return (
-                      <div
-                        key={prayer.name}
-                        className={`${
-                          prayer.isActive
-                            ? "bg-theme text-white"
-                            : "bg-white text-gray-800"
-                        } px-4 py-4 sm:py-6 border-t border-gray-200 flex-1 flex items-center min-h-0`}
-                      >
-                        <div className="grid grid-cols-3 gap-4 items-center w-full">
-                          <div className="text-left">
-                            <span className="text-sm sm:text-base lg:text-xl xl:text-3xl 2xl:text-4xl font-medium tracking-wider uppercase">
-                              {prayer.name}&nbsp;
-                              <span className="font-serif">
-                                {prayer.arabic}
-                              </span>
-                            </span>
-                          </div>
-                          <div className="text-center relative">
-                            <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
-                            <span className="text-base sm:text-lg lg:text-2xl xl:text-4xl 2xl:text-6xl font-light tracking-wide">
-                              {prayer.start}
-                            </span>
-                          </div>
-                          <div className="text-center relative">
-                            <div className="absolute left-0 top-0 h-full w-px bg-gray-300"></div>
-                            <span className="text-base sm:text-lg lg:text-2xl xl:text-4xl 2xl:text-6xl font-bold tracking-wide">
-                              {prayer.iqamah}
-                            </span>
-                          </div>
+            {/* Prayer Rows */}
+            <div className="flex-1 flex flex-col">
+              {dailyPrayerTimes?.map((prayer) => {
+                return (
+                  <div
+                    key={prayer.name}
+                    className={`${
+                      prayer.isActive
+                        ? "bg-theme text-white"
+                        : "bg-white text-gray-800"
+                    } px-6 py-6 xl:py-8 flex-1 flex items-center min-h-0 rounded-xl`}
+                  >
+                    <div className="grid grid-cols-3 gap-6 items-center w-full">
+                      <div className="text-left">
+                        <div className="flex flex-col xl:flex-row xl:items-baseline xl:gap-3">
+                          <span className="text-xl xl:text-3xl 2xl:text-4xl font-medium tracking-wider uppercase leading-tight">
+                            {prayer.name}
+                          </span>
+                          <span className="text-lg xl:text-2xl 2xl:text-3xl font-serif opacity-90">
+                            {prayer.arabic}
+                          </span>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      <div className="text-center relative">
+                        <div className="absolute left-0 top-0 h-full w-px bg-gray-300 opacity-30"></div>
+                        <span className="text-2xl xl:text-4xl 2xl:text-6xl font-light tracking-wide tabular-nums">
+                          {formatTimeWithSmallPeriod(prayer.start)}
+                        </span>
+                      </div>
+                      <div className="text-center relative">
+                        <div className="absolute left-0 top-0 h-full w-px bg-gray-300 opacity-30"></div>
+                        <span className="text-2xl xl:text-4xl 2xl:text-6xl font-bold tracking-wide tabular-nums">
+                          {formatTimeWithSmallPeriod(prayer.iqamah)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:flex lg:flex-col lg:w-80 xl:w-[34rem] space-y-6">
-              {/* Dates */}
-              <DateSection
-                hijriDate={hijriDate || ""}
-                gregorianDate={gregorianDate || ""}
+      {/* Right Sidebar */}
+      <div className="flex flex-col w-80 lg:w-96 xl:w-[28rem] 2xl:w-[32rem] bg-gradient-to-br from-theme via-theme-gradient to-theme text-white relative overflow-hidden rounded-4xl">
+        {/* Background pattern with opacity */}
+        <div
+          className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage: 'url("/pattern8.jpg")',
+            backgroundSize: "100%",
+            backgroundPosition: "center",
+            mixBlendMode: "overlay",
+          }}
+        />
+
+        {/* Content container to ensure it appears above the background */}
+        <div className="relative z-10 flex flex-col h-full w-full py-3 lg:py-4 xl:py-6">
+          {/* Logo Section - Optimized size */}
+          <div className="flex flex-col justify-center items-center py-3 lg:py-4 px-4 lg:px-6 xl:px-8 flex-shrink-0">
+            <div className="w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden p-2">
+              <img
+                src={masjid?.logo || "/logo.png"}
+                alt="Masjid Logo"
+                className="w-full h-full object-contain"
               />
+            </div>
+          </div>
 
-              <hr className="border-gray-300" />
+          {/* Current Time Section - Primary focus */}
+          <div className="flex-[4] flex flex-col justify-center py-2 lg:py-3 xl:py-4 px-4 lg:px-6 xl:px-8 text-center min-h-0">
+            <TimeSection nextEvent={nextEvent} countdown={countdown} />
+          </div>
 
-              {/* Current Time */}
-              <TimeSection
-                nextEvent={nextEvent}
-                countdown={countdown}
-              />
-
-              <hr className="border-gray-300" />
-
-              {/* Jumu'ah */}
-              <div className="text-center">
-                <Swiper {...SWIPER_SETTINGS}>
-                  {jummahPrayerTimes &&
-                    jummahPrayerTimes.map((session, index) => (
-                      <SwiperSlide key={index} className="h-full">
-                        <div className="flex flex-col justify-between h-full">
-                          <div className="text-center">
-                            <h3 className="text-xl xl:text-3xl font-bold text-gray-800 tracking-wider mb-4 uppercase">
-                              {jummahPrayerTimes.length > 1
-                                ? `Jumaah Session ${index + 1}`
-                                : "Jumaah جمعة"}
-                            </h3>
+          {/* Jummah Times Section - Balanced presence */}
+          {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
+            <div className="flex-[3] flex flex-col justify-center px-4 lg:px-6 xl:px-8 py-2 lg:py-3 min-h-0">
+              <div className="w-full">
+                <Swiper {...SWIPER_SETTINGS} style={{ height: "auto" }}>
+                  {jummahPrayerTimes?.map((session, index) => (
+                    <SwiperSlide key={index}>
+                      <div className="text-center bg-white/15 rounded-xl lg:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
+                        {/* Card Header */}
+                        <div className="px-3 lg:px-4 xl:px-5 pt-3 lg:pt-4 pb-2 lg:pb-3 border-b border-white/20">
+                          <div className="text-base lg:text-lg xl:text-xl 2xl:text-xl font-bold uppercase tracking-wider">
+                            {jummahPrayerTimes.length === 1
+                              ? "Jumu'ah"
+                              : `Jumu'ah ${index + 1}`}
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <div className="text-sm xl:text-md font-semibold uppercase text-gray-600 tracking-wider mb-2">
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="px-3 lg:px-4 xl:px-5 py-3 lg:py-4">
+                          <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                            <div className="text-center">
+                              <div className="text-xs lg:text-sm font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
                                 Starts
                               </div>
-                              <div className="text-xl xl:text-4xl font-light text-gray-800">
-                                {session.start}
+                              <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-2xl font-bold">
+                                {formatTimeWithSmallPeriod(session.start)}
                               </div>
                             </div>
-                            <div>
-                              <div className="text-sm xl:text-md font-semibold uppercase text-gray-600 tracking-wider mb-2">
+
+                            <div className="text-center">
+                              <div className="text-xs lg:text-sm font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
                                 Khutbah
                               </div>
-                              <div className="text-xl xl:text-4xl font-light text-gray-800">
-                                {session.khutbah}
+                              <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-2xl font-bold">
+                                {formatTimeWithSmallPeriod(session.khutbah)}
                               </div>
-                            </div>
-                          </div>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                </Swiper>
-              </div>
-
-              <hr className="border-gray-300" />
-
-              {/* Bottom Section */}
-              <div className="flex-1 flex items-center justify-center">
-                {/* Logo */}
-                <div className="w-40 h-40 xl:w-64 xl:h-64">
-                  <img
-                    src={masjid?.logo || "/logo.png"}
-                    alt="Masjid Logo"
-                    className="w-full h-full object-contain opacity-80"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Jumu'ah - Shows after prayer table on mobile */}
-            <div className="lg:hidden bg-gray-50 rounded-lg p-4">
-              <Swiper {...SWIPER_SETTINGS}>
-                {jummahPrayerTimes &&
-                  jummahPrayerTimes.map((session, index) => (
-                    <SwiperSlide key={index} className="h-full">
-                      <div className="flex flex-col justify-between h-full">
-                        <div className="text-center">
-                          <h3 className="text-lg font-bold text-gray-800 text-center mb-3">
-                            {jummahPrayerTimes.length > 1
-                              ? `Jumaah ${index + 1}`
-                              : "Jumaah جمعة"}
-                          </h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                            <div className="text-sm font-bold uppercase text-gray-600 mb-1">
-                              Starts
-                            </div>
-                            <div className="text-lg font-light text-gray-800">
-                              {session.start}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-sm font-bold uppercase text-gray-600 mb-1">
-                              Khutbah
-                            </div>
-                            <div className="text-lg font-light text-gray-800">
-                              {session.khutbah}
                             </div>
                           </div>
                         </div>
                       </div>
                     </SwiperSlide>
                   ))}
-              </Swiper>
-            </div>
-
-            {/* Mobile Bottom Section */}
-            <div className="lg:hidden flex items-center justify-between pt-4">
-              <div className="w-24 h-24">
-                <img
-                  src="/logo.png"
-                  alt="Masjid Logo"
-                  className="w-full h-full object-contain opacity-80"
-                />
+                </Swiper>
               </div>
             </div>
+          )}
+
+          {/* Dates Section - Compact but prominent */}
+          <div className="flex-[2] flex flex-col justify-center py-3 lg:py-4 px-4 lg:px-6 xl:px-8 text-center min-h-0">
+            <DateSection
+              hijriDate={hijriDate || ""}
+              gregorianDate={gregorianDate || ""}
+            />
           </div>
         </div>
       </div>
