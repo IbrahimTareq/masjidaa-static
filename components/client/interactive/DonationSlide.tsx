@@ -123,7 +123,7 @@ export default function DonationSlide({
         >
           <div className="text-center">
             <h1
-              className="font-bold text-gray-900 leading-tight break-words mb-[2vh]"
+              className="font-bold text-gray-900 leading-tight break-words mb-[2vh] truncate"
               style={{
                 fontSize: "clamp(1.75rem, 4vw, 4rem)",
               }}

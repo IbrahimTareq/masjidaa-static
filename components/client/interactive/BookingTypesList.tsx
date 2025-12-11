@@ -152,5 +152,6 @@ export const BookingTypesList: React.FC<BookingTypesListProps> = ({
   );
 };
 
+export { BookingTypeCard };
 export default BookingTypesList;
 
