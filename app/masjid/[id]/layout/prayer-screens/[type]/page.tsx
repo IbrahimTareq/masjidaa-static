@@ -3,6 +3,7 @@ import Theme2 from "@/app/masjid/[id]/prayer-screens/[type]/theme2/theme2";
 import Theme3 from "@/app/masjid/[id]/prayer-screens/[type]/theme3/theme3";
 import Theme4 from "@/app/masjid/[id]/prayer-screens/[type]/theme4/theme4";
 import Theme5 from "@/app/masjid/[id]/prayer-screens/[type]/theme5/theme5";
+import Theme6 from "@/app/masjid/[id]/prayer-screens/[type]/theme6/theme6";
 import { getServerPrayerData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import PrayerScreens from "./prayer-screens";
 
@@ -26,6 +27,8 @@ export default async function Page({
     prayerScreen = <Theme4 formattedData={prayerData} />;
   } else if (type === "theme5") {
     prayerScreen = <Theme5 formattedData={prayerData} />;
+  } else if (type === "theme6") {
+    prayerScreen = <Theme6 formattedData={prayerData} />;
   }
 
   if (prayerScreen) {

@@ -4,15 +4,36 @@ interface LayoutWithHeaderProps {
   children: React.ReactNode;
   headerTitle: string;
   showHeader?: boolean;
+  dates?: {
+    hijri: string;
+    gregorian: string;
+  };
 }
 
-const Header = ({ title }: { title: string }) => {
+const Header = ({ title, dates }: { title: string; dates?: { hijri: string; gregorian: string } }) => {
   const masjid = useMasjidContext();
 
   return (
     <header className={`grid grid-cols-3 items-center gap-4 flex-shrink-0`}>
-      {/* Empty space for balance */}
-      <div></div>
+      {/* Dates section (conditionally rendered) */}
+      <div className="flex flex-col justify-center pl-4 sm:pl-6 lg:pl-8">
+        {dates ? (
+          <div className="space-y-1">
+            <div className="space-y-1">
+              <div
+                className="font-semibold text-gray-900 text-xs sm:text-sm lg:text-base"
+              >
+                {dates.hijri}
+              </div>
+              <div
+                className="font-medium text-gray-600 text-xs sm:text-sm"
+              >
+                {dates.gregorian}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
 
       {/* Centered Title */}
       <div className="flex items-center justify-center">
@@ -44,13 +65,14 @@ const LayoutWithHeader = ({
   children,
   headerTitle,
   showHeader = true,
+  dates,
 }: LayoutWithHeaderProps) => {
   return (
     <div className="font-montserrat h-full overflow-hidden">
       <div className="w-full mx-auto h-full relative overflow-hidden">
         <div className="bg-white h-full flex flex-col overflow-hidden">
           <div className={showHeader ? "mb-6 sm:mb-8 flex-shrink-0" : "pt-8 flex-shrink-0"}>
-            {showHeader && <Header title={headerTitle} />}
+            {showHeader && <Header title={headerTitle} dates={dates} />}
           </div>
 
           {/* Page content */}

@@ -4,6 +4,7 @@ import Theme2 from "./theme2/theme2";
 import Theme3 from "./theme3/theme3";
 import Theme4 from "./theme4/theme4";
 import Theme5 from "./theme5/theme5";
+import Theme6 from "./theme6/theme6";
 
 export default async function Page({
   params,
@@ -24,6 +25,8 @@ export default async function Page({
     return <Theme4 formattedData={prayerData} />;
   } else if (type === "theme5") {
     return <Theme5 formattedData={prayerData} />;
+  } else if (type === "theme6") {
+    return <Theme6 formattedData={prayerData} />;
   }
 
   return <div>Not found</div>;

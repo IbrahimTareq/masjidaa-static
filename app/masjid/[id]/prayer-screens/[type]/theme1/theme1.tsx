@@ -16,7 +16,7 @@ export default function PrayerClient({
 }: {
   formattedData: FormattedData;
 }) {
-  const { dailyPrayerTimes, shurq, jummahPrayerTimes, prayerInfo } =
+  const { dailyPrayerTimes, shurq, jummahPrayerTimes, prayerInfo, hijriDate, gregorianDate } =
     formattedData;
   const masjid = useMasjidContext();
   const config = useDateTimeConfig();
@@ -25,7 +25,13 @@ export default function PrayerClient({
   const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
   return (
-    <LayoutWithHeader headerTitle={masjid?.name || "Masjid"}>
+    <LayoutWithHeader
+      headerTitle={masjid?.name || "Masjid"}
+      dates={{
+        hijri: hijriDate,
+        gregorian: gregorianDate,
+      }}
+    >
       <div className="h-full flex flex-col">
         {/* Container with rounded background */}
         <div
@@ -43,97 +49,100 @@ export default function PrayerClient({
               paddingTop: 'clamp(0.5rem, 1vh, 1rem)',
             }}
           >
-            {/* Clock Section */}
-            <section
-              className="text-center"
-              style={{
-                marginBottom: 'clamp(1.5rem, 2vh, 2.5rem)',
-              }}
-            >
-              {/* Main Clock */}
-              <div
-                className="flex items-baseline justify-center"
-                style={{
-                  gap: 'clamp(0.5rem, 1vw, 1rem)',
-                  marginBottom: 'clamp(0.75rem, 1vh, 1rem)',
-                }}
-              >
-                <span
-                  className="font-medium text-black tabular-nums leading-none"
+            {/* Time Header - Clean 2-column layout */}
+            <header className="mb-8">
+              <div className="bg-white rounded-2xl overflow-hidden">
+                <div
+                  className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200"
                   style={{
-                    fontSize: 'clamp(3.5rem, 8vw, 10rem)',
+                    minHeight: 'clamp(180px, 22vh, 250px)',
                   }}
                 >
-                  {formatCurrentTime({
-                    config: {
-                      timeZone: config.timeZone,
-                      is12Hour: config.is12Hour,
-                    },
-                  })}
-                </span>
-              </div>
+                  {/* Current Time Section */}
+                  <div className="flex flex-col justify-center text-right p-6 lg:p-8">
+                    <div
+                      className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                      style={{
+                        fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                      }}
+                    >
+                      Current Time
+                    </div>
+                    <div
+                      className="font-bold text-gray-900 tabular-nums"
+                      style={{
+                        fontSize: 'clamp(3.5rem, 7vw, 6rem)',
+                        lineHeight: '1',
+                      }}
+                    >
+                      {formatCurrentTime({
+                        config: {
+                          timeZone: config.timeZone,
+                          is12Hour: config.is12Hour,
+                        },
+                      })}
+                    </div>
+                  </div>
 
-              {/* Next Prayer Info */}
-              <div
-                style={{
-                  marginBottom: 'clamp(0.5rem, 1vh, 0.75rem)',
-                }}
-              >
-                <div
-                  className="text-gray-400 font-medium uppercase tracking-wider"
-                  style={{
-                    fontSize: 'clamp(0.875rem, 1.2vw, 1.5rem)',
-                    marginBottom: 'clamp(0.5rem, 0.8vh, 0.75rem)',
-                  }}
-                >
-                  {nextEvent.prayer} {nextEvent.label} in
-                </div>
-                <div
-                  className="font-semibold text-black"
-                  style={{
-                    fontSize: 'clamp(1.875rem, 4vw, 4rem)',
-                  }}
-                >
-                  {countdown.hours !== "00" && (
-                    <>
-                      {countdown.hours}
+                  {/* Next Prayer Section */}
+                  <div className="flex flex-col justify-center text-left p-6 lg:p-8">
+                    <div
+                      className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                      style={{
+                        fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                      }}
+                    >
+                      <span className="text-theme font-bold">{nextEvent.prayer}</span> {nextEvent.label} in
+                    </div>
+                    <div
+                      className="font-bold text-gray-900 tabular-nums"
+                      style={{
+                        fontSize: 'clamp(3.5rem, 7vw, 6rem)',
+                        lineHeight: '1',
+                      }}
+                    >
+                      {countdown.hours !== "00" && (
+                        <>
+                          {countdown.hours}
+                          <span
+                            className="font-normal text-gray-600"
+                            style={{
+                              fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                            }}
+                          >
+                            HR
+                          </span>
+                          &nbsp;
+                        </>
+                      )}
+                      {countdown.minutes !== "00" && (
+                        <>
+                          {countdown.minutes}
+                          <span
+                            className="font-normal text-gray-600"
+                            style={{
+                              fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                            }}
+                          >
+                            MIN
+                          </span>
+                          &nbsp;
+                        </>
+                      )}
+                      {countdown.seconds}
                       <span
                         className="font-normal text-gray-600"
                         style={{
-                          fontSize: 'clamp(1rem, 1.4vw, 1.5rem)',
+                          fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
                         }}
                       >
-                        HR
+                        SEC
                       </span>
-                      &nbsp;
-                    </>
-                  )}
-                  {countdown.minutes !== "00" && (
-                    <>
-                      {countdown.minutes}
-                      <span
-                        className="font-normal text-gray-600"
-                        style={{
-                          fontSize: 'clamp(1rem, 1.4vw, 1.5rem)',
-                        }}
-                      >
-                        MINS
-                      </span>
-                      &nbsp;
-                    </>
-                  )}
-                  {countdown.seconds}
-                  <span
-                    className="font-normal text-gray-600"
-                    style={{
-                      fontSize: 'clamp(1rem, 1.4vw, 1.5rem)',
-                    }}
-                  >
-                    SEC
-                  </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </section>
+            </header>
 
             {/* Content Cards Section */}
             <section
