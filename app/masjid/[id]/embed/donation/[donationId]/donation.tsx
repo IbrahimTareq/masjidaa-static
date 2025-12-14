@@ -12,8 +12,10 @@ export default function Donation({
   const masjid = useMasjidContext();
 
   return (
-    <div className="bg-white text-black max-w-sm mx-auto font-montserrat">
-      <DonationComponent campaign={campaign} masjid={masjid} /> 
+    <div className="bg-white text-black font-montserrat min-h-[400px]">
+      <div className="max-w-sm mx-auto px-4 lg:px-0">
+        <DonationComponent campaign={campaign} masjid={masjid} />
+      </div>
     </div>
   );
 }

@@ -116,19 +116,14 @@ export default function PrayerClient({
     <div
       key={`${card.type}-${card.name}`}
       ref={activeCardRef}
-      className="flex-shrink-0 bg-white rounded-2xl border-4 border-green-500 shadow-lg transition-all duration-300"
+      className="flex-shrink-0 bg-white rounded-2xl border-4 border-theme transition-all duration-300"
       style={{
         width: 'clamp(300px, 24vw, 380px)',
-        height: 'clamp(220px, 17vh, 260px)',
+        height: 'clamp(270px, 20vh, 300px)',
         padding: 'clamp(1.5rem, 2vw, 2.5rem)',
       }}
     >
       <div className="flex flex-col gap-4 h-full">
-        {/* "Now" Badge - Top Left */}
-        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-semibold w-fit">
-          Now
-        </div>
-
         {/* Prayer Name - Horizontal */}
         <div className="flex items-center gap-3">
           <h3
@@ -157,7 +152,7 @@ export default function PrayerClient({
               <div
                 className="font-bold text-gray-900"
                 style={{
-                  fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+                  fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
                   lineHeight: '1.1',
                 }}
               >
@@ -179,7 +174,7 @@ export default function PrayerClient({
                 <div
                   className="font-bold text-gray-900"
                   style={{
-                    fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+                    fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
                     lineHeight: '1.1',
                   }}
                 >
@@ -310,8 +305,8 @@ export default function PrayerClient({
                 <div
                   className="font-bold text-gray-900 tabular-nums"
                   style={{
-                    fontSize: 'clamp(3.5rem, 7vw, 6rem)',
-                    lineHeight: '1',
+                    fontSize: 'clamp(3rem, 6vw, 5rem)',
+                    lineHeight: '1.1',
                   }}
                 >
                   {formatCurrentTime({
@@ -336,8 +331,8 @@ export default function PrayerClient({
                 <div
                   className="font-bold text-gray-900 tabular-nums"
                   style={{
-                    fontSize: 'clamp(3.5rem, 7vw, 6rem)',
-                    lineHeight: '1',
+                    fontSize: 'clamp(3rem, 6vw, 5rem)',
+                    lineHeight: '1.1',
                   }}
                 >
                   {countdown.hours !== "00" && (
@@ -346,7 +341,7 @@ export default function PrayerClient({
                       <span
                         className="font-normal text-gray-600"
                         style={{
-                          fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                         }}
                       >
                         HR
@@ -360,7 +355,7 @@ export default function PrayerClient({
                       <span
                         className="font-normal text-gray-600"
                         style={{
-                          fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                         }}
                       >
                         MIN
@@ -387,7 +382,7 @@ export default function PrayerClient({
         <div className="flex-1 flex items-center justify-center">
           <section
             ref={containerRef}
-            className="flex gap-6 overflow-x-auto max-w-full scrollbar-hide"
+            className="flex items-center gap-6 overflow-x-auto max-w-full scrollbar-hide"
             style={{
               scrollSnapType: 'x mandatory',
               WebkitOverflowScrolling: 'touch',

@@ -18,12 +18,14 @@ export default function BookingClient({
   }
 
   return (
-    <div className="bg-white text-black max-w-sm mx-auto font-montserrat">
-      <BookingTypeCard
-        bookingType={bookingType}
-        currency={masjid.local_currency}
-        slug={masjid.slug}
-      />
+    <div className="bg-white text-black font-montserrat min-h-[400px]">
+      <div className="max-w-sm mx-auto px-4 lg:px-0">
+        <BookingTypeCard
+          bookingType={bookingType}
+          currency={masjid.local_currency}
+          slug={masjid.slug}
+        />
+      </div>
     </div>
   );
 }

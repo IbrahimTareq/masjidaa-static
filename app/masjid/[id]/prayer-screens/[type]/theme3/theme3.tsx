@@ -38,10 +38,10 @@ const DateSection: React.FC<DateSectionProps> = ({
 }) => {
   return (
     <div className="text-center">
-      <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold mb-3 lg:mb-4 uppercase leading-tight">
+      <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold mb-2 lg:mb-3 uppercase leading-tight">
         {hijriDate}
       </div>
-      <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight">
+      <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold uppercase leading-tight">
         {gregorianDate}
       </div>
     </div>
@@ -51,14 +51,16 @@ const DateSection: React.FC<DateSectionProps> = ({
 interface TimeSectionProps {
   nextEvent: NextEvent;
   countdown: CountdownDisplay;
+  hijriDate: string;
+  gregorianDate: string;
 }
 
-const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown }) => {
+const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown, hijriDate, gregorianDate }) => {
   const config = useDateTimeConfig();
 
   return (
     <div className="text-center">
-      <div className="text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light mb-3 lg:mb-4 tracking-tight leading-none">
+      <div className="text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light mb-8 lg:mb-12 tracking-tight leading-none">
         {formatTimeWithSmallPeriod(
           formatCurrentTime({
             config: {
@@ -68,38 +70,48 @@ const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown }) => {
           })
         )}
       </div>
-      <div className="text-base lg:text-lg xl:text-2xl 2xl:text-3xl font-medium uppercase opacity-95">
-        <div className="flex flex-col items-center justify-center text-center gap-1 lg:gap-2">
-          <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight">
+      <div className="text-base lg:text-lg xl:text-2xl 2xl:text-3xl font-medium uppercase opacity-95 mb-8 lg:mb-12">
+        <div className="flex flex-col items-center justify-center text-center gap-2 lg:gap-3">
+          <div className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold uppercase leading-tight">
             {nextEvent.prayer} {nextEvent.label}
           </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-1 lg:gap-2 leading-tight">
+          <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-3 leading-tight">
             {countdown.hours !== "00" && (
-              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
                 {countdown.hours}
-                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
                   h
                 </span>
               </span>
             )}
             {countdown.minutes !== "00" && (
-              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
                 {countdown.minutes}
-                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
                   m
                 </span>
               </span>
             )}
             {countdown.seconds !== "00" && (
-              <span className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
                 {countdown.seconds}
-                <span className="text-sm lg:text-base xl:text-lg opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
                   s
                 </span>
               </span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Dates positioned below countdown */}
+      <div className="text-center">
+        <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold mb-2 lg:mb-3 uppercase leading-tight">
+          {hijriDate}
+        </div>
+        <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold uppercase leading-tight">
+          {gregorianDate}
         </div>
       </div>
     </div>
@@ -153,7 +165,7 @@ export default function PrayerClient({
             </div>
 
             {/* Prayer Rows */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col justify-center gap-2">
               {dailyPrayerTimes?.map((prayer) => {
                 return (
                   <div
@@ -162,28 +174,28 @@ export default function PrayerClient({
                       prayer.isActive
                         ? "bg-theme text-white"
                         : "bg-white text-gray-800"
-                    } px-6 py-6 xl:py-8 flex-1 flex items-center min-h-0 rounded-xl`}
+                    } px-6 py-4 xl:py-6 flex items-center min-h-0 rounded-xl`}
                   >
                     <div className="grid grid-cols-3 gap-6 items-center w-full">
                       <div className="text-left">
                         <div className="flex flex-col xl:flex-row xl:items-baseline xl:gap-3">
-                          <span className="text-xl xl:text-3xl 2xl:text-4xl font-medium tracking-wider uppercase leading-tight">
+                          <span className="text-2xl xl:text-4xl 2xl:text-5xl font-medium tracking-wider uppercase leading-tight">
                             {prayer.name}
                           </span>
-                          <span className="text-lg xl:text-2xl 2xl:text-3xl font-serif opacity-90">
+                          <span className="text-xl xl:text-3xl 2xl:text-4xl font-serif font-bold opacity-90">
                             {prayer.arabic}
                           </span>
                         </div>
                       </div>
                       <div className="text-center relative">
                         <div className="absolute left-0 top-0 h-full w-px bg-gray-300 opacity-30"></div>
-                        <span className="text-2xl xl:text-4xl 2xl:text-6xl font-light tracking-wide tabular-nums">
+                        <span className="text-3xl xl:text-5xl 2xl:text-7xl font-light tracking-wide tabular-nums">
                           {formatTimeWithSmallPeriod(prayer.start)}
                         </span>
                       </div>
                       <div className="text-center relative">
                         <div className="absolute left-0 top-0 h-full w-px bg-gray-300 opacity-30"></div>
-                        <span className="text-2xl xl:text-4xl 2xl:text-6xl font-bold tracking-wide tabular-nums">
+                        <span className="text-3xl xl:text-5xl 2xl:text-7xl font-bold tracking-wide tabular-nums">
                           {formatTimeWithSmallPeriod(prayer.iqamah)}
                         </span>
                       </div>
@@ -222,12 +234,17 @@ export default function PrayerClient({
             </div>
           </div>
 
-          {/* Current Time Section - Primary focus */}
-          <div className="flex-[4] flex flex-col justify-center py-2 lg:py-3 xl:py-4 px-4 lg:px-6 xl:px-8 text-center min-h-0">
-            <TimeSection nextEvent={nextEvent} countdown={countdown} />
+          {/* Current Time Section with Dates - Primary focus */}
+          <div className="flex-[5] flex flex-col justify-center py-2 lg:py-3 xl:py-4 px-4 lg:px-6 xl:px-8 text-center min-h-0">
+            <TimeSection
+              nextEvent={nextEvent}
+              countdown={countdown}
+              hijriDate={hijriDate || ""}
+              gregorianDate={gregorianDate || ""}
+            />
           </div>
 
-          {/* Jummah Times Section - Balanced presence */}
+          {/* Jummah Times Section - Moved to bottom */}
           {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
             <div className="flex-[3] flex flex-col justify-center px-4 lg:px-6 xl:px-8 py-2 lg:py-3 min-h-0">
               <div className="w-full">
@@ -237,7 +254,7 @@ export default function PrayerClient({
                       <div className="text-center bg-white/15 rounded-xl lg:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
                         {/* Card Header */}
                         <div className="px-3 lg:px-4 xl:px-5 pt-3 lg:pt-4 pb-2 lg:pb-3 border-b border-white/20">
-                          <div className="text-base lg:text-lg xl:text-xl 2xl:text-xl font-bold uppercase tracking-wider">
+                          <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase tracking-wider">
                             {jummahPrayerTimes.length === 1
                               ? "Jumu'ah"
                               : `Jumu'ah ${index + 1}`}
@@ -248,19 +265,19 @@ export default function PrayerClient({
                         <div className="px-3 lg:px-4 xl:px-5 py-3 lg:py-4">
                           <div className="grid grid-cols-2 gap-4 lg:gap-6">
                             <div className="text-center">
-                              <div className="text-xs lg:text-sm font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
+                              <div className="text-sm lg:text-base xl:text-lg font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
                                 Starts
                               </div>
-                              <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-2xl font-bold">
+                              <div className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold">
                                 {formatTimeWithSmallPeriod(session.start)}
                               </div>
                             </div>
 
                             <div className="text-center">
-                              <div className="text-xs lg:text-sm font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
+                              <div className="text-sm lg:text-base xl:text-lg font-semibold mb-1 lg:mb-2 opacity-80 uppercase tracking-wide">
                                 Khutbah
                               </div>
-                              <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-2xl font-bold">
+                              <div className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold">
                                 {formatTimeWithSmallPeriod(session.khutbah)}
                               </div>
                             </div>
@@ -273,14 +290,6 @@ export default function PrayerClient({
               </div>
             </div>
           )}
-
-          {/* Dates Section - Compact but prominent */}
-          <div className="flex-[2] flex flex-col justify-center py-3 lg:py-4 px-4 lg:px-6 xl:px-8 text-center min-h-0">
-            <DateSection
-              hijriDate={hijriDate || ""}
-              gregorianDate={gregorianDate || ""}
-            />
-          </div>
         </div>
       </div>
     </div>

@@ -60,7 +60,7 @@ export default function PrayersCalendar({
   });
 
   return (
-    <div className="bg-white text-black font-montserrat">
+    <div className="bg-white text-black font-montserrat min-h-[600px]">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-4 sm:py-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8">
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 md:mb-0 text-center md:text-left">

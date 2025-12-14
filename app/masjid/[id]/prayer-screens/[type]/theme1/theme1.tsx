@@ -59,7 +59,7 @@ export default function PrayerClient({
                   }}
                 >
                   {/* Current Time Section */}
-                  <div className="flex flex-col justify-center text-right p-6 lg:p-8">
+                  <div className="flex flex-col justify-center text-center p-6 lg:p-8">
                     <div
                       className="text-gray-500 font-medium uppercase tracking-wide mb-2"
                       style={{
@@ -71,8 +71,8 @@ export default function PrayerClient({
                     <div
                       className="font-bold text-gray-900 tabular-nums"
                       style={{
-                        fontSize: 'clamp(3.5rem, 7vw, 6rem)',
-                        lineHeight: '1',
+                        fontSize: 'clamp(3rem, 6vw, 5rem)',
+                        lineHeight: '1.1',
                       }}
                     >
                       {formatCurrentTime({
@@ -85,7 +85,7 @@ export default function PrayerClient({
                   </div>
 
                   {/* Next Prayer Section */}
-                  <div className="flex flex-col justify-center text-left p-6 lg:p-8">
+                  <div className="flex flex-col justify-center text-center p-6 lg:p-8">
                     <div
                       className="text-gray-500 font-medium uppercase tracking-wide mb-2"
                       style={{
@@ -97,8 +97,8 @@ export default function PrayerClient({
                     <div
                       className="font-bold text-gray-900 tabular-nums"
                       style={{
-                        fontSize: 'clamp(3.5rem, 7vw, 6rem)',
-                        lineHeight: '1',
+                        fontSize: 'clamp(3rem, 6vw, 5rem)',
+                        lineHeight: '1.1',
                       }}
                     >
                       {countdown.hours !== "00" && (
@@ -107,7 +107,7 @@ export default function PrayerClient({
                           <span
                             className="font-normal text-gray-600"
                             style={{
-                              fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                              fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                             }}
                           >
                             HR
@@ -121,7 +121,7 @@ export default function PrayerClient({
                           <span
                             className="font-normal text-gray-600"
                             style={{
-                              fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                              fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                             }}
                           >
                             MIN
@@ -133,7 +133,7 @@ export default function PrayerClient({
                       <span
                         className="font-normal text-gray-600"
                         style={{
-                          fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                         }}
                       >
                         SEC
