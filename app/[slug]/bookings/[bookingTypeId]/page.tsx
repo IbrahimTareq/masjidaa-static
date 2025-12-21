@@ -175,7 +175,7 @@ export default async function BookingTypePage({ params }: PageProps) {
   const bookingTypeDTO: BookingTypeDTO = {
     id: bookingType.id,
     name: bookingType.name,
-    price: bookingType.price,
+    price: bookingType.booking_fee,
     duration_minutes: bookingType.duration_minutes,
     buffer_minutes: bookingType.buffer_minutes,
     long_description: bookingType.long_description,

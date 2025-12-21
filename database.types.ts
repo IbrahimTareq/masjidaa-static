@@ -306,6 +306,8 @@ export type Database = {
       }
       booking_types: {
         Row: {
+          bank_account_id: string | null
+          booking_fee: number | null
           booking_form_id: string | null
           buffer_minutes: number
           created_at: string | null
@@ -317,11 +319,12 @@ export type Database = {
           max_advance_booking_days: number | null
           min_advance_booking_hours: number | null
           name: string
-          price: number | null
           short_description: string
           updated_at: string | null
         }
         Insert: {
+          bank_account_id?: string | null
+          booking_fee?: number | null
           booking_form_id?: string | null
           buffer_minutes?: number
           created_at?: string | null
@@ -333,11 +336,12 @@ export type Database = {
           max_advance_booking_days?: number | null
           min_advance_booking_hours?: number | null
           name: string
-          price?: number | null
           short_description: string
           updated_at?: string | null
         }
         Update: {
+          bank_account_id?: string | null
+          booking_fee?: number | null
           booking_form_id?: string | null
           buffer_minutes?: number
           created_at?: string | null
@@ -349,7 +353,6 @@ export type Database = {
           max_advance_booking_days?: number | null
           min_advance_booking_hours?: number | null
           name?: string
-          price?: number | null
           short_description?: string
           updated_at?: string | null
         }
@@ -574,6 +577,7 @@ export type Database = {
           resend_id: string | null
           stripe_payment_id: string | null
           stripe_receipt_url: string | null
+          transfer_amount: number | null
         }
         Insert: {
           amount: number
@@ -595,6 +599,7 @@ export type Database = {
           resend_id?: string | null
           stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
+          transfer_amount?: number | null
         }
         Update: {
           amount?: number
@@ -616,6 +621,7 @@ export type Database = {
           resend_id?: string | null
           stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
+          transfer_amount?: number | null
         }
         Relationships: [
           {

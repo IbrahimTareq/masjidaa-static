@@ -19,7 +19,7 @@ const BookingTypeCard: React.FC<BookingTypeCardProps> = ({
   slug,
 }) => {
   const duration = formatDurationForDisplay(bookingType.duration_minutes || 30);
-  const hasPrice = bookingType.price && bookingType.price > 0;
+  const hasPrice = bookingType.booking_fee && bookingType.booking_fee > 0;
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
@@ -34,7 +34,7 @@ const BookingTypeCard: React.FC<BookingTypeCardProps> = ({
               <div className="text-right">
                 <div className="text-2xl font-bold text-theme">
                   {formatCurrencyWithSymbol({
-                    amount: bookingType.price || 0,
+                    amount: bookingType.booking_fee || 0,
                     currency: currency,
                     decimals: 2,
                   })}

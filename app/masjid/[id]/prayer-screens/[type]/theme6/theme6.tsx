@@ -120,14 +120,14 @@ export default function PrayerClient({
       style={{
         width: 'clamp(300px, 24vw, 380px)',
         height: 'clamp(270px, 20vh, 300px)',
-        padding: 'clamp(1.5rem, 2vw, 2.5rem)',
+        padding: 'clamp(1.25rem, 1.5vw, 2rem)',
       }}
     >
       <div className="flex flex-col gap-4 h-full">
-        {/* Prayer Name - Horizontal */}
-        <div className="flex items-center gap-3">
+        {/* Prayer Name */}
+        <div className="flex items-center justify-center gap-3">
           <h3
-            className="font-bold text-gray-900"
+            className="font-bold text-gray-900 text-center"
             style={{
               fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
             }}
@@ -136,53 +136,45 @@ export default function PrayerClient({
           </h3>
         </div>
 
-        {/* Start and Iqamah Times */}
-        <div className="mt-auto">
-          <div className="grid grid-cols-2 gap-4">
-            {/* Start Time */}
-            <div>
-              <div
-                className="text-gray-600 font-medium uppercase tracking-wide"
-                style={{
-                  fontSize: 'clamp(0.875rem, 1.2vw, 1.125rem)',
-                }}
-              >
-                Starts
-              </div>
-              <div
-                className="font-bold text-gray-900"
-                style={{
-                  fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
-                  lineHeight: '1.1',
-                }}
-              >
-                {card.startTime}
-              </div>
-            </div>
-
-            {/* Iqamah Time */}
-            {card.iqamahTime && (
-              <div>
-                <div
-                  className="text-gray-600 font-medium uppercase tracking-wide"
-                  style={{
-                    fontSize: 'clamp(0.875rem, 1.2vw, 1.125rem)',
-                  }}
-                >
-                  {card.type === 'jummah' ? 'Khutbah' : 'Iqamah'}
-                </div>
-                <div
-                  className="font-bold text-gray-900"
-                  style={{
-                    fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
-                    lineHeight: '1.1',
-                  }}
-                >
-                  {card.iqamahTime}
-                </div>
-              </div>
-            )}
+        {/* Start and Iqamah Times - Stacked Vertically with Inline Labels */}
+        <div className="mt-auto flex flex-col gap-4">
+          {/* Start Time - Inline label */}
+          <div
+            className="font-bold text-gray-900 text-right"
+            style={{
+              fontSize: 'clamp(2rem, 3vw, 2.75rem)',
+              lineHeight: '1.1',
+            }}
+          >
+            <span 
+              className="text-gray-600 font-medium"
+              style={{
+                fontSize: 'clamp(1.25rem, 2vw, 1.75rem)',
+              }}
+            >
+              Start:
+            </span> {card.startTime}
           </div>
+
+          {/* Iqamah Time - Inline label */}
+          {card.iqamahTime && (
+            <div
+              className="font-bold text-gray-900 text-right"
+              style={{
+                fontSize: 'clamp(2rem, 3vw, 2.75rem)',
+                lineHeight: '1.1',
+              }}
+            >
+              <span 
+                className="text-gray-600 font-medium"
+                style={{
+                  fontSize: 'clamp(1.25rem, 2vw, 1.75rem)',
+                }}
+              >
+                {card.type === 'jummah' ? 'Khutbah:' : 'Iqamah:'}
+              </span> {card.iqamahTime}
+            </div>
+          )}
         </div>
       </div>
     </div>
