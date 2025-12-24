@@ -304,6 +304,69 @@ export type Database = {
           },
         ]
       }
+      booking_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string | null
+          currency: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          masjid_id: string
+          receipt_id: string | null
+          resend_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_receipt_url: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string | null
+          currency?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          masjid_id: string
+          receipt_id?: string | null
+          resend_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string | null
+          currency?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          masjid_id?: string
+          receipt_id?: string | null
+          resend_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_payments_masjid_id_fkey"
+            columns: ["masjid_id"]
+            isOneToOne: false
+            referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_types: {
         Row: {
           bank_account_id: string | null
@@ -378,17 +441,19 @@ export type Database = {
           admin_notes: string | null
           booking_date: string
           booking_form_id: string | null
+          booking_payment_id: string | null
           booking_type_id: string
           created_at: string | null
           data: Json
-          email: string | null
+          email: string
           end_time: string
           id: string
           masjid_id: string
-          name: string | null
+          name: string
           notes: string | null
-          phone: string | null
+          phone: string
           resend_id: string | null
+          session_expires_at: string | null
           start_time: string
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string | null
@@ -397,17 +462,19 @@ export type Database = {
           admin_notes?: string | null
           booking_date: string
           booking_form_id?: string | null
+          booking_payment_id?: string | null
           booking_type_id: string
           created_at?: string | null
           data: Json
-          email?: string | null
+          email: string
           end_time: string
           id?: string
           masjid_id: string
-          name?: string | null
+          name: string
           notes?: string | null
-          phone?: string | null
+          phone: string
           resend_id?: string | null
+          session_expires_at?: string | null
           start_time: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
@@ -416,17 +483,19 @@ export type Database = {
           admin_notes?: string | null
           booking_date?: string
           booking_form_id?: string | null
+          booking_payment_id?: string | null
           booking_type_id?: string
           created_at?: string | null
           data?: Json
-          email?: string | null
+          email?: string
           end_time?: string
           id?: string
           masjid_id?: string
-          name?: string | null
+          name?: string
           notes?: string | null
-          phone?: string | null
+          phone?: string
           resend_id?: string | null
+          session_expires_at?: string | null
           start_time?: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
@@ -437,6 +506,13 @@ export type Database = {
             columns: ["booking_form_id"]
             isOneToOne: false
             referencedRelation: "booking_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_booking_payment_id_fkey"
+            columns: ["booking_payment_id"]
+            isOneToOne: false
+            referencedRelation: "booking_payments"
             referencedColumns: ["id"]
           },
           {
@@ -707,6 +783,7 @@ export type Database = {
           masjid_id: string
           quantity: number
           resend_id: string | null
+          session_expires_at: string | null
           status: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at: string | null
         }
@@ -722,6 +799,7 @@ export type Database = {
           masjid_id: string
           quantity?: number
           resend_id?: string | null
+          session_expires_at?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }
@@ -737,6 +815,7 @@ export type Database = {
           masjid_id?: string
           quantity?: number
           resend_id?: string | null
+          session_expires_at?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
         }

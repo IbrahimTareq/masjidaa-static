@@ -314,24 +314,33 @@ export default function EventRegistration({
         }
         // For paid events, proceed to payment with the submission ID
         else if (isPaid) {
-          const amountInCents = Math.round(event.enrolment_fee! * quantity * 100);
+          try {
+            const amountInCents = Math.round(event.enrolment_fee! * quantity * 100);
 
-          const paymentData = await createEventPaymentIntentAction({
-            amount: amountInCents,
-            currency: masjid.local_currency.toLowerCase(),
-            eventId: event.id,
-            eventTitle: event.title,
-            masjidId: masjid.id,
-            stripeAccountId: bankAccount.stripe_account_id,
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
-            quantity: quantity,
-            formSubmissionId: result.submissionId,
-          });
+            const paymentData = await createEventPaymentIntentAction({
+              amount: amountInCents,
+              currency: masjid.local_currency.toLowerCase(),
+              eventId: event.id,
+              eventTitle: event.title,
+              masjidId: masjid.id,
+              stripeAccountId: bankAccount.stripe_account_id,
+              email: email,
+              firstName: firstName,
+              lastName: lastName,
+              quantity: quantity,
+              formSubmissionId: result.submissionId,
+            });
 
-          setClientSecret(paymentData.client_secret);
-          setCurrentStep("payment");
+            setClientSecret(paymentData.client_secret);
+            setCurrentStep("payment");
+          } catch (paymentIntentError) {
+            // If payment intent creation fails, cancel the submission
+            if (submissionId) {
+              await updateEventFormSubmissionStatusAction(submissionId, "cancelled");
+              setSubmissionId(null);
+            }
+            throw paymentIntentError; // Re-throw to be caught by outer catch
+          }
         }
       } else {
         // For events without forms, just show success
@@ -347,6 +356,8 @@ export default function EventRegistration({
       if (currentStatus?.isFull) {
         setCurrentStep("initial");
       }
+      // Stay on form step to show error
+      setCurrentStep("form");
     } finally {
       setIsLoading(false);
     }

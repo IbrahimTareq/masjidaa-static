@@ -25,9 +25,11 @@ async function validateEnrollmentAvailability(
   }
 
   // Sum the quantity field to get total enrollments (not just submission count)
+  // Only count registered submissions and payment_pending submissions that haven't expired
+  const now = new Date().toISOString();
   const { data: submissions, error: submissionsError } = await supabase
     .from("event_form_submissions")
-    .select("quantity")
+    .select("quantity, status, session_expires_at")
     .eq("event_id", eventId);
 
   if (submissionsError) {
@@ -35,8 +37,17 @@ async function validateEnrollmentAvailability(
     return { available: false, error: "Failed to verify enrollment availability" };
   }
 
+  // Filter out expired payment_pending submissions
+  const activeSubmissions = submissions?.filter(sub => {
+    if (sub.status === "payment_pending" && sub.session_expires_at) {
+      return new Date(sub.session_expires_at) > new Date(now);
+    }
+    // Include registered and confirmed submissions
+    return sub.status === "registered" || sub.status === "confirmed";
+  }) || [];
+
   // Sum all quantities to get total number of people enrolled
-  const currentEnrollments = submissions?.reduce((sum, sub) => sum + (sub.quantity || 0), 0) || 0;
+  const currentEnrollments = activeSubmissions.reduce((sum, sub) => sum + (sub.quantity || 0), 0);
   const availableSlots = event.enrolment_limit - currentEnrollments;
 
   // Check if there's enough space for the requested quantity
@@ -68,6 +79,11 @@ export async function submitEventRegistration(
     return { success: false, error: validation.error };
   }
 
+  // Set session expiration time (30 minutes from now) for payment_pending submissions
+  const sessionExpiresAt = status === "payment_pending"
+    ? new Date(Date.now() + 30 * 60 * 1000).toISOString()
+    : null;
+
   // Submit the registration
   const supabase = await createClient();
   const { data: submission, error } = await supabase
@@ -82,6 +98,7 @@ export async function submitEventRegistration(
       quantity: quantity,
       data: data,
       status: status,
+      session_expires_at: sessionExpiresAt,
     })
     .select("id")
     .single();
@@ -149,9 +166,16 @@ export async function updateEventFormSubmissionStatus(
   status: "confirmed" | "cancelled" | "registered" | "payment_pending"
 ) {
   const supabase = await createClient();
+  
+  // Clear session_expires_at when status changes to registered (payment successful)
+  const updateData: { status: typeof status; session_expires_at?: null } = { status };
+  if (status === "registered") {
+    updateData.session_expires_at = null;
+  }
+  
   const { error } = await supabase
     .from("event_form_submissions")
-    .update({ status })
+    .update(updateData)
     .eq("id", submissionId);
 
   if (error) {

@@ -6,6 +6,8 @@ export const getBookingsByTypeId = cache(async (
   bookingTypeId: string
 ): Promise<Tables<"bookings">[]> => {
   const supabase = await createClient();
+  const now = new Date().toISOString();
+  
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
@@ -17,7 +19,16 @@ export const getBookingsByTypeId = cache(async (
     console.error("Error fetching bookings by type:", error);
     return [];
   }
-  return data || [];
+  
+  // Filter out expired pending bookings
+  const activeBookings = data?.filter(booking => {
+    if (booking.status === "pending" && booking.session_expires_at) {
+      return new Date(booking.session_expires_at) > new Date(now);
+    }
+    return true; // Include all confirmed bookings
+  }) || [];
+  
+  return activeBookings;
 });
 
 export const createBooking = async (
@@ -44,14 +55,16 @@ export const isTimeSlotBooked = async (
   endTime: string
 ): Promise<boolean> => {
   const supabase = await createClient();
+  const now = new Date().toISOString();
 
   // Check for overlapping bookings
+  // Include: confirmed bookings, completed bookings, and pending bookings that haven't expired
   const { data, error } = await supabase
     .from("bookings")
-    .select("id")
+    .select("id, status, session_expires_at")
     .eq("booking_type_id", bookingTypeId)
     .eq("booking_date", date)
-    .in("status", ["pending", "confirmed"])
+    .in("status", ["pending", "confirmed", "completed"])
     .or(`and(start_time.lt.${endTime},end_time.gt.${startTime})`);
 
   if (error) {
@@ -59,7 +72,15 @@ export const isTimeSlotBooked = async (
     return true; // Assume booked on error for safety
   }
 
-  return (data?.length || 0) > 0;
+  // Filter out expired pending bookings
+  const activeBookings = data?.filter(booking => {
+    if (booking.status === "pending" && booking.session_expires_at) {
+      return new Date(booking.session_expires_at) > new Date(now);
+    }
+    return true; // Include all confirmed and completed bookings
+  }) || [];
+
+  return activeBookings.length > 0;
 };
 
 export const getBulkBookingStatusForTimeSlots = cache(
@@ -109,3 +130,62 @@ export const getBulkBookingStatusForTimeSlots = cache(
     return slotStatus;
   }
 );
+
+export async function createBookingPaymentIntent({
+  amount,
+  currency,
+  bookingTypeId,
+  bookingTypeName,
+  masjidId,
+  stripeAccountId,
+  email,
+  name,
+  phone,
+  bookingDate,
+  startTime,
+  endTime,
+  notes,
+}: {
+  amount: number;
+  currency: string;
+  bookingTypeId: string;
+  bookingTypeName?: string;
+  masjidId: string;
+  stripeAccountId?: string;
+  email: string;
+  name: string;
+  phone: string;
+  bookingDate: string;
+  startTime: string;
+  endTime: string;
+  notes?: string;
+}): Promise<{ client_secret: string }> {
+  const supabase = await createClient();
+  
+  // Prepare the request body with snake_case field names
+  const requestBody = {
+    amount,
+    currency,
+    booking_type_id: bookingTypeId,
+    booking_type_name: bookingTypeName,
+    masjid_id: masjidId,
+    stripe_account_id: stripeAccountId,
+    email,
+    name,
+    phone,
+    booking_date: bookingDate,
+    start_time: startTime,
+    end_time: endTime,
+    notes: notes || undefined,
+  };
+
+  const { data, error } = await supabase.functions.invoke(
+    "stripe-booking-payment",
+    {
+      body: requestBody,
+    }
+  );
+
+  if (error) throw error;
+  return data as { client_secret: string };
+}

@@ -4,6 +4,7 @@ import { getBookingsByTypeId } from "@/lib/server/services/bookings";
 import { getBookingTypeById } from "@/lib/server/services/bookingTypes";
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
+import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
 import { Metadata } from "next";
 import BookingClient from "./booking";
 
@@ -23,6 +24,7 @@ interface BookingTypeDTO {
   long_description: string | null;
   min_advance_booking_hours: number | null;
   max_advance_booking_days: number | null;
+  bank_account_id: string | null;
 }
 
 export const revalidate = 60;
@@ -158,11 +160,12 @@ export default async function BookingTypePage({ params }: PageProps) {
   }
 
   // Parallel fetch related data
-  const [availabilities, location, blackouts, existingBookings] = await Promise.all([
+  const [availabilities, location, blackouts, existingBookings, bankAccount] = await Promise.all([
     getBookingAvailabilitiesByTypeId(bookingTypeId),
     getMasjidLocationByMasjidId(masjid.id),
     getActiveBlackoutsByTypeId(bookingTypeId),
     getBookingsByTypeId(bookingTypeId),
+    bookingType.bank_account_id ? getMasjidBankAccountById(bookingType.bank_account_id) : Promise.resolve(null),
   ]);
 
   // Create optimized DTOs for client transfer
@@ -181,6 +184,7 @@ export default async function BookingTypePage({ params }: PageProps) {
     long_description: bookingType.long_description,
     min_advance_booking_hours: bookingType.min_advance_booking_hours,
     max_advance_booking_days: bookingType.max_advance_booking_days,
+    bank_account_id: bookingType.bank_account_id,
   };
 
   return (
@@ -192,6 +196,7 @@ export default async function BookingTypePage({ params }: PageProps) {
       existingBookings={existingBookings || []}
       location={location}
       slug={slug}
+      bankAccount={bankAccount}
     />
   );
 }

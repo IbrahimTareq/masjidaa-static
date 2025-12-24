@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Tables, TablesInsert } from "@/database.types";
-import { createBooking, isTimeSlotBooked } from "../services/bookings";
+import { createBooking, isTimeSlotBooked, createBookingPaymentIntent } from "../services/bookings";
 import { getBookingTypeById } from "../services/bookingTypes";
 import { isSlotAvailable, getAvailableSlots } from "../services/bookingAvailability";
 import {
@@ -22,6 +22,7 @@ export async function submitBookingAction(
   formData: BookingFormData & {
     booking_type_id: string;
     masjid_id: string;
+    status?: "pending" | "confirmed";
   }
 ): Promise<BookingActionResult> {
   try {
@@ -67,6 +68,14 @@ export async function submitBookingAction(
       };
     }
 
+    // Determine status: pending for paid bookings, confirmed for free bookings
+    const status = formData.status || "confirmed";
+
+    // Set session expiration time (30 minutes from now) for pending bookings
+    const sessionExpiresAt = status === "pending" 
+      ? new Date(Date.now() + 30 * 60 * 1000).toISOString()
+      : null;
+
     // Prepare booking data
     const bookingData: TablesInsert<"bookings"> = {
       masjid_id: formData.masjid_id,
@@ -77,13 +86,15 @@ export async function submitBookingAction(
       end_time: endTime,
       name: sanitizedData.name,
       email: sanitizedData.email,
-      phone: sanitizedData.phone || null,
+      phone: sanitizedData.phone,
       notes: sanitizedData.notes || null,
       admin_notes: null,
+      status: status,
+      session_expires_at: sessionExpiresAt,
       data: {
         name: sanitizedData.name,
         email: sanitizedData.email,
-        phone: sanitizedData.phone || null,
+        phone: sanitizedData.phone,
         notes: sanitizedData.notes || null,
       },
     };
@@ -267,3 +278,86 @@ export async function getBookingDetailsAction(
     };
   }
 }
+
+export async function createBookingPaymentIntentAction({
+  amount,
+  currency,
+  bookingTypeId,
+  bookingTypeName,
+  masjidId,
+  stripeAccountId,
+  email,
+  name,
+  phone,
+  bookingDate,
+  startTime,
+  endTime,
+  notes,
+}: {
+  amount: number;
+  currency: string;
+  bookingTypeId: string;
+  bookingTypeName?: string;
+  masjidId: string;
+  stripeAccountId?: string;
+  email: string;
+  name: string;
+  phone: string;
+  bookingDate: string;
+  startTime: string;
+  endTime: string;
+  notes?: string;
+}): Promise<{ client_secret: string }> {
+  return createBookingPaymentIntent({
+    amount,
+    currency,
+    bookingTypeId,
+    bookingTypeName,
+    masjidId,
+    stripeAccountId,
+    email,
+    name,
+    phone,
+    bookingDate,
+    startTime,
+    endTime,
+    notes,
+  });
+}
+
+export async function updateBookingStatusAction(
+  bookingId: string,
+  status: "pending" | "confirmed" | "cancelled" | "completed" | "no_show"
+): Promise<BookingActionResult> {
+  try {
+    const supabase = await createClient();
+    
+    // Clear session_expires_at when status changes to confirmed (payment successful)
+    const updateData: { status: typeof status; session_expires_at?: null } = { status };
+    if (status === "confirmed") {
+      updateData.session_expires_at = null;
+    }
+    
+    const { error } = await supabase
+      .from("bookings")
+      .update(updateData)
+      .eq("id", bookingId);
+
+    if (error) {
+      console.error("Error updating booking status:", error);
+      return {
+        success: false,
+        error: "Failed to update booking status",
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating booking status:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
+  }
+}
+

@@ -3,7 +3,7 @@ import { Tables } from "@/database.types";
 export interface BookingFormData {
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
   notes?: string;
   booking_date: string;
   start_time: string;
@@ -55,9 +55,11 @@ export function validateCompleteBookingForm(
     errors.email = "Email must be less than 255 characters";
   }
 
-  // Validate phone (optional)
+  // Validate phone (required)
   const phone = formData.phone?.trim();
-  if (phone) {
+  if (!phone) {
+    errors.phone = "Phone number is required";
+  } else {
     const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
     if (cleanPhone.length < 10) {
       errors.phone = "Phone number must be at least 10 digits";
@@ -146,7 +148,7 @@ export function sanitizeBookingFormData(formData: BookingFormData): BookingFormD
   return {
     name: formData.name.trim(),
     email: formData.email.trim().toLowerCase(),
-    phone: formData.phone?.trim() || undefined,
+    phone: formData.phone.trim(),
     notes: formData.notes?.trim() || undefined,
     booking_date: formData.booking_date,
     start_time: formData.start_time,

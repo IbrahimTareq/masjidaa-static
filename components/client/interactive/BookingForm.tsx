@@ -4,6 +4,13 @@ import { BookingFormData } from "@/utils/booking/validation";
 import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { AlertCircle, CreditCard, Mail, MessageSquare, Phone, User } from "lucide-react";
 import React, { useState } from "react";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 interface BookingTypeForForm {
   price?: number | null;
@@ -15,8 +22,11 @@ interface BookingFormProps {
   onSubmit: (data: BookingFormData) => void;
   errors: Record<string, string>;
   bookingType: BookingTypeForForm;
-  submitting: boolean;
+  isLoading: boolean;
   currency: string;
+  clientSecret?: string | null;
+  onPaymentSuccess?: () => void;
+  showPaymentForm?: boolean;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -25,8 +35,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
   onSubmit,
   errors,
   bookingType,
-  submitting,
+  isLoading,
   currency,
+  clientSecret,
+  onPaymentSuccess,
+  showPaymentForm = false,
 }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -44,7 +57,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
       return;
     }
 
-    onSubmit(formData);
+    // If payment form is not shown yet, just submit the form data
+    // The parent will handle showing the payment form
+    if (!showPaymentForm) {
+      onSubmit(formData);
+    }
   };
 
   const hasPrice = bookingType.price && bookingType.price > 0;
@@ -76,7 +93,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   errors.name ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your full name"
-                disabled={submitting}
+                disabled={isLoading}
                 required
               />
             </div>
@@ -103,7 +120,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your email address"
-                disabled={submitting}
+                disabled={isLoading}
                 required
               />
             </div>
@@ -115,7 +132,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           {/* Phone */}
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
+              Phone Number *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -130,15 +147,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   errors.phone ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your phone number"
-                disabled={submitting}
+                disabled={isLoading}
+                required
               />
             </div>
             {errors.phone && (
               <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
-              Optional - for appointment reminders
-            </p>
           </div>
         </div>
       </div>
@@ -161,7 +176,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               errors.notes ? 'border-red-300' : 'border-gray-300'
             }`}
             placeholder="Any special requirements or additional information..."
-            disabled={submitting}
+            disabled={isLoading}
           />
         </div>
         {errors.notes && (
@@ -172,12 +187,12 @@ const BookingForm: React.FC<BookingFormProps> = ({
         </p>
       </div>
 
-      {/* Payment Information (if applicable) */}
-      {hasPrice && (
+      {/* Payment Information (if applicable and not showing payment form yet) */}
+      {hasPrice && !showPaymentForm && (
         <div className="bg-gray-50 rounded-lg p-4">
           <h4 className="font-medium text-gray-900 mb-3 flex items-center">
             <CreditCard className="h-4 w-4 mr-2" />
-            Payment Information
+            Payment Required
           </h4>
           <div className="text-2xl font-bold text-theme mb-2">
             {formatCurrencyWithSymbol({
@@ -187,7 +202,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
             })}
           </div>
           <p className="text-sm text-gray-600">
-            Payment will be processed immediately upon booking confirmation.
+            Payment will be processed on the next step.
           </p>
         </div>
       )}
@@ -201,16 +216,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
             checked={acceptedTerms}
             onChange={(e) => setAcceptedTerms(e.target.checked)}
             className="mt-1 h-4 w-4 text-theme focus:ring-theme border-gray-300 rounded cursor-pointer"
-            disabled={submitting}
+            disabled={isLoading}
           />
           <label htmlFor="terms" className="text-sm text-gray-700">
             I agree to the booking terms and conditions. I understand that:
             <ul className="list-disc list-inside mt-2 space-y-1 text-xs text-gray-600">
               <li>I will arrive on time for my scheduled appointment</li>
               <li>I will notify the masjid if I need to cancel or reschedule</li>
-              {hasPrice && (
-                <li>Payment is required and refunds are subject to the masjid's policy</li>
-              )}
               <li>I will follow all masjid rules and guidelines during my visit</li>
             </ul>
           </label>
@@ -240,18 +252,20 @@ const BookingForm: React.FC<BookingFormProps> = ({
       <div className="pt-4">
         <button
           type="submit"
-          disabled={!acceptedTerms || submitting}
+          disabled={!acceptedTerms || isLoading}
           className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer ${
-            !acceptedTerms || submitting
+            !acceptedTerms || isLoading
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-theme text-white'
           }`}
         >
-          {submitting ? (
+          {isLoading ? (
             <div className="flex items-center justify-center space-x-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Submitting Booking...</span>
+              <span>Processing...</span>
             </div>
+          ) : hasPrice ? (
+            'Continue to Payment'
           ) : (
             'Confirm Booking'
           )}
@@ -264,5 +278,177 @@ const BookingForm: React.FC<BookingFormProps> = ({
     </form>
   );
 };
+
+// Payment Form Content Component (uses Stripe hooks inside Elements)
+function PaymentFormContent({
+  amount,
+  currency,
+  acceptedTerms,
+  onSuccess,
+}: {
+  amount: number;
+  currency: string;
+  acceptedTerms: boolean;
+  onSuccess: () => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  const handlePaymentSubmit = async () => {
+    if (!stripe || !elements || !acceptedTerms) {
+      return;
+    }
+
+    setIsProcessing(true);
+    setErrorMessage(undefined);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.href + "?payment=success",
+        },
+        redirect: "if_required",
+      });
+
+      if (error) {
+        setErrorMessage(error.message);
+        setIsProcessing(false);
+      } else {
+        onSuccess();
+      }
+    } catch (err) {
+      console.error("Payment error:", err);
+      setErrorMessage(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Payment Amount */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+          <CreditCard className="h-4 w-4 mr-2" />
+          Payment Information
+        </h4>
+        <div className="text-2xl font-bold text-theme mb-4">
+          {formatCurrencyWithSymbol({
+            amount: amount,
+            currency: currency,
+            decimals: 2,
+          })}
+        </div>
+      </div>
+
+      {/* Payment Element */}
+      <PaymentElement />
+
+      {/* Terms and Conditions */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="payment-terms"
+            checked={acceptedTerms}
+            disabled
+            className="mt-1 h-4 w-4 text-theme focus:ring-theme border-gray-300 rounded"
+          />
+          <label htmlFor="payment-terms" className="text-sm text-gray-700">
+            I agree to the booking terms and conditions. I understand that:
+            <ul className="list-disc list-inside mt-2 space-y-1 text-xs text-gray-600">
+              <li>I will arrive on time for my scheduled appointment</li>
+              <li>I will notify the masjid if I need to cancel or reschedule</li>
+              <li>I will follow all masjid rules and guidelines during my visit</li>
+            </ul>
+          </label>
+        </div>
+      </div>
+
+      {/* Payment Error */}
+      {errorMessage && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+            <div className="text-sm text-red-700">{errorMessage}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Submit Button */}
+      <div className="pt-4">
+        <button
+          type="button"
+          onClick={handlePaymentSubmit}
+          disabled={!acceptedTerms || isProcessing || !stripe || !elements}
+          className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer ${
+            !acceptedTerms || isProcessing || !stripe || !elements
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-theme text-white"
+          }`}
+        >
+          {isProcessing ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Processing Payment...</span>
+            </div>
+          ) : (
+            "Complete Payment"
+          )}
+        </button>
+      </div>
+
+      <div className="text-xs text-gray-500 text-center">
+        By completing this payment, you confirm that all information is accurate and complete.
+      </div>
+    </div>
+  );
+}
+
+// Separate Payment Step Component (exported for use in booking.tsx)
+export function BookingPaymentForm({
+  clientSecret,
+  amount,
+  currency,
+  onSuccess,
+}: {
+  clientSecret: string;
+  amount: number;
+  currency: string;
+  onSuccess: () => void;
+}) {
+  const stripePromise = React.useMemo(() => {
+    const pk = process.env.NEXT_PUBLIC_STRIPE_CONNECT_PUBLIC_KEY!;
+    return loadStripe(pk);
+  }, []);
+
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: "stripe" as const,
+      variables: {
+        colorPrimary:
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--theme-color")
+            .trim() || "#0c8c4d",
+      },
+    },
+  };
+
+  return (
+    <Elements stripe={stripePromise} options={options}>
+      <PaymentFormContent
+        amount={amount}
+        currency={currency}
+        acceptedTerms={true}
+        onSuccess={onSuccess}
+      />
+    </Elements>
+  );
+}
 
 export default BookingForm;

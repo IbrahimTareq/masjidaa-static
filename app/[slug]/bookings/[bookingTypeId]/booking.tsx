@@ -1,13 +1,15 @@
 "use client";
 
 import BookingCalendar from "@/components/client/interactive/BookingCalendar";
-import BookingForm from "@/components/client/interactive/BookingForm";
+import BookingForm, { BookingPaymentForm } from "@/components/client/interactive/BookingForm";
 import TimeSlotPicker from "@/components/client/interactive/TimeSlotPicker";
 import { Tables } from "@/database.types";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import {
   getAvailableSlotsAction,
   submitBookingAction,
+  createBookingPaymentIntentAction,
+  updateBookingStatusAction,
 } from "@/lib/server/actions/bookingActions";
 import { formatDurationForDisplay } from "@/utils/booking/availability";
 import {
@@ -35,6 +37,7 @@ interface BookingTypeDTO {
   long_description: string | null;
   min_advance_booking_hours: number | null;
   max_advance_booking_days: number | null;
+  bank_account_id: string | null;
 }
 
 interface BookingClientProps {
@@ -45,9 +48,10 @@ interface BookingClientProps {
   existingBookings: Tables<"bookings">[];
   location?: Tables<"masjid_locations"> | null;
   slug: string;
+  bankAccount?: Tables<"masjid_bank_accounts"> | null;
 }
 
-type BookingStep = "date" | "time" | "details" | "loading";
+type BookingStep = "date" | "time" | "details" | "payment" | "loading";
 
 interface TimeSlot {
   start_time: string;
@@ -63,6 +67,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
   existingBookings,
   location,
   slug,
+  bankAccount,
 }) => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<BookingStep>("date");
@@ -81,8 +86,11 @@ const BookingClient: React.FC<BookingClientProps> = ({
     start_time: "",
     end_time: "",
   });
-  const [submitting, setSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
 
   // Load available slots when date is selected
   useEffect(() => {
@@ -126,42 +134,106 @@ const BookingClient: React.FC<BookingClientProps> = ({
   };
 
   const handleFormSubmit = async (data: BookingFormData) => {
-    setSubmitting(true);
-    setCurrentStep("loading");
-    setErrors({});
+    setIsLoading(true);
+    setError(null);
 
     try {
       // Validate form
       const validation = validateCompleteBookingForm(data, bookingType);
       if (!validation.valid) {
         setErrors(validation.errors);
-        setCurrentStep("details");
-        setSubmitting(false);
+        setIsLoading(false);
         return;
       }
 
-      // Submit booking
+      const isPaid = hasPrice && bookingType.bank_account_id && bankAccount;
+
+      // Determine status based on whether payment is required
+      const status = isPaid ? "pending" : "confirmed";
+
+      // Always submit booking first, regardless of payment requirement
       const result = await submitBookingAction({
         ...data,
         booking_type_id: bookingType.id,
         masjid_id: masjid.id,
+        status: status,
       });
 
-      if (result.success && result.booking) {
-        // Redirect to success page
-        router.push(
-          `/${slug}/bookings/${bookingType.id}/success?bookingId=${result.booking.id}`
-        );
-      } else {
-        setErrors({ submit: result.error || "Failed to submit booking" });
-        setCurrentStep("details");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to submit booking");
       }
-    } catch (error) {
-      console.error("Booking submission error:", error);
-      setErrors({ submit: "An unexpected error occurred. Please try again." });
-      setCurrentStep("details");
+
+      // Store the booking ID for later use
+      setBookingId(result.booking!.id);
+
+      // For free bookings, redirect to success immediately
+      if (!isPaid) {
+        router.push(
+          `/${slug}/bookings/${bookingType.id}/success`
+        );
+      }
+      // For paid bookings, proceed to payment with the booking ID
+      else if (isPaid) {
+        try {
+          const amountInCents = Math.round(bookingType.price! * 100);
+          
+          const paymentData = await createBookingPaymentIntentAction({
+            amount: amountInCents,
+            currency: masjid.local_currency.toLowerCase(),
+            bookingTypeId: bookingType.id,
+            bookingTypeName: bookingType.name,
+            masjidId: masjid.id,
+            stripeAccountId: bankAccount.stripe_account_id,
+            email: data.email,
+            name: data.name,
+            phone: data.phone,
+            bookingDate: data.booking_date,
+            startTime: data.start_time,
+            endTime: data.end_time,
+            notes: data.notes,
+          });
+
+          setClientSecret(paymentData.client_secret);
+          setCurrentStep("payment");
+        } catch (paymentIntentError) {
+          // If payment intent creation fails, cancel the booking
+          if (bookingId) {
+            await updateBookingStatusAction(bookingId, "cancelled");
+            setBookingId(null);
+          }
+          throw paymentIntentError; // Re-throw to be caught by outer catch
+        }
+      }
+    } catch (err) {
+      console.error("Error submitting booking:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setCurrentStep("details"); // Stay on details step to show error
     } finally {
-      setSubmitting(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handlePaymentSuccess = async () => {
+    try {
+      // After successful payment, update the booking status to "confirmed"
+      if (bookingId) {
+        const result = await updateBookingStatusAction(bookingId, "confirmed");
+        
+        if (!result.success) {
+          console.error(
+            "Failed to update booking status after payment:",
+            result.error
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Error updating booking status after payment:", err);
+    } finally {
+      // Reset state and redirect to success page
+      setBookingId(null);
+      router.push(
+        `/${slug}/bookings/${bookingType.id}/success`
+      );
     }
   };
 
@@ -178,7 +250,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
 
   const { formatTime } = useDateTimeFormat();
   const duration = formatDurationForDisplay(bookingType.duration_minutes || 30);
-  const hasPrice = bookingType.price && bookingType.price > 0;
+  const hasPrice = bookingType.price !== null && bookingType.price !== undefined && bookingType.price > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -202,7 +274,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
                 <div className="text-right">
                   <div className="text-2xl font-bold text-theme">
                     {formatCurrencyWithSymbol({
-                      amount: bookingType.price || 0,
+                      amount: bookingType.price!,
                       currency: masjid.local_currency,
                       decimals: 2,
                     })}
@@ -236,7 +308,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
                   <CreditCard className="h-4 w-4" />
                   <span>
                     {formatCurrencyWithSymbol({
-                      amount: bookingType.price || 0,
+                      amount: bookingType.price!,
                       currency: masjid.local_currency,
                       decimals: 2,
                     })}
@@ -254,7 +326,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
               className={`flex items-center space-x-2 ${
                 currentStep === "date"
                   ? "text-theme"
-                  : ["time", "details", "loading"].includes(currentStep)
+                  : ["time", "details", "payment", "loading"].includes(currentStep)
                   ? "text-theme"
                   : "text-gray-400"
               }`}
@@ -263,7 +335,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep === "date"
                     ? "bg-theme text-white"
-                    : ["time", "details", "loading"].includes(currentStep)
+                    : ["time", "details", "payment", "loading"].includes(currentStep)
                     ? "bg-theme text-white"
                     : "bg-gray-200"
                 }`}
@@ -276,7 +348,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
             <div className="w-12 h-0.5 bg-gray-200">
               <div
                 className={`h-full transition-all duration-300 ${
-                  ["time", "details", "loading"].includes(currentStep)
+                  ["time", "details", "payment", "loading"].includes(currentStep)
                     ? "bg-theme w-full"
                     : "bg-gray-200 w-0"
                 }`}
@@ -287,7 +359,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
               className={`flex items-center space-x-2 ${
                 currentStep === "time"
                   ? "text-theme"
-                  : ["details", "loading"].includes(currentStep)
+                  : ["details", "payment", "loading"].includes(currentStep)
                   ? "text-theme"
                   : "text-gray-400"
               }`}
@@ -296,7 +368,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep === "time"
                     ? "bg-theme text-white"
-                    : ["details", "loading"].includes(currentStep)
+                    : ["details", "payment", "loading"].includes(currentStep)
                     ? "bg-theme text-white"
                     : "bg-gray-200"
                 }`}
@@ -309,7 +381,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
             <div className="w-12 h-0.5 bg-gray-200">
               <div
                 className={`h-full transition-all duration-300 ${
-                  ["details", "loading"].includes(currentStep)
+                  ["details", "payment", "loading"].includes(currentStep)
                     ? "bg-theme w-full"
                     : "bg-gray-200 w-0"
                 }`}
@@ -318,14 +390,18 @@ const BookingClient: React.FC<BookingClientProps> = ({
 
             <div
               className={`flex items-center space-x-2 ${
-                ["details", "loading"].includes(currentStep)
+                currentStep === "details"
+                  ? "text-theme"
+                  : ["payment", "loading"].includes(currentStep)
                   ? "text-theme"
                   : "text-gray-400"
               }`}
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  ["details", "loading"].includes(currentStep)
+                  currentStep === "details"
+                    ? "bg-theme text-white"
+                    : ["payment", "loading"].includes(currentStep)
                     ? "bg-theme text-white"
                     : "bg-gray-200"
                 }`}
@@ -334,6 +410,39 @@ const BookingClient: React.FC<BookingClientProps> = ({
               </div>
               <span className="font-medium">Your Details</span>
             </div>
+
+            {hasPrice && (
+              <>
+                <div className="w-12 h-0.5 bg-gray-200">
+                  <div
+                    className={`h-full transition-all duration-300 ${
+                      ["payment", "loading"].includes(currentStep)
+                        ? "bg-theme w-full"
+                        : "bg-gray-200 w-0"
+                    }`}
+                  />
+                </div>
+
+                <div
+                  className={`flex items-center space-x-2 ${
+                    ["payment", "loading"].includes(currentStep)
+                      ? "text-theme"
+                      : "text-gray-400"
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      ["payment", "loading"].includes(currentStep)
+                        ? "bg-theme text-white"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    4
+                  </div>
+                  <span className="font-medium">Payment</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -394,6 +503,12 @@ const BookingClient: React.FC<BookingClientProps> = ({
 
           {currentStep === "details" && (
             <div className="p-6">
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+                  {error}
+                </div>
+              )}
+              
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">
                   Your Details
@@ -440,8 +555,47 @@ const BookingClient: React.FC<BookingClientProps> = ({
                 onSubmit={handleFormSubmit}
                 errors={errors}
                 bookingType={bookingType}
-                submitting={submitting}
+                isLoading={isLoading}
                 currency={masjid.local_currency}
+              />
+            </div>
+          )}
+
+          {currentStep === "payment" && clientSecret && (
+            <div className="p-6">
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="font-medium text-gray-900 mb-2">
+                  Booking Summary
+                </div>
+                <div className="text-gray-600 space-y-1">
+                  <div>
+                    {selectedDate &&
+                      new Date(selectedDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                  </div>
+                  <div>
+                    {selectedTimeSlot && (
+                      <>
+                        {formatTime(selectedTimeSlot.start_time)} -{" "}
+                        {formatTime(selectedTimeSlot.end_time)}
+                      </>
+                    )}
+                  </div>
+                  <div>
+                    {bookingType.name} at {masjid.name}
+                  </div>
+                </div>
+              </div>
+
+              <BookingPaymentForm
+                clientSecret={clientSecret}
+                amount={bookingType.price || 0}
+                currency={masjid.local_currency}
+                onSuccess={handlePaymentSuccess}
               />
             </div>
           )}
