@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Youtube } from "lucide-react";
+import { useRef, useState, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Youtube, Loader2 } from "lucide-react";
+import { fetchMoreYouTubeVideos } from "@/lib/server/actions/youtubeActions";
 
 type VideoItem = {
   id: string;
@@ -20,7 +21,9 @@ export default function YoutubeFeedComponent({
   subscriberCount,
   videoCount,
   viewCount,
-  videos,
+  initialVideos,
+  initialNextPageToken,
+  uploadsPlaylistId,
   showCoverImage = false,
   coverImage,
 }: {
@@ -30,24 +33,66 @@ export default function YoutubeFeedComponent({
   subscriberCount?: string;
   videoCount?: string;
   viewCount?: string;
-  videos: VideoItem[];
+  initialVideos: VideoItem[];
+  initialNextPageToken: string | null;
+  uploadsPlaylistId: string;
   showCoverImage?: boolean;
   coverImage?: string | null;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [videos, setVideos] = useState<VideoItem[]>(initialVideos || []);
+  const [nextPageToken, setNextPageToken] = useState<string | null>(initialNextPageToken);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadMoreVideos = useCallback(async () => {
+    if (isLoading || !nextPageToken) return;
+
+    setIsLoading(true);
+    try {
+      const result = await fetchMoreYouTubeVideos(
+        uploadsPlaylistId,
+        nextPageToken,
+        10
+      );
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      setVideos((prev) => [...prev, ...result.videos]);
+      setNextPageToken(result.nextPageToken);
+
+      // Auto-scroll to show new videos
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          left: scrollRef.current.scrollLeft + scrollRef.current.clientWidth * 0.8,
+          behavior: "smooth",
+        });
+      }, 100);
+    } catch (error) {
+      console.error("Error loading more videos:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, nextPageToken, uploadsPlaylistId]);
 
   const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollAmount = clientWidth * 0.8; // Scroll 80% of visible width
-      scrollRef.current.scrollTo({
-        left:
-          direction === "left"
-            ? scrollLeft - scrollAmount
-            : scrollLeft + scrollAmount,
-        behavior: "smooth",
-      });
+    if (!scrollRef.current) return;
+
+    const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+    const scrollAmount = clientWidth * 0.8;
+
+    // If scrolling right and near the end, load more videos
+    if (direction === "right" && scrollLeft + clientWidth >= scrollWidth - scrollAmount) {
+      loadMoreVideos();
+      return;
     }
+
+    // Normal scroll
+    scrollRef.current.scrollTo({
+      left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+      behavior: "smooth",
+    });
   };
 
   const formatCount = (value?: string | number) => {
@@ -124,6 +169,11 @@ export default function YoutubeFeedComponent({
           ref={scrollRef}
           className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-8 pb-8"
         >
+          {videos.length === 0 && !isLoading && (
+            <div className="w-full text-center py-8 text-gray-500">
+              No videos available
+            </div>
+          )}
           {videos.map((v) => (
             <a
               key={v.id}
@@ -171,9 +221,14 @@ export default function YoutubeFeedComponent({
         {/* Right Scroll Button */}
         <button
           onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hover:bg-gray-100 cursor-pointer"
+          disabled={isLoading}
+          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hover:bg-gray-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ChevronRight className="w-6 h-6 text-gray-700" />
+          {isLoading ? (
+            <Loader2 className="w-6 h-6 text-gray-700 animate-spin" />
+          ) : (
+            <ChevronRight className="w-6 h-6 text-gray-700" />
+          )}
         </button>
       </div>
     </div>

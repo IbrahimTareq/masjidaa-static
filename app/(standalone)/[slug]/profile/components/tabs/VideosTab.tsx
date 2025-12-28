@@ -23,13 +23,17 @@ type YouTubeChannelInfo = {
 interface VideosTabProps {
   channelId: string;
   channelInfo: YouTubeChannelInfo | null;
-  videos: VideoItem[];
+  initialVideos: VideoItem[];
+  initialNextPageToken: string | null;
+  uploadsPlaylistId: string;
 }
 
 export function VideosTab({
   channelId,
   channelInfo,
-  videos,
+  initialVideos,
+  initialNextPageToken,
+  uploadsPlaylistId,
 }: VideosTabProps) {
   if (!channelId || !channelInfo) {
     return (
@@ -47,7 +51,7 @@ export function VideosTab({
     );
   }
 
-  if (videos.length === 0) {
+  if (initialVideos.length === 0) {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
@@ -72,7 +76,9 @@ export function VideosTab({
         subscriberCount={channelInfo.subscriberCount}
         videoCount={channelInfo.videoCount}
         viewCount={channelInfo.viewCount}
-        videos={videos}
+        initialVideos={initialVideos}
+        initialNextPageToken={initialNextPageToken}
+        uploadsPlaylistId={uploadsPlaylistId}
         showCoverImage={false}
         coverImage={channelInfo.bannerUrl}
       />

@@ -55,49 +55,43 @@ async function getYouTubeChannelInfo(channelId: string) {
   }
 }
 
-async function getYouTubeVideosFromPlaylist(uploadsPlaylistId: string) {
+async function getInitialYouTubeVideos(uploadsPlaylistId: string) {
   if (!YOUTUBE_API_KEY) {
     console.error("Missing YOUTUBE_API_KEY environment variable");
-    return [];
+    return { videos: [], nextPageToken: null };
   }
 
   try {
-    let videos: any[] = [];
-    let nextPageToken: string | undefined = undefined;
+    // Only fetch the first batch of videos (10 videos)
+    const playlistRes: Response = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=10&playlistId=${uploadsPlaylistId}&key=${YOUTUBE_API_KEY}`,
+      { next: { revalidate: 3600 } } // cache for 1 hour
+    );
 
-    do {
-      const playlistRes: Response = await fetch(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${YOUTUBE_API_KEY}${
-          nextPageToken ? `&pageToken=${nextPageToken}` : ""
-        }`,
-        { next: { revalidate: 86400 } } // cache for 24 hours
-      );
+    if (!playlistRes.ok) {
+      console.error("Failed to fetch playlist videos:", playlistRes.status);
+      return { videos: [], nextPageToken: null };
+    }
 
-      if (!playlistRes.ok) {
-        console.error("Failed to fetch playlist videos:", playlistRes.status);
-        break;
-      }
+    const playlistData: any = await playlistRes.json();
+    const videos =
+      playlistData.items?.map((item: any) => ({
+        id: item.snippet.resourceId.videoId,
+        title: item.snippet.title,
+        published: item.snippet.publishedAt,
+        thumbnail: item.snippet.thumbnails?.medium?.url,
+      })) || [];
 
-      const playlistData: any = await playlistRes.json();
-      const pageVideos =
-        playlistData.items?.map((item: any) => ({
-          id: item.snippet.resourceId.videoId,
-          title: item.snippet.title,
-          published: item.snippet.publishedAt,
-          thumbnail: item.snippet.thumbnails?.medium?.url,
-        })) || [];
-
-      videos = [...videos, ...pageVideos];
-      nextPageToken = playlistData.nextPageToken;
-    } while (nextPageToken);
-
-    // Fetch video statistics in batches
+    // Fetch video statistics
     const videosWithStats = await getVideoStatistics(videos);
     
-    return videosWithStats;
+    return {
+      videos: videosWithStats,
+      nextPageToken: playlistData.nextPageToken || null,
+    };
   } catch (error) {
     console.error("Error fetching YouTube videos:", error);
-    return [];
+    return { videos: [], nextPageToken: null };
   }
 }
 
@@ -105,41 +99,35 @@ async function getVideoStatistics(videos: any[]) {
   if (!videos.length || !YOUTUBE_API_KEY) return videos;
 
   try {
-    // Process videos in batches of 50 (YouTube API limit)
-    const batchSize = 50;
-    const enhancedVideos = [...videos];
-    
-    for (let i = 0; i < videos.length; i += batchSize) {
-      const batch = videos.slice(i, i + batchSize);
-      const videoIds = batch.map(video => video.id).join(',');
-      
-      const statsRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`,
-        { next: { revalidate: 3600 } } // cache for 1 hour
-      );
-      
-      if (!statsRes.ok) {
-        console.error("Failed to fetch video statistics:", statsRes.status);
-        continue;
-      }
-      
-      const statsData: any = await statsRes.json();
-      
-      if (statsData.items) {
-        statsData.items.forEach((item: any) => {
-          const videoIndex = enhancedVideos.findIndex(v => v.id === item.id);
-          if (videoIndex !== -1) {
-            enhancedVideos[videoIndex] = {
-              ...enhancedVideos[videoIndex],
-              viewCount: item.statistics?.viewCount,
-              likeCount: item.statistics?.likeCount,
-              commentCount: item.statistics?.commentCount
-            };
-          }
-        });
-      }
+    const videoIds = videos.map((video) => video.id).join(",");
+
+    const statsRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`,
+      { next: { revalidate: 3600 } } // cache for 1 hour
+    );
+
+    if (!statsRes.ok) {
+      console.error("Failed to fetch video statistics:", statsRes.status);
+      return videos;
     }
-    
+
+    const statsData: any = await statsRes.json();
+    const enhancedVideos = [...videos];
+
+    if (statsData.items) {
+      statsData.items.forEach((item: any) => {
+        const videoIndex = enhancedVideos.findIndex((v) => v.id === item.id);
+        if (videoIndex !== -1) {
+          enhancedVideos[videoIndex] = {
+            ...enhancedVideos[videoIndex],
+            viewCount: item.statistics?.viewCount,
+            likeCount: item.statistics?.likeCount,
+            commentCount: item.statistics?.commentCount,
+          };
+        }
+      });
+    }
+
     return enhancedVideos;
   } catch (error) {
     console.error("Error fetching video statistics:", error);
@@ -213,11 +201,18 @@ export default async function Page({
   const youtubeChannelId = masjidSocials?.youtube_channel_id;
   let youtubeChannelInfo = null;
   let youtubeVideos: any[] = [];
+  let youtubeNextPageToken: string | null = null;
+  let youtubeUploadsPlaylistId: string | null = null;
 
   if (youtubeChannelId) {
     youtubeChannelInfo = await getYouTubeChannelInfo(youtubeChannelId);
     if (youtubeChannelInfo?.uploadsPlaylistId) {
-      youtubeVideos = await getYouTubeVideosFromPlaylist(youtubeChannelInfo.uploadsPlaylistId);
+      const { videos, nextPageToken } = await getInitialYouTubeVideos(
+        youtubeChannelInfo.uploadsPlaylistId
+      );
+      youtubeVideos = videos;
+      youtubeNextPageToken = nextPageToken;
+      youtubeUploadsPlaylistId = youtubeChannelInfo.uploadsPlaylistId;
     }
   }
 
@@ -291,6 +286,8 @@ export default async function Page({
         youtubeChannelId={youtubeChannelId}
         youtubeChannelInfo={youtubeChannelInfo}
         youtubeVideos={youtubeVideos}
+        youtubeNextPageToken={youtubeNextPageToken}
+        youtubeUploadsPlaylistId={youtubeUploadsPlaylistId}
       />
     </>
   );

@@ -39,6 +39,8 @@ export interface SummaryClientProps {
   youtubeChannelId?: string | null;
   youtubeChannelInfo?: YouTubeChannelInfo | null;
   youtubeVideos?: VideoItem[];
+  youtubeNextPageToken?: string | null;
+  youtubeUploadsPlaylistId?: string | null;
 }
 
 export type { ApprovedBusinessAd };

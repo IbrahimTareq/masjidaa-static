@@ -40,6 +40,8 @@ export default function SummaryClient({
   youtubeChannelId,
   youtubeChannelInfo,
   youtubeVideos,
+  youtubeNextPageToken,
+  youtubeUploadsPlaylistId,
 }: SummaryClientProps) {
   const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState("prayer");
@@ -364,11 +366,14 @@ export default function SummaryClient({
 
             {activeTab === "videos" &&
               youtubeChannelId &&
-              youtubeChannelInfo && (
+              youtubeChannelInfo &&
+              youtubeUploadsPlaylistId && (
                 <VideosTab
                   channelId={youtubeChannelId}
                   channelInfo={youtubeChannelInfo}
-                  videos={youtubeVideos || []}
+                  initialVideos={youtubeVideos || []}
+                  initialNextPageToken={youtubeNextPageToken || null}
+                  uploadsPlaylistId={youtubeUploadsPlaylistId}
                 />
               )}
           </div>
