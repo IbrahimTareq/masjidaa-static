@@ -4,6 +4,26 @@ import { ApprovedBusinessAd } from "@/lib/server/services/businessAd";
 import { DisplayDates } from "@/lib/server/services/masjidDates";
 import { NearbyMasjid } from "@/lib/server/services/nearbyMasjids";
 
+// YouTube related types
+export type VideoItem = {
+  id: string;
+  title: string;
+  published: string;
+  thumbnail: string;
+  viewCount?: string;
+  likeCount?: string;
+  commentCount?: string;
+};
+
+export type YouTubeChannelInfo = {
+  title: string;
+  logo: string;
+  subscriberCount: string;
+  videoCount: string;
+  viewCount: string;
+  bannerUrl: string | null;
+};
+
 export interface SummaryClientProps {
   masjid: Tables<"masjids">;
   prayerData: FormattedData;
@@ -16,6 +36,9 @@ export interface SummaryClientProps {
   nearbyMasjids: NearbyMasjid[];
   dates: DisplayDates | null;
   location: Tables<"masjid_locations"> | null;
+  youtubeChannelId?: string | null;
+  youtubeChannelInfo?: YouTubeChannelInfo | null;
+  youtubeVideos?: VideoItem[];
 }
 
 export type { ApprovedBusinessAd };

@@ -25,6 +25,7 @@ import { AnnouncementsTab } from "./components/tabs/AnnouncementsTab";
 import { DonationsTab } from "./components/tabs/DonationsTab";
 import { EventsTab } from "./components/tabs/EventsTab";
 import { PrayerTimesTab } from "./components/tabs/PrayerTimesTab";
+import { VideosTab } from "./components/tabs/VideosTab";
 
 export default function SummaryClient({
   masjid,
@@ -36,13 +37,18 @@ export default function SummaryClient({
   businessAds,
   nearbyMasjids,
   location,
+  youtubeChannelId,
+  youtubeChannelInfo,
+  youtubeVideos,
 }: SummaryClientProps) {
   const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState("prayer");
   const [isCopied, setIsCopied] = useState(false);
 
   const handleShareClick = async () => {
-    await navigator.clipboard.writeText(`${window.location.origin}/${masjid.slug}/profile`);
+    await navigator.clipboard.writeText(
+      `${window.location.origin}/${masjid.slug}/profile`
+    );
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -131,8 +137,8 @@ export default function SummaryClient({
                     <span className="font-semibold">
                       {followerCount > 0
                         ? followerCount.toLocaleString()
-                        : "No"
-                      } {followerCount === 1 ? "follower" : "followers"}
+                        : "No"}{" "}
+                      {followerCount === 1 ? "follower" : "followers"}
                     </span>
                   </div>
 
@@ -239,7 +245,7 @@ export default function SummaryClient({
                   {
                     id: "prayer",
                     label: "Prayer Times",
-                    count: dailyPrayers.length,
+                    count: undefined,
                   },
                   {
                     id: "announcements",
@@ -256,6 +262,18 @@ export default function SummaryClient({
                     label: "Donations",
                     count: campaigns.length,
                   },
+                  // Conditionally add Videos tab if YouTube channel exists
+                  ...(youtubeChannelId &&
+                  youtubeVideos &&
+                  youtubeVideos.length > 0
+                    ? [
+                        {
+                          id: "videos",
+                          label: "Videos",
+                          count: undefined,
+                        },
+                      ]
+                    : []),
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -343,6 +361,16 @@ export default function SummaryClient({
                 masjidName={masjid.name}
               />
             )}
+
+            {activeTab === "videos" &&
+              youtubeChannelId &&
+              youtubeChannelInfo && (
+                <VideosTab
+                  channelId={youtubeChannelId}
+                  channelInfo={youtubeChannelInfo}
+                  videos={youtubeVideos || []}
+                />
+              )}
           </div>
 
           {/* Sidebar */}
@@ -388,7 +416,7 @@ export default function SummaryClient({
                   {expandedEvents.slice(0, 3).map((event) => {
                     const eventDate = event.date ? new Date(event.date) : null;
                     const eventUrl = getEventUrl(event, masjid.slug);
-                    
+
                     return (
                       <Link
                         key={event.id}
@@ -443,7 +471,10 @@ export default function SummaryClient({
                             {nearby.name}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {getDistanceLabel(nearby.distance_meters, location?.country_code ?? "GB")}
+                            {getDistanceLabel(
+                              nearby.distance_meters,
+                              location?.country_code ?? "GB"
+                            )}
                           </div>
                         </div>
                       </div>
