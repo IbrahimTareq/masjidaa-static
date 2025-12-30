@@ -6,6 +6,7 @@ import { usePrayerScreen } from "@/hooks/usePrayerScreen";
 import { useScreenDim } from "@/hooks/useScreenDim";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { useEffect } from "react";
+import DimmingOverlay from "@/components/client/ui/DimmingOverlay";
 
 interface PrayerScreensProps {
   children: React.ReactNode;
@@ -29,8 +30,6 @@ export default function PrayerScreens({
   // Use the screen dim hook
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
     shouldDim: isIqamah && countdownZero,
-    durationMinutes: 5,
-    dimOpacity: 0.8,
   });
 
   const masjid = useMasjidContext();
@@ -56,23 +55,11 @@ export default function PrayerScreens({
         padding: 'clamp(0.5rem, 1vw, 1.25rem)',
       }}
     >
-      {/* Dimming overlay */}
-      {isDimmed && (
-        <div
-          className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500"
-          style={{ opacity: opacity }}
-        >
-          {/* Progress indicator for remaining dim time */}
-          <div
-            className="absolute top-0 left-0 right-0 bg-theme-accent"
-            style={{
-              height: 'clamp(0.25rem, 0.4vh, 0.5rem)',
-              width: `${remainingPercent}%`,
-              transition: "width 1s linear",
-            }}
-          ></div>
-        </div>
-      )}
+      <DimmingOverlay
+        isDimmed={isDimmed}
+        opacity={opacity}
+        remainingPercent={remainingPercent}
+      />
 
       <div
         className="flex-1 w-full overflow-hidden"

@@ -55,12 +55,17 @@ interface TimeSectionProps {
   gregorianDate: string;
 }
 
-const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown, hijriDate, gregorianDate }) => {
+const TimeSection: React.FC<TimeSectionProps> = ({
+  nextEvent,
+  countdown,
+  hijriDate,
+  gregorianDate,
+}) => {
   const config = useDateTimeConfig();
 
   return (
     <div className="text-center">
-      <div className="text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light mb-8 lg:mb-12 tracking-tight leading-none">
+      <div className="text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-8 lg:mb-12 tracking-tight leading-none">
         {formatTimeWithSmallPeriod(
           formatCurrentTime({
             config: {
@@ -78,25 +83,25 @@ const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown, hijriDa
 
           <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-3 leading-tight">
             {countdown.hours !== "00" && (
-              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold">
                 {countdown.hours}
-                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-bold">
                   h
                 </span>
               </span>
             )}
             {countdown.minutes !== "00" && (
-              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold">
                 {countdown.minutes}
-                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-bold">
                   m
                 </span>
               </span>
             )}
             {countdown.seconds !== "00" && (
-              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+              <span className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold">
                 {countdown.seconds}
-                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-semibold">
+                <span className="text-base lg:text-lg xl:text-xl opacity-90 font-bold">
                   s
                 </span>
               </span>
@@ -107,10 +112,10 @@ const TimeSection: React.FC<TimeSectionProps> = ({ nextEvent, countdown, hijriDa
 
       {/* Dates positioned below countdown */}
       <div className="text-center">
-        <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold mb-2 lg:mb-3 uppercase leading-tight">
+        <div className="text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold mb-3 md:mb-4 uppercase leading-tight opacity-95">
           {hijriDate}
         </div>
-        <div className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold uppercase leading-tight">
+        <div className="text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight opacity-95">
           {gregorianDate}
         </div>
       </div>

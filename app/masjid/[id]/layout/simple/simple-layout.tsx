@@ -10,6 +10,7 @@ import { Ticker } from "@/components/client/interactive/Ticker";
 import { useMasjidContext } from "@/context/masjidContext";
 import { Tables } from "@/database.types";
 import { getMasjidTicker } from "@/lib/server/actions/tickerActions";
+import DimmingOverlay from "@/components/client/ui/DimmingOverlay";
 
 interface SimpleLayoutProps {
   slides: Slide[];
@@ -57,28 +58,15 @@ export default function SimpleLayout({
   // Use the screen dim hook
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
     shouldDim: isIqamah && countdownZero,
-    durationMinutes: 5,
-    dimOpacity: 0.8,
   });
 
   return (
     <div className="h-screen p-2 sm:p-4 lg:p-5 bg-gradient-to-br from-theme to-theme flex flex-col relative">
-      {/* Dimming overlay */}
-      {isDimmed && (
-        <div
-          className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500"
-          style={{ opacity: opacity }}
-        >
-          {/* Progress indicator for remaining dim time */}
-          <div
-            className="absolute top-0 left-0 right-0 h-1 bg-theme-accent"
-            style={{
-              width: `${remainingPercent}%`,
-              transition: "width 1s linear",
-            }}
-          ></div>
-        </div>
-      )}
+      <DimmingOverlay
+        isDimmed={isDimmed}
+        opacity={opacity}
+        remainingPercent={remainingPercent}
+      />
 
       {/* Main content - Slideshow */}
       <div

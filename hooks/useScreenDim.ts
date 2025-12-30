@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ScreenDimOptions {
   /**
@@ -21,24 +21,48 @@ interface ScreenDimOptions {
   dimOpacity?: number;
 }
 
+const DIM_STORAGE_KEY = 'screen_dim_start_time';
+
 /**
  * Hook to manage screen dimming based on a condition
+ * Persists dim state across page refreshes using localStorage
  */
 export const useScreenDim = ({
   shouldDim,
   durationMinutes = 5,
-  dimOpacity = 0.8
+  dimOpacity = 0.9
 }: ScreenDimOptions) => {
   const [isDimmed, setIsDimmed] = useState(false);
   const [dimStartTime, setDimStartTime] = useState<number | null>(null);
   const [remainingPercent, setRemainingPercent] = useState(100);
   
+  // On mount, check if there's an existing dim session
+  useEffect(() => {
+    const storedStartTime = localStorage.getItem(DIM_STORAGE_KEY);
+    if (storedStartTime) {
+      const startTime = parseInt(storedStartTime, 10);
+      const dimDurationMs = durationMinutes * 60 * 1000;
+      const elapsed = Date.now() - startTime;
+      
+      // If the dim period hasn't expired, restore the dimmed state
+      if (elapsed < dimDurationMs) {
+        setIsDimmed(true);
+        setDimStartTime(startTime);
+      } else {
+        // Clean up expired dim session
+        localStorage.removeItem(DIM_STORAGE_KEY);
+      }
+    }
+  }, [durationMinutes]);
+  
   // Effect to handle dimming based on shouldDim condition
   useEffect(() => {
     if (shouldDim && !isDimmed) {
+      const startTime = Date.now();
       setIsDimmed(true);
-      setDimStartTime(Date.now());
+      setDimStartTime(startTime);
       setRemainingPercent(100);
+      localStorage.setItem(DIM_STORAGE_KEY, startTime.toString());
     }
   }, [shouldDim, isDimmed]);
   
@@ -56,12 +80,16 @@ export const useScreenDim = ({
       setRemainingPercent(percent);
     }, 1000);
     
+    // Calculate remaining time from when dimming started (handles page refreshes)
+    const remainingTime = dimDurationMs - (Date.now() - dimStartTime);
+    
     // Set timeout to undim
     const timerId = setTimeout(() => {
       setIsDimmed(false);
       setDimStartTime(null);
       setRemainingPercent(0);
-    }, dimDurationMs);
+      localStorage.removeItem(DIM_STORAGE_KEY);
+    }, Math.max(0, remainingTime));
     
     return () => {
       clearTimeout(timerId);

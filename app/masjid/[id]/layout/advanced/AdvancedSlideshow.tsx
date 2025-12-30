@@ -12,6 +12,7 @@ import { useScreenDim } from "@/hooks/useScreenDim";
 import { DOMAIN_NAME, SWIPER_SETTINGS } from "@/utils/shared/constants";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
+import DimmingOverlay from "@/components/client/ui/DimmingOverlay";
 
 // Helper function to format time with smaller AM/PM
 const formatTimeWithSmallPeriod = (time: string | null) => {
@@ -74,28 +75,15 @@ export default function AdvancedSlideshow({
   // Use the screen dim hook to handle dimming when iqamah countdown reaches zero
   const { isDimmed, opacity, remainingPercent } = useScreenDim({
     shouldDim: isIqamah && countdownZero,
-    durationMinutes: 5,
-    dimOpacity: 0.8,
   });
 
   return (
     <div className="h-screen w-screen bg-white grid grid-cols-[1fr_224px] lg:grid-cols-[1fr_256px] xl:grid-cols-[1fr_288px] 2xl:grid-cols-[1fr_320px] 3xl:grid-cols-[1fr_384px] overflow-hidden relative">
-      {/* Dimming overlay */}
-      {isDimmed && (
-        <div
-          className="absolute inset-0 bg-black z-50 pointer-events-none transition-opacity duration-500"
-          style={{ opacity: opacity }}
-        >
-          {/* Optional: Progress indicator for remaining dim time */}
-          <div
-            className="absolute top-0 left-0 right-0 h-1 bg-theme-accent"
-            style={{
-              width: `${remainingPercent}%`,
-              transition: "width 1s linear",
-            }}
-          ></div>
-        </div>
-      )}
+      <DimmingOverlay
+        isDimmed={isDimmed}
+        opacity={opacity}
+        remainingPercent={remainingPercent}
+      />
 
       {/* Left Column: Slideshow + Prayer Bar */}
       <div className="flex flex-col min-w-0 overflow-hidden">
