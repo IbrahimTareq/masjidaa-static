@@ -1,236 +1,392 @@
 "use client";
 
+import { useRef, useEffect } from "react";
+import LayoutWithHeader from "@/components/LayoutWithHeader";
+import { useDateTimeConfig } from "@/context/dateTimeContext";
 import { useMasjidContext } from "@/context/masjidContext";
-import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import { usePrayerScreen } from "@/hooks/usePrayerScreen";
+import { formatCurrentTime } from "@/lib/server/formatters/dateTime";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 
-import { SWIPER_SETTINGS } from "@/utils/shared/constants";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-// Helper function to format time with smaller AM/PM like in AdvancedSlideshow
-const formatTimeWithSmallPeriod = (time: string | null) => {
-  if (!time) return null;
-  const parts = time.match(/^(.+?)\s*(AM|PM)$/i);
-  if (parts) {
-    return (
-      <>
-        {parts[1]}
-        <span className="text-[0.5em] ml-0.5">{parts[2]}</span>
-      </>
-    );
+// Helper function to format countdown for display (e.g., "in 1h 30m")
+const formatCountdown = (hours: string, minutes: string): string => {
+  const parts: string[] = [];
+  if (hours !== "00") {
+    parts.push(`${parseInt(hours)}h`);
   }
-  return time;
+  if (minutes !== "00") {
+    parts.push(`${parseInt(minutes)}m`);
+  }
+  return parts.length > 0 ? `in ${parts.join(" ")}` : "";
 };
+
+// Prayer icon mapping using emojis
+const getPrayerIcon = (name: string): string => {
+  const icons: { [key: string]: string } = {
+    Fajr: "🌙",
+    Zuhr: "☀️",
+    Asr: "🌤️",
+    Maghrib: "🌆",
+    Isha: "🌙",
+    "Jumu'ah": "🕌",
+  };
+  return icons[name] || "🕌";
+};
+
+// Card data type for unified rendering
+interface CardData {
+  type: 'daily' | 'jummah';
+  data: any;
+  isActive: boolean;
+  name: string;
+  arabicName: string;
+  startTime: string;
+  iqamahTime?: string;
+  showCountdown?: string;
+}
 
 export default function PrayerClient({
   formattedData,
 }: {
   formattedData: FormattedData;
 }) {
-  const {
-    dailyPrayerTimes,
-    jummahPrayerTimes,
-    prayerInfo,
-    hijriDate,
-    gregorianDate,
-  } = formattedData;
+  const { dailyPrayerTimes, shurq, jummahPrayerTimes, prayerInfo, hijriDate, gregorianDate } =
+    formattedData;
   const masjid = useMasjidContext();
-  const { formatCurrentTime } = useDateTimeFormat();
+  const config = useDateTimeConfig();
 
   // Use the custom hook to manage prayer screen logic
   const { nextEvent, countdown } = usePrayerScreen(prayerInfo);
 
-  const time = formatCurrentTime();
+  // Auto-scroll functionality to ensure active cards are visible
+  const containerRef = useRef<HTMLDivElement>(null);
+  const activeCardRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className="font-montserrat h-screen w-screen bg-white grid grid-cols-[1fr_288px] lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_352px] 2xl:grid-cols-[1fr_384px] 3xl:grid-cols-[1fr_416px] overflow-hidden shadow-2xl">
-      {/* Left Content Area */}
-      <div className="flex flex-col min-w-0 overflow-hidden bg-gray-50">
-        {/* Countdown Section */}
-        <div className="flex-shrink-0 bg-white shadow-sm border-b border-gray-200 px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5 xl:py-6">
-          <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light text-gray-900 mb-2 md:mb-3 lg:mb-4 xl:mb-6">
-              <span className="font-bold text-theme uppercase">
-                {nextEvent.prayer}
-              </span>
-              &nbsp;{nextEvent.label} in
-            </h2>
+  useEffect(() => {
+    if (activeCardRef.current && containerRef.current) {
+      activeCardRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [dailyPrayerTimes]); // Re-run when prayer data changes
 
-            {/* Countdown Display */}
-            <div className="flex justify-center items-center gap-2 md:gap-3 lg:gap-4 xl:gap-6">
-              {/* Hours */}
-              <div className="text-center flex-1 max-w-[100px] md:max-w-[120px] lg:max-w-[140px]">
-                <div className="bg-white shadow-lg border border-gray-200 rounded-xl md:rounded-2xl px-2 py-3 md:px-3 md:py-4 lg:px-4 lg:py-6 xl:px-6 xl:py-8">
-                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-gray-900 tabular-nums leading-none">
-                    {countdown.hours}
-                  </div>
-                </div>
-                <div className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-500 font-medium mt-1 md:mt-2 lg:mt-3">
-                  Hours
-                </div>
-              </div>
+  // Combine all prayer data into a single array for unified rendering
+  const combineAllPrayerData = (): CardData[] => {
+    const cards: CardData[] = [];
 
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-gray-400 font-light self-start pt-3 md:pt-4 lg:pt-6 xl:pt-8">
-                :
-              </div>
+    // Add daily prayers
+    dailyPrayerTimes?.forEach(prayer => {
+      const isNext = nextEvent.prayer === prayer.name && !prayer.isActive;
+      const countdownText = isNext ? formatCountdown(countdown.hours, countdown.minutes) : undefined;
 
-              {/* Minutes */}
-              <div className="text-center flex-1 max-w-[100px] md:max-w-[120px] lg:max-w-[140px]">
-                <div className="bg-white shadow-lg border border-gray-200 rounded-xl md:rounded-2xl px-2 py-3 md:px-3 md:py-4 lg:px-4 lg:py-6 xl:px-6 xl:py-8">
-                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-gray-900 tabular-nums leading-none">
-                    {countdown.minutes}
-                  </div>
-                </div>
-                <div className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-500 font-medium mt-1 md:mt-2 lg:mt-3">
-                  Minutes
-                </div>
-              </div>
+      cards.push({
+        type: 'daily',
+        data: prayer,
+        isActive: prayer.isActive,
+        name: prayer.name,
+        arabicName: prayer.arabic,
+        startTime: prayer.start,
+        iqamahTime: prayer.iqamah || undefined,
+        showCountdown: countdownText
+      });
+    });
 
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-gray-400 font-light self-start pt-3 md:pt-4 lg:pt-6 xl:pt-8">
-                :
-              </div>
+    // Add Jummah (if exists)
+    if (jummahPrayerTimes && jummahPrayerTimes.length > 0) {
+      cards.push({
+        type: 'jummah',
+        data: jummahPrayerTimes[0], // Use first session
+        isActive: false,
+        name: "Jumu'ah",
+        arabicName: "جمعة",
+        startTime: jummahPrayerTimes[0].start,
+        iqamahTime: jummahPrayerTimes[0].khutbah
+      });
+    }
 
-              {/* Seconds */}
-              <div className="text-center flex-1 max-w-[100px] md:max-w-[120px] lg:max-w-[140px]">
-                <div className="bg-white shadow-lg border border-gray-200 rounded-xl md:rounded-2xl px-2 py-3 md:px-3 md:py-4 lg:px-4 lg:py-6 xl:px-6 xl:py-8">
-                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-gray-900 tabular-nums leading-none">
-                    {countdown.seconds}
-                  </div>
-                </div>
-                <div className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-500 font-medium mt-1 md:mt-2 lg:mt-3">
-                  Seconds
-                </div>
-              </div>
-            </div>
-          </div>
+    // Shurq card removed per user request
+
+    return cards;
+  };
+
+  // Render active prayer card with special layout
+  const renderActiveCard = (card: CardData) => (
+    <div
+      key={`${card.type}-${card.name}`}
+      ref={activeCardRef}
+      className="flex-shrink-0 bg-white rounded-2xl border-4 border-theme transition-all duration-300"
+      style={{
+        width: 'clamp(300px, 24vw, 380px)',
+        height: 'clamp(270px, 20vh, 300px)',
+        padding: 'clamp(1.25rem, 1.5vw, 2rem)',
+      }}
+    >
+      <div className="flex flex-col gap-4 h-full">
+        {/* Prayer Name */}
+        <div className="flex items-center justify-center gap-3">
+          <h3
+            className="font-bold text-gray-900 text-center"
+            style={{
+              fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+            }}
+          >
+            {card.name} <span className="font-serif">{card.arabicName}</span>
+          </h3>
         </div>
 
-        {/* Prayer Cards Grid */}
-        <div className="flex-1 flex items-center overflow-auto px-3 md:px-4 lg:px-6 xl:px-8">
-          <div className="grid grid-cols-3 gap-2 md:gap-3 lg:gap-4 xl:gap-5 max-w-7xl mx-auto w-full py-3 md:py-4 lg:py-5">
-            {dailyPrayerTimes?.map((prayer, index) => (
-              <div
-                key={index}
-                className={`rounded-xl md:rounded-2xl border-2 p-3 md:p-4 lg:p-5 xl:p-6 2xl:p-7 transition-all duration-200 ${
-                  prayer.isActive
-                    ? "bg-theme text-white border-theme shadow-lg"
-                    : "bg-white text-gray-800 border-gray-200 hover:shadow-md"
-                }`}
+        {/* Start and Iqamah Times - Stacked Vertically with Inline Labels */}
+        <div className="mt-auto flex flex-col gap-4">
+          {/* Start Time - Inline label */}
+          <div
+            className="font-bold text-gray-900 text-right"
+            style={{
+              fontSize: 'clamp(2rem, 3vw, 2.75rem)',
+              lineHeight: '1.1',
+            }}
+          >
+            <span 
+              className="text-gray-600 font-medium"
+              style={{
+                fontSize: 'clamp(1.25rem, 2vw, 1.75rem)',
+              }}
+            >
+              Start:
+            </span> {card.startTime}
+          </div>
+
+          {/* Iqamah Time - Inline label */}
+          {card.iqamahTime && (
+            <div
+              className="font-bold text-gray-900 text-right"
+              style={{
+                fontSize: 'clamp(2rem, 3vw, 2.75rem)',
+                lineHeight: '1.1',
+              }}
+            >
+              <span 
+                className="text-gray-600 font-medium"
+                style={{
+                  fontSize: 'clamp(1.25rem, 2vw, 1.75rem)',
+                }}
               >
-                <div className="text-center mb-3 md:mb-4 lg:mb-5">
-                  <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold mb-1 md:mb-1.5">
-                    {prayer.name} {prayer.arabic}
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-5 text-center">
-                  <div>
-                    <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold uppercase tracking-wide opacity-80 mb-1.5 md:mb-2">
-                      Starts
-                    </div>
-                    <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold tabular-nums leading-none">
-                      {formatTimeWithSmallPeriod(prayer.start)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold uppercase tracking-wide opacity-80 mb-1.5 md:mb-2">
-                      Iqamah
-                    </div>
-                    <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold tabular-nums leading-none">
-                      {formatTimeWithSmallPeriod(prayer.iqamah)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Jummah Card */}
-            {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
-              <div className="bg-white border-2 border-gray-200 rounded-xl md:rounded-2xl p-3 md:p-4 lg:p-5 xl:p-6 2xl:p-7 hover:shadow-md transition-all duration-300">
-                <Swiper {...SWIPER_SETTINGS}>
-                  {jummahPrayerTimes?.map((session, index) => (
-                    <SwiperSlide key={index}>
-                      <div className="text-center mb-3 md:mb-4 lg:mb-5">
-                        <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-900 mb-1 md:mb-1.5">
-                          {jummahPrayerTimes?.length === 1
-                            ? "Jumaah جمعة"
-                            : `Jumaah ${index + 1}`}
-                        </h3>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-5 text-center">
-                        <div>
-                          <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 font-semibold uppercase tracking-wide mb-1.5 md:mb-2">
-                            Starts
-                          </div>
-                          <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-700 tabular-nums leading-none">
-                            {formatTimeWithSmallPeriod(session.start)}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 font-semibold uppercase tracking-wide mb-1.5 md:mb-2">
-                            Khutbah
-                          </div>
-                          <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-900 tabular-nums leading-none">
-                            {formatTimeWithSmallPeriod(session.khutbah)}
-                          </div>
-                        </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Sidebar */}
-      <div className="bg-gradient-to-br from-theme via-theme-gradient to-theme text-white flex flex-col shadow-xl relative overflow-hidden">
-        {/* Background pattern with opacity */}
-        <div
-          className="absolute inset-0 z-0 opacity-20"
-          style={{
-            backgroundImage: `url('/masjid-bg.png')`,
-            backgroundSize: "contain",
-            backgroundPosition: "bottom left -80px",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-
-        {/* Content container */}
-        <div className="relative z-10 flex flex-col h-full w-full justify-start pt-8 md:pt-10 lg:pt-12 xl:pt-14">
-          {/* Logo Section */}
-          <div className="flex flex-col items-center px-6 lg:px-8 xl:px-10 mb-8 md:mb-10 lg:mb-12">
-            <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 2xl:w-40 2xl:h-40 bg-white rounded-2xl lg:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden p-2.5 lg:p-3">
-              <img
-                src={masjid?.logo || "/logo.png"}
-                alt="Masjid Logo"
-                className="w-full h-full object-contain"
-              />
+                {card.type === 'jummah' ? 'Khutbah:' : 'Iqamah:'}
+              </span> {card.iqamahTime}
             </div>
-          </div>
-
-          {/* Current Time Section */}
-          <div className="flex flex-col items-center px-6 lg:px-8 xl:px-10 text-center mb-8 md:mb-10 lg:mb-12">
-            <div className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold tracking-tight leading-none">
-              {formatTimeWithSmallPeriod(time)}
-            </div>
-          </div>
-
-          {/* Dates Section */}
-          <div className="flex flex-col items-center px-6 lg:px-8 xl:px-10 text-center">
-            <div className="text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold mb-3 md:mb-4 uppercase leading-tight opacity-95">
-              {hijriDate}
-            </div>
-            <div className="text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold uppercase leading-tight opacity-95">
-              {gregorianDate}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
+  );
+
+  // Render inactive prayer card with centered layout
+  const renderInactiveCard = (card: CardData) => (
+    <div
+      key={`${card.type}-${card.name}`}
+      className="flex-shrink-0 bg-white rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md"
+      style={{
+        width: 'clamp(180px, 16vw, 220px)',
+        height: 'clamp(200px, 15vh, 230px)',
+        padding: 'clamp(1rem, 1.5vw, 1.5rem)',
+      }}
+    >
+      <div className="flex flex-col items-center text-center gap-3 h-full justify-center">
+        {/* Prayer Name - Centered */}
+        <div className="flex items-center gap-2">
+          <h3
+            className="font-semibold text-gray-900"
+            style={{
+              fontSize: 'clamp(1.25rem, 1.6vw, 1.5rem)',
+            }}
+          >
+            {card.name} <span className="font-serif">{card.arabicName}</span>
+          </h3>
+        </div>
+
+        {/* Times - Centered */}
+        <div className="flex flex-col gap-2">
+          {/* Start Time */}
+          <div className="text-center">
+            <div
+              className="text-gray-500 font-medium uppercase tracking-wide"
+              style={{
+                fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+              }}
+            >
+              Starts
+            </div>
+            <div
+              className="font-bold text-gray-900"
+              style={{
+                fontSize: 'clamp(1.5rem, 2.2vw, 1.875rem)',
+              }}
+            >
+              {card.startTime}
+            </div>
+          </div>
+
+          {/* Iqamah Time */}
+          {card.iqamahTime && (
+            <div className="text-center">
+              <div
+                className="text-gray-500 font-medium uppercase tracking-wide"
+                style={{
+                  fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                }}
+              >
+                {card.type === 'jummah' ? 'Khutbah' : 'Iqamah'}
+              </div>
+              <div
+                className="font-semibold text-gray-700"
+                style={{
+                  fontSize: 'clamp(1.5rem, 2.2vw, 1.875rem)',
+                }}
+              >
+                {card.iqamahTime}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Countdown - If applicable */}
+        {card.showCountdown && (
+          <div
+            className="text-gray-500 font-medium"
+            style={{
+              fontSize: 'clamp(0.875rem, 1.1vw, 1rem)',
+            }}
+          >
+            {card.showCountdown}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const allCards = combineAllPrayerData();
+
+  return (
+    <LayoutWithHeader
+      headerTitle={masjid?.name || "Masjid"}
+      dates={{
+        hijri: hijriDate,
+        gregorian: gregorianDate,
+      }}
+    >
+      <main className="h-full flex flex-col p-8">
+        {/* Time Header - Clean 2-column layout */}
+        <header className="mb-8">
+          <div className="bg-white rounded-2xl overflow-hidden">
+            <div
+              className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200"
+              style={{
+                minHeight: 'clamp(180px, 22vh, 250px)',
+              }}
+            >
+              {/* Current Time Section */}
+              <div className="flex flex-col justify-center text-right p-6 lg:p-8">
+                <div
+                  className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                  style={{
+                    fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                  }}
+                >
+                  Current Time
+                </div>
+                <div
+                  className="font-bold text-gray-900 tabular-nums"
+                  style={{
+                    fontSize: 'clamp(3rem, 6vw, 5rem)',
+                    lineHeight: '1.1',
+                  }}
+                >
+                  {formatCurrentTime({
+                    config: {
+                      timeZone: config.timeZone,
+                      is12Hour: config.is12Hour,
+                    },
+                  })}
+                </div>
+              </div>
+
+              {/* Next Prayer Section */}
+              <div className="flex flex-col justify-center text-left p-6 lg:p-8">
+                <div
+                  className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                  style={{
+                    fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                  }}
+                >
+                  <span className="text-theme font-bold">{nextEvent.prayer}</span> {nextEvent.label} in
+                </div>
+                <div
+                  className="font-bold text-gray-900 tabular-nums"
+                  style={{
+                    fontSize: 'clamp(3rem, 6vw, 5rem)',
+                    lineHeight: '1.1',
+                  }}
+                >
+                  {countdown.hours !== "00" && (
+                    <>
+                      {countdown.hours}
+                      <span
+                        className="font-normal text-gray-600"
+                        style={{
+                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+                        }}
+                      >
+                        HR
+                      </span>
+                      &nbsp;
+                    </>
+                  )}
+                  {countdown.minutes !== "00" && (
+                    <>
+                      {countdown.minutes}
+                      <span
+                        className="font-normal text-gray-600"
+                        style={{
+                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+                        }}
+                      >
+                        MIN
+                      </span>
+                      &nbsp;
+                    </>
+                  )}
+                  {countdown.seconds}
+                  <span
+                    className="font-normal text-gray-600"
+                    style={{
+                      fontSize: 'clamp(1.5rem, 2.2vw, 2rem)',
+                    }}
+                  >
+                    SEC
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Prayer Cards - Centered */}
+        <div className="flex-1 flex items-center justify-center">
+          <section
+            ref={containerRef}
+            className="flex items-center gap-6 overflow-x-auto max-w-full scrollbar-hide"
+            style={{
+              scrollSnapType: 'x mandatory',
+              WebkitOverflowScrolling: 'touch',
+              paddingBottom: 'clamp(0.5rem, 1vh, 1rem)',
+            }}
+          >
+            {allCards.map((card) =>
+              card.isActive ? renderActiveCard(card) : renderInactiveCard(card)
+            )}
+          </section>
+        </div>
+      </main>
+    </LayoutWithHeader>
   );
 }
