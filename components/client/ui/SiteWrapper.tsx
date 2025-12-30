@@ -7,6 +7,7 @@ import { DOMAIN_NAME } from "@/utils/shared/constants";
 import Image from "next/image";
 import React, { useState } from "react";
 import { SocialIcon } from "react-social-icons";
+import FloatingWhatsAppButton from "./FloatingWhatsAppButton";
 
 export default function SiteWrapper({
   children,
@@ -26,6 +27,14 @@ export default function SiteWrapper({
 
   return (
     <div className="min-h-screen text-white font-montserrat">
+      {/* Floating WhatsApp Button */}
+      {socials?.whatsapp_url && (
+        <FloatingWhatsAppButton
+          whatsappUrl={socials.whatsapp_url}
+          masjidName={masjid.name}
+        />
+      )}
+
       {/* Top Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-theme-gradient font-semibold">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0">
@@ -217,7 +226,8 @@ export default function SiteWrapper({
               socials?.twitter_url ||
               socials?.instagram_url ||
               socials?.youtube_url ||
-              socials?.tiktok_url) && (
+              socials?.tiktok_url ||
+              socials?.whatsapp_url) && (
               <div>
                 <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Follow Us</h2>
                 <div className="flex gap-3 md:gap-4 flex-wrap">
@@ -249,6 +259,12 @@ export default function SiteWrapper({
                     <SocialLink
                       href={socials?.tiktok_url || ""}
                       icon="tiktok"
+                    />
+                  )}
+                  {socials?.whatsapp_url && (
+                    <SocialLink
+                      href={socials?.whatsapp_url || ""}
+                      icon="whatsapp"
                     />
                   )}
                 </div>
