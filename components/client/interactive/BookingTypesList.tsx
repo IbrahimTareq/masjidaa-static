@@ -66,27 +66,18 @@ const BookingTypeCard: React.FC<BookingTypeCardProps> = ({
         </div>
 
         {/* Booking Requirements - At bottom above button */}
-        {(bookingType.min_advance_booking_hours ||
+        {(bookingType.min_advance_booking_days ||
           bookingType.max_advance_booking_days) && (
           <div className="bg-gray-50 rounded-lg p-4 mb-4">
             <h4 className="text-sm font-medium text-gray-900 mb-2">
               Booking Requirements:
             </h4>
             <ul className="text-sm text-gray-600 space-y-1">
-              {bookingType.min_advance_booking_hours && (
+              {bookingType.min_advance_booking_days && (
                 <li>
-                  • Book at least{" "}
-                  {bookingType.min_advance_booking_hours < 24
-                    ? `${bookingType.min_advance_booking_hours} hours`
-                    : `${Math.floor(
-                        bookingType.min_advance_booking_hours / 24
-                      )} day${
-                        Math.floor(bookingType.min_advance_booking_hours / 24) >
-                        1
-                          ? "s"
-                          : ""
-                      }`}{" "}
-                  in advance
+                  • Book at least {bookingType.min_advance_booking_days} day
+                  {bookingType.min_advance_booking_days > 1 ? "s" : ""} in
+                  advance
                 </li>
               )}
               {bookingType.max_advance_booking_days && (

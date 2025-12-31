@@ -23,7 +23,7 @@ const TIME_PATTERN = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
 
 interface BookingTypeForValidation {
-  min_advance_booking_hours?: number | null;
+  min_advance_booking_days?: number | null;
   max_advance_booking_days?: number | null;
 }
 
@@ -116,25 +116,18 @@ export function validateCompleteBookingForm(
     const now = new Date();
     const bookingDateTime = new Date(`${formData.booking_date}T${formData.start_time}`);
     const hoursUntilBooking = (bookingDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const daysUntilBooking = hoursUntilBooking / 24;
 
     // Check minimum advance booking
-    if (bookingType.min_advance_booking_hours && hoursUntilBooking < bookingType.min_advance_booking_hours) {
-      const minHours = bookingType.min_advance_booking_hours;
-      if (minHours < 24) {
-        errors.advance_booking = `Bookings must be made at least ${minHours} hours in advance`;
-      } else {
-        const days = Math.floor(minHours / 24);
-        errors.advance_booking = `Bookings must be made at least ${days} day${days > 1 ? 's' : ''} in advance`;
-      }
+    if (bookingType.min_advance_booking_days && daysUntilBooking < bookingType.min_advance_booking_days) {
+      const minDays = bookingType.min_advance_booking_days;
+      errors.advance_booking = `Bookings must be made at least ${minDays} day${minDays > 1 ? 's' : ''} in advance`;
     }
 
     // Check maximum advance booking
-    if (bookingType.max_advance_booking_days) {
-      const maxAdvanceHours = bookingType.max_advance_booking_days * 24;
-      if (hoursUntilBooking > maxAdvanceHours) {
-        const maxDays = bookingType.max_advance_booking_days;
-        errors.advance_booking = `Bookings cannot be made more than ${maxDays} day${maxDays > 1 ? 's' : ''} in advance`;
-      }
+    if (bookingType.max_advance_booking_days && daysUntilBooking > bookingType.max_advance_booking_days) {
+      const maxDays = bookingType.max_advance_booking_days;
+      errors.advance_booking = `Bookings cannot be made more than ${maxDays} day${maxDays > 1 ? 's' : ''} in advance`;
     }
   }
 

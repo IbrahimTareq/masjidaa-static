@@ -375,12 +375,13 @@ export type Database = {
           buffer_minutes: number
           created_at: string | null
           duration_minutes: number
+          faqs: Json | null
           id: string
           is_active: boolean
           long_description: string
           masjid_id: string
           max_advance_booking_days: number | null
-          min_advance_booking_hours: number | null
+          min_advance_booking_days: number | null
           name: string
           short_description: string
           updated_at: string | null
@@ -392,12 +393,13 @@ export type Database = {
           buffer_minutes?: number
           created_at?: string | null
           duration_minutes: number
+          faqs?: Json | null
           id?: string
           is_active?: boolean
           long_description: string
           masjid_id: string
           max_advance_booking_days?: number | null
-          min_advance_booking_hours?: number | null
+          min_advance_booking_days?: number | null
           name: string
           short_description: string
           updated_at?: string | null
@@ -409,12 +411,13 @@ export type Database = {
           buffer_minutes?: number
           created_at?: string | null
           duration_minutes?: number
+          faqs?: Json | null
           id?: string
           is_active?: boolean
           long_description?: string
           masjid_id?: string
           max_advance_booking_days?: number | null
-          min_advance_booking_hours?: number | null
+          min_advance_booking_days?: number | null
           name?: string
           short_description?: string
           updated_at?: string | null

@@ -1,14 +1,16 @@
 "use client";
 
 import BookingCalendar from "@/components/client/interactive/BookingCalendar";
-import BookingForm, { BookingPaymentForm } from "@/components/client/interactive/BookingForm";
+import BookingForm, {
+  BookingPaymentForm,
+} from "@/components/client/interactive/BookingForm";
 import TimeSlotPicker from "@/components/client/interactive/TimeSlotPicker";
 import { Tables } from "@/database.types";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import {
+  createBookingPaymentIntentAction,
   getAvailableSlotsAction,
   submitBookingAction,
-  createBookingPaymentIntentAction,
   updateBookingStatusAction,
 } from "@/lib/server/actions/bookingActions";
 import { formatDurationForDisplay } from "@/utils/booking/availability";
@@ -17,7 +19,7 @@ import {
   validateCompleteBookingForm,
 } from "@/utils/booking/validation";
 import { formatCurrencyWithSymbol } from "@/utils/currency";
-import { ArrowLeft, Calendar, Clock, CreditCard } from "lucide-react";
+import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -28,6 +30,11 @@ interface MasjidDTO {
   local_currency: string;
 }
 
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 interface BookingTypeDTO {
   id: string;
   name: string;
@@ -35,9 +42,10 @@ interface BookingTypeDTO {
   duration_minutes: number | null;
   buffer_minutes: number | null;
   long_description: string | null;
-  min_advance_booking_hours: number | null;
+  min_advance_booking_days: number | null;
   max_advance_booking_days: number | null;
   bank_account_id: string | null;
+  faqs: FAQItem[] | null;
 }
 
 interface BookingClientProps {
@@ -168,15 +176,13 @@ const BookingClient: React.FC<BookingClientProps> = ({
 
       // For free bookings, redirect to success immediately
       if (!isPaid) {
-        router.push(
-          `/${slug}/bookings/${bookingType.id}/success`
-        );
+        router.push(`/${slug}/bookings/${bookingType.id}/success`);
       }
       // For paid bookings, proceed to payment with the booking ID
       else if (isPaid) {
         try {
           const amountInCents = Math.round(bookingType.price! * 100);
-          
+
           const paymentData = await createBookingPaymentIntentAction({
             amount: amountInCents,
             currency: masjid.local_currency.toLowerCase(),
@@ -218,7 +224,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
       // After successful payment, update the booking status to "confirmed"
       if (bookingId) {
         const result = await updateBookingStatusAction(bookingId, "confirmed");
-        
+
         if (!result.success) {
           console.error(
             "Failed to update booking status after payment:",
@@ -231,9 +237,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
     } finally {
       // Reset state and redirect to success page
       setBookingId(null);
-      router.push(
-        `/${slug}/bookings/${bookingType.id}/success`
-      );
+      router.push(`/${slug}/bookings/${bookingType.id}/success`);
     }
   };
 
@@ -250,7 +254,10 @@ const BookingClient: React.FC<BookingClientProps> = ({
 
   const { formatTime } = useDateTimeFormat();
   const duration = formatDurationForDisplay(bookingType.duration_minutes || 30);
-  const hasPrice = bookingType.price !== null && bookingType.price !== undefined && bookingType.price > 0;
+  const hasPrice =
+    bookingType.price !== null &&
+    bookingType.price !== undefined &&
+    bookingType.price > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -258,18 +265,30 @@ const BookingClient: React.FC<BookingClientProps> = ({
         {/* Header */}
         <div className="mb-8">
           <Link
-            href={`/${slug}/bookings`}
+            href={`/${slug}/bookings/${bookingType.id}`}
             className="inline-flex items-center text-theme mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to all services
+            Back to service details
           </Link>
 
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-start justify-between mb-4">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Book {bookingType.name}
-              </h1>
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  Book {bookingType.name}
+                </h1>
+                <div className="flex items-center space-x-6 text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4" />
+                    <span>{duration}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>{masjid.name}</span>
+                  </div>
+                </div>
+              </div>
               {hasPrice && (
                 <div className="text-right">
                   <div className="text-2xl font-bold text-theme">
@@ -279,40 +298,6 @@ const BookingClient: React.FC<BookingClientProps> = ({
                       decimals: 2,
                     })}
                   </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              {bookingType.long_description && (
-                <div
-                  className="mt-3 text-gray-600 [&_p]:mb-4 [&_p:last-child]:mb-0"
-                  dangerouslySetInnerHTML={{
-                    __html: bookingType.long_description,
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="flex items-center space-x-6 text-gray-600">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4" />
-                <span>{duration}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4" />
-                <span>{masjid.name}</span>
-              </div>
-              {hasPrice && (
-                <div className="flex items-center space-x-2">
-                  <CreditCard className="h-4 w-4" />
-                  <span>
-                    {formatCurrencyWithSymbol({
-                      amount: bookingType.price!,
-                      currency: masjid.local_currency,
-                      decimals: 2,
-                    })}
-                  </span>
                 </div>
               )}
             </div>
@@ -326,7 +311,9 @@ const BookingClient: React.FC<BookingClientProps> = ({
               className={`flex items-center space-x-2 ${
                 currentStep === "date"
                   ? "text-theme"
-                  : ["time", "details", "payment", "loading"].includes(currentStep)
+                  : ["time", "details", "payment", "loading"].includes(
+                      currentStep
+                    )
                   ? "text-theme"
                   : "text-gray-400"
               }`}
@@ -335,7 +322,9 @@ const BookingClient: React.FC<BookingClientProps> = ({
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep === "date"
                     ? "bg-theme text-white"
-                    : ["time", "details", "payment", "loading"].includes(currentStep)
+                    : ["time", "details", "payment", "loading"].includes(
+                        currentStep
+                      )
                     ? "bg-theme text-white"
                     : "bg-gray-200"
                 }`}
@@ -348,7 +337,9 @@ const BookingClient: React.FC<BookingClientProps> = ({
             <div className="w-12 h-0.5 bg-gray-200">
               <div
                 className={`h-full transition-all duration-300 ${
-                  ["time", "details", "payment", "loading"].includes(currentStep)
+                  ["time", "details", "payment", "loading"].includes(
+                    currentStep
+                  )
                     ? "bg-theme w-full"
                     : "bg-gray-200 w-0"
                 }`}
@@ -508,7 +499,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
                   {error}
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">
                   Your Details

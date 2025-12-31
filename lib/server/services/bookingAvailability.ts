@@ -30,21 +30,22 @@ export const getAvailableSlots = cache(
     const bookingDate = new Date(date); // Direct parsing of YYYY-MM-DD
     const hoursUntilBooking =
       (bookingDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const daysUntilBooking = hoursUntilBooking / 24;
 
-    // Check minimum advance booking hours
+    // Check minimum advance booking days
     if (
-      bookingType.min_advance_booking_hours &&
-      hoursUntilBooking < bookingType.min_advance_booking_hours
+      bookingType.min_advance_booking_days &&
+      daysUntilBooking < bookingType.min_advance_booking_days
     ) {
       return [];
     }
 
     // Check maximum advance booking days
-    if (bookingType.max_advance_booking_days) {
-      const maxAdvanceHours = bookingType.max_advance_booking_days * 24;
-      if (hoursUntilBooking > maxAdvanceHours) {
-        return [];
-      }
+    if (
+      bookingType.max_advance_booking_days &&
+      daysUntilBooking > bookingType.max_advance_booking_days
+    ) {
+      return [];
     }
 
     // Get day of week consistently - use the same parsing method as events
@@ -172,19 +173,20 @@ export const isSlotAvailable = async (
   const bookingDateTime = new Date(`${date}T${startTime}`);
   const hoursUntilBooking =
     (bookingDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const daysUntilBooking = hoursUntilBooking / 24;
 
   if (
-    bookingType.min_advance_booking_hours &&
-    hoursUntilBooking < bookingType.min_advance_booking_hours
+    bookingType.min_advance_booking_days &&
+    daysUntilBooking < bookingType.min_advance_booking_days
   ) {
     return false;
   }
 
-  if (bookingType.max_advance_booking_days) {
-    const maxAdvanceHours = bookingType.max_advance_booking_days * 24;
-    if (hoursUntilBooking > maxAdvanceHours) {
-      return false;
-    }
+  if (
+    bookingType.max_advance_booking_days &&
+    daysUntilBooking > bookingType.max_advance_booking_days
+  ) {
+    return false;
   }
 
   // Check if time falls within availability windows

@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDateTimeConfig } from "@/context/dateTimeContext";
 
 interface BookingTypeForCalendar {
-  min_advance_booking_hours?: number | null;
+  min_advance_booking_days?: number | null;
   max_advance_booking_days?: number | null;
   duration_minutes?: number | null;
   buffer_minutes?: number | null;
@@ -49,9 +49,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   const nowInMasjidTz = new Date(now.toLocaleString('en-US', { timeZone }));
 
   // For calendar display, we need to determine if ANY time slots on a date could be available
-  // So we check if the minimum advance booking time extends beyond the start of the next day
-  const minAdvanceHours = bookingType.min_advance_booking_hours || 0;
-  const minAdvanceMs = minAdvanceHours * 60 * 60 * 1000;
+  // So we check if the minimum advance booking days extends beyond the start of the next day
+  const minAdvanceDays = bookingType.min_advance_booking_days || 0;
+  const minAdvanceMs = minAdvanceDays * 24 * 60 * 60 * 1000;
   const earliestBookingTime = new Date(nowInMasjidTz.getTime() + minAdvanceMs);
 
   // For the calendar, show a date as available if the date is >= the date of earliest booking time
