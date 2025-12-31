@@ -26,6 +26,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${DOMAIN_NAME}/contact`,
       lastModified: new Date(),
     },
+    {
+      url: `${DOMAIN_NAME}/blog`,
+      lastModified: new Date(),
+    },
   ];
 
   // Generate masjid URLs
