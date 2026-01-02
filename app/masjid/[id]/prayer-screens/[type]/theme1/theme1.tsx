@@ -44,26 +44,26 @@ export default function PrayerClient({
           <main
             className="flex-1 flex flex-col min-h-0"
             style={{
-              padding: 'clamp(1rem, 2vw, 2rem)',
-              paddingBottom: 'clamp(1rem, 1.5vw, 2.5rem)',
-              paddingTop: 'clamp(0.5rem, 1vh, 1rem)',
+              padding: 'clamp(0.75rem, 1.5vw, 2rem)',
+              paddingBottom: 'clamp(0.75rem, 1.2vw, 2.5rem)',
+              paddingTop: 'clamp(0.5rem, 0.8vh, 1rem)',
             }}
           >
             {/* Time Header - Clean 2-column layout */}
-            <header className="mb-8">
+            <header className="mb-4 md:mb-6">
               <div className="bg-white rounded-2xl overflow-hidden">
                 <div
-                  className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200"
+                  className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200"
                   style={{
-                    minHeight: 'clamp(180px, 22vh, 250px)',
+                    minHeight: 'clamp(140px, 18vh, 250px)',
                   }}
                 >
                   {/* Current Time Section */}
-                  <div className="flex flex-col justify-center text-center p-6 lg:p-8">
+                  <div className="flex flex-col justify-center text-center p-4 md:p-6">
                     <div
-                      className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                      className="text-gray-500 font-medium uppercase tracking-wide mb-1"
                       style={{
-                        fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                        fontSize: 'clamp(0.875rem, 1.4vw, 1.75rem)',
                       }}
                     >
                       Current Time
@@ -71,7 +71,7 @@ export default function PrayerClient({
                     <div
                       className="font-bold text-gray-900 tabular-nums"
                       style={{
-                        fontSize: 'clamp(3rem, 6vw, 5rem)',
+                        fontSize: 'clamp(2.5rem, 5vw, 5rem)',
                         lineHeight: '1.1',
                       }}
                     >
@@ -85,11 +85,11 @@ export default function PrayerClient({
                   </div>
 
                   {/* Next Prayer Section */}
-                  <div className="flex flex-col justify-center text-center p-6 lg:p-8">
+                  <div className="flex flex-col justify-center text-center p-4 md:p-6">
                     <div
-                      className="text-gray-500 font-medium uppercase tracking-wide mb-2"
+                      className="text-gray-500 font-medium uppercase tracking-wide mb-1"
                       style={{
-                        fontSize: 'clamp(1.125rem, 1.8vw, 1.75rem)',
+                        fontSize: 'clamp(0.875rem, 1.4vw, 1.75rem)',
                       }}
                     >
                       <span className="text-theme font-bold">{nextEvent.prayer}</span> {nextEvent.label} in
@@ -97,7 +97,7 @@ export default function PrayerClient({
                     <div
                       className="font-bold text-gray-900 tabular-nums"
                       style={{
-                        fontSize: 'clamp(3rem, 6vw, 5rem)',
+                        fontSize: 'clamp(2.5rem, 5vw, 5rem)',
                         lineHeight: '1.1',
                       }}
                     >
@@ -107,7 +107,7 @@ export default function PrayerClient({
                           <span
                             className="font-normal text-gray-600"
                             style={{
-                              fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+                              fontSize: 'clamp(1rem, 1.5vw, 1.6rem)',
                             }}
                           >
                             HR
@@ -121,7 +121,7 @@ export default function PrayerClient({
                           <span
                             className="font-normal text-gray-600"
                             style={{
-                              fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+                              fontSize: 'clamp(1rem, 1.5vw, 1.6rem)',
                             }}
                           >
                             MIN
@@ -133,7 +133,7 @@ export default function PrayerClient({
                       <span
                         className="font-normal text-gray-600"
                         style={{
-                          fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+                          fontSize: 'clamp(1rem, 1.5vw, 1.6rem)',
                         }}
                       >
                         SEC
@@ -146,19 +146,19 @@ export default function PrayerClient({
 
             {/* Content Cards Section */}
             <section
-              className="grid grid-cols-1 lg:grid-cols-5 mt-auto flex-shrink-0"
+              className="grid grid-cols-1 md:grid-cols-5 mt-auto flex-shrink-0"
               style={{
-                gap: 'clamp(0.75rem, 1vw, 1rem)',
-                marginBottom: 'clamp(1rem, 1.5vh, 1.5rem)',
+                gap: 'clamp(0.5rem, 0.8vw, 1rem)',
+                marginBottom: 'clamp(0.5rem, 1vh, 1.5rem)',
               }}
             >
               {/* Jumaah Card */}
               {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
                 <div
-                  className="bg-gray-50 border border-gray-200 order-2 lg:order-1 lg:col-span-1 flex flex-col"
+                  className="bg-gray-50 border border-gray-200 order-2 md:order-1 md:col-span-1 flex flex-col"
                   style={{
-                    borderRadius: 'clamp(0.75rem, 1vw, 1rem)',
-                    padding: 'clamp(1rem, 1.5vw, 1.5rem)',
+                    borderRadius: 'clamp(0.5rem, 0.8vw, 1rem)',
+                    padding: 'clamp(0.75rem, 1.2vw, 1.5rem)',
                   }}
                 >
                   <div className="flex-1">
@@ -178,14 +178,14 @@ export default function PrayerClient({
                           <div
                             className="flex flex-col justify-between"
                             style={{
-                              gap: 'clamp(1.5rem, 3vh, 2.5rem)',
+                              gap: 'clamp(0.75rem, 2vh, 2.5rem)',
                             }}
                           >
                             <div className="text-center">
                               <h2
                                 className="font-bold"
                                 style={{
-                                  fontSize: 'clamp(0.875rem, 1.2vw, 1.5rem)',
+                                  fontSize: 'clamp(0.75rem, 1vw, 1.5rem)',
                                 }}
                               >
                                 {jummahPrayerTimes.length > 1
@@ -203,7 +203,7 @@ export default function PrayerClient({
                                 <div
                                   className="font-medium uppercase tracking-wider opacity-70"
                                   style={{
-                                    fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                                    fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                                   }}
                                 >
                                   Starts
@@ -211,7 +211,7 @@ export default function PrayerClient({
                                 <div
                                   className="font-semibold"
                                   style={{
-                                    fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                                    fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                                   }}
                                 >
                                   {session.start}
@@ -221,7 +221,7 @@ export default function PrayerClient({
                                 <div
                                   className="font-medium uppercase tracking-wider opacity-70"
                                   style={{
-                                    fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                                    fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                                   }}
                                 >
                                   Khutbah
@@ -229,7 +229,7 @@ export default function PrayerClient({
                                 <div
                                   className="font-semibold"
                                   style={{
-                                    fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                                    fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                                   }}
                                 >
                                   {session.khutbah}
@@ -245,7 +245,7 @@ export default function PrayerClient({
               )}
 
               {/* Sunrise/Duha Card */}
-              <div className="flex flex-col items-center justify-center text-center order-1 lg:order-2 lg:col-span-1 lg:col-start-5">
+              <div className="flex flex-col items-center justify-center text-center order-1 md:order-2 md:col-span-1 md:col-start-5">
                 <div className="w-full h-full">
                   <div
                     className="text-center transition-all bg-gray-50 border border-gray-200 text-gray-900 h-full"
@@ -257,13 +257,13 @@ export default function PrayerClient({
                     <div className="h-full flex flex-col">
                       <div
                         style={{
-                          marginBottom: 'clamp(0.75rem, 1vh, 1rem)',
+                          marginBottom: 'clamp(0.5rem, 0.8vh, 1rem)',
                         }}
                       >
                         <h3
                           className="font-bold"
                           style={{
-                            fontSize: 'clamp(0.875rem, 1.2vw, 1.5rem)',
+                            fontSize: 'clamp(0.75rem, 1vw, 1.5rem)',
                           }}
                         >
                           Shurq شروق
@@ -281,7 +281,7 @@ export default function PrayerClient({
                           <div
                             className="font-medium uppercase tracking-wider opacity-70"
                             style={{
-                              fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                              fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                             }}
                           >
                             Sunrise
@@ -289,7 +289,7 @@ export default function PrayerClient({
                           <div
                             className="font-semibold"
                             style={{
-                              fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                              fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                             }}
                           >
                             {shurq?.sunrise || "--:--"}
@@ -301,7 +301,7 @@ export default function PrayerClient({
                           <div
                             className="font-medium uppercase tracking-wider opacity-70"
                             style={{
-                              fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                              fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                             }}
                           >
                             Duha
@@ -309,7 +309,7 @@ export default function PrayerClient({
                           <div
                             className="font-semibold"
                             style={{
-                              fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                              fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                             }}
                           >
                             {shurq?.duha || "--:--"}
@@ -324,9 +324,9 @@ export default function PrayerClient({
 
             {/* Prayer Cards Grid */}
             <section
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mt-auto"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 mt-auto"
               style={{
-                gap: 'clamp(0.75rem, 1vw, 1rem)',
+                gap: 'clamp(0.5rem, 0.8vw, 1rem)',
               }}
             >
               {dailyPrayerTimes?.map((prayer, index) => (
@@ -341,16 +341,16 @@ export default function PrayerClient({
                     }
                   `}
                   style={{
-                    borderRadius: 'clamp(0.75rem, 1vw, 1rem)',
-                    padding: 'clamp(0.75rem, 1.2vw, 1rem)',
-                    marginBottom: 'clamp(0.5rem, 0.8vh, 0.75rem)',
+                    borderRadius: 'clamp(0.5rem, 0.8vw, 1rem)',
+                    padding: 'clamp(0.5rem, 1vw, 1rem)',
+                    marginBottom: 0,
                   }}
                 >
                   <h3
                     className="font-bold"
                     style={{
-                      fontSize: 'clamp(0.875rem, 1.2vw, 1.5rem)',
-                      marginBottom: 'clamp(0.5rem, 0.8vh, 0.75rem)',
+                      fontSize: 'clamp(0.75rem, 1vw, 1.5rem)',
+                      marginBottom: 'clamp(0.375rem, 0.6vh, 0.75rem)',
                     }}
                   >
                     {prayer.name}&nbsp;
@@ -359,14 +359,14 @@ export default function PrayerClient({
                   <div
                     className="grid grid-cols-2 text-center"
                     style={{
-                      gap: 'clamp(0.5rem, 0.8vw, 0.75rem)',
+                      gap: 'clamp(0.375rem, 0.6vw, 0.75rem)',
                     }}
                   >
                     <div>
                       <div
                         className="font-medium uppercase tracking-wider opacity-70"
                         style={{
-                          fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                          fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                         }}
                       >
                         Starts
@@ -374,7 +374,7 @@ export default function PrayerClient({
                       <div
                         className="font-semibold"
                         style={{
-                          fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                          fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                         }}
                       >
                         {prayer.start}
@@ -384,7 +384,7 @@ export default function PrayerClient({
                       <div
                         className="font-medium uppercase tracking-wider opacity-70"
                         style={{
-                          fontSize: 'clamp(0.75rem, 0.9vw, 0.875rem)',
+                          fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
                         }}
                       >
                         Iqamah
@@ -392,7 +392,7 @@ export default function PrayerClient({
                       <div
                         className="font-semibold"
                         style={{
-                          fontSize: 'clamp(1.125rem, 1.6vw, 1.875rem)',
+                          fontSize: 'clamp(1rem, 1.4vw, 1.875rem)',
                         }}
                       >
                         {prayer.iqamah}
