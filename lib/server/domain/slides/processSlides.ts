@@ -19,8 +19,8 @@ export async function processSlides(
 ): Promise<ProcessedSlide[]> {
   // Define supported slide types per layout
   const layoutSupport = {
-    advanced: ["event", "announcement", "donation", "custom", "prayer-screen", "static", "business-ad"], // supports ALL slide types
-    simple: ["event", "announcement", "donation", "custom", "static", "business-ad"] // supports all EXCEPT prayer-screen
+    advanced: ["event", "announcement", "donation", "custom", "static", "business-ad"], // supports ALL slide types except prayer-screen
+    simple: ["event", "announcement", "donation", "custom", "prayer-screen", "static", "business-ad"] // supports all slide types
   };
 
   const supportedTypes = layoutSupport[layoutType];
