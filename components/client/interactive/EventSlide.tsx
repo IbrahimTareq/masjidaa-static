@@ -53,7 +53,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
 
       // Calculate responsive QR code size based on viewport
       const viewportWidth = window.innerWidth;
-      const qrSize = Math.min(Math.max(viewportWidth * 0.18, 220), 400);
+      const qrSize = Math.min(Math.max(viewportWidth * 0.15, 180), 400);
 
       // Create QR code with responsive styling
       const qrCode = new QRCodeStyling({
@@ -112,16 +112,16 @@ export default function EventSlide({ eventId }: EventSlideProps) {
       {/* Hero Section */}
       <div className="w-full bg-white">
         <div
-          className="mx-auto px-[2vw] py-[3vh]"
+          className="mx-auto px-[2vw] py-[2vh]"
           style={{
             maxWidth: 'clamp(800px, 90vw, 1400px)',
           }}
         >
           <div className="text-center">
             <h1
-              className="font-bold text-gray-900 leading-tight break-words mb-[2vh] truncate"
+              className="font-bold text-gray-900 leading-tight break-words mb-[1.5vh] truncate"
               style={{
-                fontSize: 'clamp(1.75rem, 4vw, 4rem)',
+                fontSize: 'clamp(1.5rem, 3.5vw, 4rem)',
               }}
             >
               {event.title}
@@ -129,23 +129,23 @@ export default function EventSlide({ eventId }: EventSlideProps) {
 
             {/* Key Event Info - Responsive */}
             <div
-              className="flex flex-col lg:flex-row items-center justify-center text-gray-700 flex-wrap"
+              className="flex flex-col md:flex-row items-center justify-center text-gray-700 flex-wrap"
               style={{
-                gap: 'clamp(1rem, 2vw, 3rem)',
+                gap: 'clamp(0.75rem, 1.5vw, 3rem)',
               }}
             >
               <div className="flex items-center gap-[0.5vw]">
                 <Calendar
                   className="text-theme flex-shrink-0"
                   style={{
-                    width: 'clamp(1.25rem, 1.5vw, 2rem)',
-                    height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                    width: 'clamp(1rem, 1.3vw, 2rem)',
+                    height: 'clamp(1rem, 1.3vw, 2rem)',
                   }}
                 />
                 <span
                   className="font-medium"
                   style={{
-                    fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                    fontSize: 'clamp(0.875rem, 1.1vw, 1.5rem)',
                   }}
                 >
                   {formatDate(event.date)}
@@ -156,14 +156,14 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                   <Clock
                     className="text-theme flex-shrink-0"
                     style={{
-                      width: 'clamp(1.25rem, 1.5vw, 2rem)',
-                      height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                      width: 'clamp(1rem, 1.3vw, 2rem)',
+                      height: 'clamp(1rem, 1.3vw, 2rem)',
                     }}
                   />
                   <span
                     className="font-medium"
                     style={{
-                      fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                      fontSize: 'clamp(0.875rem, 1.1vw, 1.5rem)',
                     }}
                   >
                     {formatTime(event.start_time)}
@@ -175,14 +175,14 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                   <MapPin
                     className="text-theme flex-shrink-0"
                     style={{
-                      width: 'clamp(1.25rem, 1.5vw, 2rem)',
-                      height: 'clamp(1.25rem, 1.5vw, 2rem)',
+                      width: 'clamp(1rem, 1.3vw, 2rem)',
+                      height: 'clamp(1rem, 1.3vw, 2rem)',
                     }}
                   />
                   <span
                     className="font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.2vw, 1.5rem)',
+                      fontSize: 'clamp(0.875rem, 1.1vw, 1.5rem)',
                     }}
                   >
                     {event.location}
@@ -197,29 +197,29 @@ export default function EventSlide({ eventId }: EventSlideProps) {
       {/* Main Content */}
       <div className="w-full bg-gray-50">
         <div
-          className="mx-auto px-[2vw] py-[4vh]"
+          className="mx-auto px-[2vw] py-[2.5vh]"
           style={{
             maxWidth: 'clamp(800px, 90vw, 1400px)',
           }}
         >
           <div
-            className="grid grid-cols-1 xl:grid-cols-3"
+            className="grid grid-cols-1 md:grid-cols-3"
             style={{
-              gap: 'clamp(1.5rem, 2vw, 3rem)',
+              gap: 'clamp(1rem, 1.5vw, 3rem)',
             }}
           >
             {/* Main Content - Description */}
-            <div className="xl:col-span-2 w-full min-w-0">
+            <div className="md:col-span-2 w-full min-w-0">
               <div
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full"
                 style={{
-                  padding: 'clamp(1.5rem, 2vw, 3rem)',
+                  padding: 'clamp(1rem, 1.5vw, 3rem)',
                 }}
               >
                 <h2
-                  className="font-bold text-gray-900 mb-[2vh]"
+                  className="font-bold text-gray-900 mb-[1.5vh]"
                   style={{
-                    fontSize: 'clamp(1.25rem, 2vw, 2rem)',
+                    fontSize: 'clamp(1.25rem, 1.8vw, 2rem)',
                   }}
                 >
                   About this event
@@ -229,10 +229,10 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                     <p
                       className="text-gray-700 leading-relaxed whitespace-pre-line break-words overflow-hidden"
                       style={{
-                        fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
-                        lineHeight: '1.7',
+                        fontSize: 'clamp(1.125rem, 1.5vw, 1.875rem)',
+                        lineHeight: '1.6',
                         display: '-webkit-box',
-                        WebkitLineClamp: 7,
+                        WebkitLineClamp: 5,
                         WebkitBoxOrient: 'vertical',
                       }}
                     >
@@ -240,18 +240,18 @@ export default function EventSlide({ eventId }: EventSlideProps) {
                     </p>
                   </div>
                 ) : (
-                  <div className="text-center py-[4vh]">
+                  <div className="text-center py-[3vh]">
                     <Calendar
-                      className="text-gray-300 mx-auto mb-4"
+                      className="text-gray-300 mx-auto mb-3"
                       style={{
-                        width: 'clamp(3rem, 4vw, 6rem)',
-                        height: 'clamp(3rem, 4vw, 6rem)',
+                        width: 'clamp(2.5rem, 3.5vw, 6rem)',
+                        height: 'clamp(2.5rem, 3.5vw, 6rem)',
                       }}
                     />
                     <p
                       className="text-gray-500"
                       style={{
-                        fontSize: 'clamp(1rem, 1.1vw, 1.25rem)',
+                        fontSize: 'clamp(0.875rem, 1vw, 1.25rem)',
                       }}
                     >
                       No description available for this event
@@ -262,21 +262,21 @@ export default function EventSlide({ eventId }: EventSlideProps) {
             </div>
 
             {/* Sidebar */}
-            <div className="xl:col-span-1 w-full min-w-0">
+            <div className="md:col-span-1 w-full min-w-0">
               {/* QR Code */}
               <div
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
                 style={{
-                  padding: 'clamp(1rem, 1.5vw, 2rem)',
+                  padding: 'clamp(0.875rem, 1.3vw, 2rem)',
                 }}
               >
-                <div className="flex justify-center mb-[1vh]">
+                <div className="flex justify-center mb-[0.75vh]">
                   <div ref={qrRef} className="qr-code-container" />
                 </div>
                 <p
                   className="text-gray-600 leading-relaxed"
                   style={{
-                    fontSize: 'clamp(1.25rem, 1.6vw, 1.875rem)',
+                    fontSize: 'clamp(0.875rem, 1.2vw, 1.875rem)',
                   }}
                 >
                   Scan QR code for more information

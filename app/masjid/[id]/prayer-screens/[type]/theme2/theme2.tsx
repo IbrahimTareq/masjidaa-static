@@ -120,16 +120,16 @@ export default function PrayerClient({
       style={{
         width: 'clamp(135px, 13.5vw, 220px)',
         height: 'clamp(170px, 14vh, 240px)',
-        padding: 'clamp(0.75rem, 1.1vw, 1.5rem)',
+        padding: 'clamp(0.5rem, 0.9vw, 1.5rem)',
       }}
     >
-      <div className="flex flex-col items-center text-center gap-2 h-full justify-center">
+      <div className="flex flex-col items-center text-center gap-1.5 h-full justify-center">
         {/* Prayer Name - Centered */}
         <div className="flex items-center gap-1">
           <h3
             className="font-semibold text-gray-900"
             style={{
-              fontSize: 'clamp(0.95rem, 1.3vw, 1.5rem)',
+              fontSize: 'clamp(1rem, 1.4vw, 1.625rem)',
             }}
           >
             {card.name} <span className="font-serif">{card.arabicName}</span>
@@ -137,13 +137,13 @@ export default function PrayerClient({
         </div>
 
         {/* Times - Centered */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           {/* Start Time */}
           <div className="text-center">
             <div
               className="text-gray-500 font-medium uppercase tracking-wide"
               style={{
-                fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
+                fontSize: 'clamp(0.5rem, 0.7vw, 0.875rem)',
               }}
             >
               Starts
@@ -151,7 +151,7 @@ export default function PrayerClient({
             <div
               className="font-bold text-gray-900"
               style={{
-                fontSize: 'clamp(1.125rem, 1.7vw, 1.875rem)',
+                fontSize: 'clamp(1.5rem, 2.3vw, 2.25rem)',
               }}
             >
               {card.startTime}
@@ -164,7 +164,7 @@ export default function PrayerClient({
               <div
                 className="text-gray-500 font-medium uppercase tracking-wide"
                 style={{
-                  fontSize: 'clamp(0.625rem, 0.8vw, 0.875rem)',
+                  fontSize: 'clamp(0.5rem, 0.7vw, 0.875rem)',
                 }}
               >
                 {card.type === 'jummah' ? 'Khutbah' : 'Iqamah'}
@@ -172,7 +172,7 @@ export default function PrayerClient({
               <div
                 className="font-semibold text-gray-700"
                 style={{
-                  fontSize: 'clamp(1.125rem, 1.7vw, 1.875rem)',
+                  fontSize: 'clamp(1.5rem, 2.3vw, 2.25rem)',
                 }}
               >
                 {card.iqamahTime}
@@ -204,16 +204,16 @@ export default function PrayerClient({
       style={{
         width: 'clamp(120px, 12vw, 220px)',
         height: 'clamp(150px, 12vh, 230px)',
-        padding: 'clamp(0.625rem, 1vw, 1.5rem)',
+        padding: 'clamp(0.5rem, 0.8vw, 1.5rem)',
       }}
     >
-      <div className="flex flex-col items-center text-center gap-1.5 h-full justify-center">
+      <div className="flex flex-col items-center text-center gap-1 h-full justify-center">
         {/* Prayer Name - Centered */}
         <div className="flex items-center gap-1">
           <h3
             className="font-semibold text-gray-900"
             style={{
-              fontSize: 'clamp(0.875rem, 1.2vw, 1.5rem)',
+              fontSize: 'clamp(0.95rem, 1.3vw, 1.5rem)',
             }}
           >
             {card.name} <span className="font-serif">{card.arabicName}</span>
@@ -221,13 +221,13 @@ export default function PrayerClient({
         </div>
 
         {/* Times - Centered */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0.5">
           {/* Start Time */}
           <div className="text-center">
             <div
               className="text-gray-500 font-medium uppercase tracking-wide"
               style={{
-                fontSize: 'clamp(0.5rem, 0.7vw, 0.875rem)',
+                fontSize: 'clamp(0.5rem, 0.65vw, 0.875rem)',
               }}
             >
               Starts
@@ -235,7 +235,7 @@ export default function PrayerClient({
             <div
               className="font-bold text-gray-900"
               style={{
-                fontSize: 'clamp(1rem, 1.5vw, 1.875rem)',
+                fontSize: 'clamp(1.25rem, 1.9vw, 2rem)',
               }}
             >
               {card.startTime}
@@ -248,7 +248,7 @@ export default function PrayerClient({
               <div
                 className="text-gray-500 font-medium uppercase tracking-wide"
                 style={{
-                  fontSize: 'clamp(0.5rem, 0.7vw, 0.875rem)',
+                  fontSize: 'clamp(0.5rem, 0.65vw, 0.875rem)',
                 }}
               >
                 {card.type === 'jummah' ? 'Khutbah' : 'Iqamah'}
@@ -256,7 +256,7 @@ export default function PrayerClient({
               <div
                 className="font-semibold text-gray-700"
                 style={{
-                  fontSize: 'clamp(1rem, 1.5vw, 1.875rem)',
+                  fontSize: 'clamp(1.25rem, 1.9vw, 2rem)',
                 }}
               >
                 {card.iqamahTime}

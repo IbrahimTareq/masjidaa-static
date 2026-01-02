@@ -26,17 +26,17 @@ export default function Parking() {
           }}
         >
           {/* Hadith Section - Centered */}
-          <div className="text-center mb-[2.5vh]">
+          <div className="text-center mb-[2vh]">
             <div
               className="text-theme-gradient rounded-lg inline-block"
               style={{
-                padding: "clamp(1.25rem, 2vw, 2.5rem)",
+                padding: "clamp(1rem, 1.6vw, 2.5rem)",
               }}
             >
               <p
                 className="font-medium leading-relaxed break-words"
                 style={{
-                  fontSize: "clamp(1.125rem, 1.8vw, 2.25rem)",
+                  fontSize: "clamp(1rem, 1.5vw, 2.25rem)",
                   lineHeight: "1.4",
                   maxWidth: "none",
                 }}
@@ -46,7 +46,7 @@ export default function Parking() {
                 <span
                   className="opacity-75 italic"
                   style={{
-                    fontSize: "clamp(1rem, 1.4vw, 1.75rem)",
+                    fontSize: "clamp(0.875rem, 1.2vw, 1.75rem)",
                   }}
                 >
                   - Sahih Muslim 46
@@ -59,19 +59,19 @@ export default function Parking() {
             className="bg-gray-200"
             style={{
               height: "clamp(2px, 0.25vh, 5px)",
-              margin: "clamp(1.25rem, 2vh, 2.5rem) 0",
+              margin: "clamp(1rem, 1.5vh, 2.5rem) 0",
             }}
           />
 
           {/* Parking Guidelines */}
           <div className="w-full mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-[1.5vw]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.2vw]">
               {parkingGuidelines.map((guideline, index) => (
                 <div
                   key={index}
-                  className="flex gap-[1.2vw] items-start"
+                  className="flex gap-[1vw] items-start"
                   style={{
-                    padding: "clamp(0.75rem, 1.2vw, 1.5rem)",
+                    padding: "clamp(0.625rem, 1vw, 1.5rem)",
                   }}
                 >
                   {/* Bullet Point */}
@@ -79,9 +79,9 @@ export default function Parking() {
                     <div
                       className="bg-theme rounded-full"
                       style={{
-                        width: "clamp(0.6rem, 1vw, 1.25rem)",
-                        height: "clamp(0.6rem, 1vw, 1.25rem)",
-                        marginTop: "clamp(0.3rem, 0.6vh, 0.6rem)",
+                        width: "clamp(0.5rem, 0.8vw, 1.25rem)",
+                        height: "clamp(0.5rem, 0.8vw, 1.25rem)",
+                        marginTop: "clamp(0.3rem, 0.5vh, 0.6rem)",
                       }}
                     />
                   </div>
@@ -91,7 +91,7 @@ export default function Parking() {
                     <p
                       className="text-gray-700 font-medium break-words"
                       style={{
-                        fontSize: "clamp(1.125rem, 1.6vw, 2rem)",
+                        fontSize: "clamp(1rem, 1.4vw, 2rem)",
                         lineHeight: "1.3",
                       }}
                     >

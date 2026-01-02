@@ -20,8 +20,8 @@ export default function DownloadApp() {
   useQRCode(
     {
       data: `${DOMAIN_NAME}/${masjid?.slug}`,
-      width: 180,
-      height: 180,
+      width: 140,
+      height: 140,
     },
     qrRef
   );
@@ -40,9 +40,9 @@ export default function DownloadApp() {
             <h1
               className="font-extrabold leading-tight break-words"
               style={{
-                fontSize: 'clamp(1.75rem, 3.5vw, 4rem)',
+                fontSize: 'clamp(1.5rem, 2.8vw, 4rem)',
                 lineHeight: '1.2',
-                marginBottom: 'clamp(1rem, 1.5vh, 1.5rem)',
+                marginBottom: 'clamp(0.75rem, 1.2vh, 1.5rem)',
               }}
             >
               Stay connected with&nbsp;
@@ -51,9 +51,9 @@ export default function DownloadApp() {
             <p
               className="font-semibold text-gray-600 break-words"
               style={{
-                fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                 lineHeight: '1.3',
-                marginBottom: 'clamp(2rem, 3vh, 3rem)',
+                marginBottom: 'clamp(1.5rem, 2vh, 3rem)',
                 maxWidth: '85%',
               }}
             >
@@ -66,8 +66,8 @@ export default function DownloadApp() {
             <div
               className="flex items-center justify-center bg-white rounded-xl w-fit"
               style={{
-                gap: 'clamp(1.5rem, 2.5vw, 3rem)',
-                padding: 'clamp(1rem, 1.5vw, 2rem)',
+                gap: 'clamp(1rem, 2vw, 3rem)',
+                padding: 'clamp(0.75rem, 1.2vw, 2rem)',
               }}
             >
               {/* QR Code */}
@@ -75,8 +75,8 @@ export default function DownloadApp() {
                 ref={qrRef}
                 className="qr-code-container flex items-center justify-center border border-gray-100 rounded-lg overflow-hidden"
                 style={{
-                  width: 'clamp(140px, 14vw, 200px)',
-                  height: 'clamp(140px, 14vw, 200px)',
+                  width: 'clamp(120px, 12vw, 200px)',
+                  height: 'clamp(120px, 12vw, 200px)',
                 }}
               />
 
@@ -84,7 +84,7 @@ export default function DownloadApp() {
               <div
                 className="flex flex-col items-center justify-center"
                 style={{
-                  gap: 'clamp(0.75rem, 1vw, 1.25rem)',
+                  gap: 'clamp(0.625rem, 0.8vw, 1.25rem)',
                 }}
               >
                 <Image
@@ -94,7 +94,7 @@ export default function DownloadApp() {
                   height={45}
                   className="object-contain"
                   style={{
-                    width: 'clamp(120px, 12vw, 180px)',
+                    width: 'clamp(100px, 10vw, 180px)',
                     height: 'auto',
                   }}
                 />
@@ -105,7 +105,7 @@ export default function DownloadApp() {
                   height={45}
                   className="object-contain"
                   style={{
-                    width: 'clamp(120px, 12vw, 180px)',
+                    width: 'clamp(100px, 10vw, 180px)',
                     height: 'auto',
                   }}
                 />

@@ -39,15 +39,15 @@ export default function MasjidEtiquette() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(1rem, 1.5vh, 1.75rem)',
+              gap: 'clamp(0.625rem, 1vh, 1.75rem)',
             }}
           >
             {etiquettePoints.map((point) => (
               <div
                 key={point.number}
-                className="flex gap-[1.2vw] items-start"
+                className="flex gap-[1vw] items-start"
                 style={{
-                  padding: 'clamp(0.5rem, 1vw, 1.25rem)',
+                  padding: 'clamp(0.375rem, 0.7vw, 1.25rem)',
                 }}
               >
                 {/* Number Circle */}
@@ -55,9 +55,9 @@ export default function MasjidEtiquette() {
                   <div
                     className="bg-theme text-white rounded-full flex items-center justify-center font-bold"
                     style={{
-                      width: 'clamp(2rem, 3vw, 3.5rem)',
-                      height: 'clamp(2rem, 3vw, 3.5rem)',
-                      fontSize: 'clamp(1rem, 1.5vw, 1.875rem)',
+                      width: 'clamp(1.5rem, 2.2vw, 3.5rem)',
+                      height: 'clamp(1.5rem, 2.2vw, 3.5rem)',
+                      fontSize: 'clamp(0.75rem, 1.2vw, 1.875rem)',
                     }}
                   >
                     {point.number}
@@ -69,7 +69,7 @@ export default function MasjidEtiquette() {
                   <p
                     className="text-gray-700 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >

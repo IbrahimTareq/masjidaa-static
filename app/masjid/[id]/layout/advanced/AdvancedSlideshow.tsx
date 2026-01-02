@@ -230,23 +230,23 @@ export default function AdvancedSlideshow({
                             : `Jumaah ${index + 1}`}
                         </div>
 
-                        <div className="flex flex-col lg:flex-row items-center justify-center gap-2 lg:gap-3 xl:gap-4">
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 xl:gap-4">
                           <div className="text-center">
-                            <div className="text-xs lg:text-sm xl:text-base 2xl:text-lg font-bold mb-2 opacity-90">
+                            <div className="text-xs md:text-sm xl:text-base 2xl:text-lg font-bold mb-2 opacity-90">
                               Starts
                             </div>
-                            <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl font-semibold">
+                            <div className="text-lg md:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl font-semibold">
                               {formatTimeWithSmallPeriod(session.start)}
                             </div>
                           </div>
 
-                          <div className="w-8 h-px lg:w-px lg:h-8 bg-white opacity-40"></div>
+                          <div className="w-8 h-px md:w-px md:h-8 bg-white opacity-40"></div>
 
                           <div className="text-center">
-                            <div className="text-xs lg:text-sm xl:text-base 2xl:text-lg font-bold mb-2 opacity-90">
+                            <div className="text-xs md:text-sm xl:text-base 2xl:text-lg font-bold mb-2 opacity-90">
                               Khutbah
                             </div>
-                            <div className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl font-semibold">
+                            <div className="text-lg md:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl font-semibold">
                               {formatTimeWithSmallPeriod(session.khutbah)}
                             </div>
                           </div>

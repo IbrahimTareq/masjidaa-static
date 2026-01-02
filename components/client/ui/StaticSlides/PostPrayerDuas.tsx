@@ -14,17 +14,17 @@ export default function PostPrayerDuas() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(1rem, 1.5vh, 1.75rem)',
+              gap: 'clamp(0.625rem, 1vh, 1.75rem)',
             }}
           >
             {/* Astaghfirullah */}
-            <div className="border-b border-gray-100 pb-[1vh]">
-              <div className="flex gap-[2vw]">
+            <div className="border-b border-gray-100 pb-[0.75vh]">
+              <div className="flex gap-[1.5vw]">
                 <div className="flex-[1.5]">
                   <p
                     className="text-gray-800 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -34,9 +34,9 @@ export default function PostPrayerDuas() {
                     </span>
                   </p>
                   <p
-                    className="text-gray-600 mt-[0.5vh] break-words"
+                    className="text-gray-600 mt-[0.4vh] break-words"
                     style={{
-                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      fontSize: 'clamp(0.75rem, 1.1vw, 1.625rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -47,7 +47,7 @@ export default function PostPrayerDuas() {
                   <p
                     className="font-serif text-gray-800 break-words"
                     style={{
-                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      fontSize: 'clamp(1.125rem, 1.7vw, 2.5rem)',
                       lineHeight: '1.4',
                       fontFamily: '"Amiri", "Times New Roman", serif',
                     }}
@@ -59,22 +59,22 @@ export default function PostPrayerDuas() {
             </div>
 
             {/* Allahumma antas-salam */}
-            <div className="border-b border-gray-100 pb-[1vh]">
-              <div className="flex gap-[2vw]">
+            <div className="border-b border-gray-100 pb-[0.75vh]">
+              <div className="flex gap-[1.5vw]">
                 <div className="flex-[1.5]">
                   <p
                     className="text-gray-800 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >
                     Allahumma Antas-Salam wa minkas-salam Tabarakta ya Dhal-jalali wal-ikram
                   </p>
                   <p
-                    className="text-gray-600 mt-[0.5vh] break-words"
+                    className="text-gray-600 mt-[0.4vh] break-words"
                     style={{
-                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      fontSize: 'clamp(0.75rem, 1.1vw, 1.625rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -85,7 +85,7 @@ export default function PostPrayerDuas() {
                   <p
                     className="font-serif text-gray-800 break-words"
                     style={{
-                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      fontSize: 'clamp(1.125rem, 1.7vw, 2.5rem)',
                       lineHeight: '1.4',
                       fontFamily: '"Amiri", "Times New Roman", serif',
                     }}
@@ -97,13 +97,13 @@ export default function PostPrayerDuas() {
             </div>
 
             {/* Subhanallah */}
-            <div className="border-b border-gray-100 pb-[1vh]">
-              <div className="flex gap-[2vw]">
+            <div className="border-b border-gray-100 pb-[0.75vh]">
+              <div className="flex gap-[1.5vw]">
                 <div className="flex-[1.5]">
                   <p
                     className="text-gray-800 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -113,9 +113,9 @@ export default function PostPrayerDuas() {
                     </span>
                   </p>
                   <p
-                    className="text-gray-600 mt-[0.5vh] break-words"
+                    className="text-gray-600 mt-[0.4vh] break-words"
                     style={{
-                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      fontSize: 'clamp(0.75rem, 1.1vw, 1.625rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -126,7 +126,7 @@ export default function PostPrayerDuas() {
                   <p
                     className="font-serif text-gray-800 break-words"
                     style={{
-                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      fontSize: 'clamp(1.125rem, 1.7vw, 2.5rem)',
                       lineHeight: '1.4',
                       fontFamily: '"Amiri", "Times New Roman", serif',
                     }}
@@ -138,22 +138,22 @@ export default function PostPrayerDuas() {
             </div>
 
             {/* Ayatul Kursi */}
-            <div className="pb-[1vh]">
-              <div className="flex gap-[2vw]">
+            <div className="pb-[0.75vh]">
+              <div className="flex gap-[1.5vw]">
                 <div className="flex-[1.5]">
                   <p
                     className="text-gray-800 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >
                     Recite Ayatul Kursi
                   </p>
                   <p
-                    className="text-gray-600 mt-[0.5vh] break-words"
+                    className="text-gray-600 mt-[0.4vh] break-words"
                     style={{
-                      fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                      fontSize: 'clamp(0.75rem, 1.1vw, 1.625rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -164,7 +164,7 @@ export default function PostPrayerDuas() {
                   <p
                     className="font-serif text-gray-800 break-words"
                     style={{
-                      fontSize: 'clamp(1.25rem, 2vw, 2.5rem)',
+                      fontSize: 'clamp(1.125rem, 1.7vw, 2.5rem)',
                       lineHeight: '1.4',
                       fontFamily: '"Amiri", "Times New Roman", serif',
                     }}

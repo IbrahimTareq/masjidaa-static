@@ -29,11 +29,11 @@ export default function JummahSunnah() {
           }}
         >
           {/* Title Section */}
-          <div className="text-center mb-[1.5vh]">
+          <div className="text-center mb-[1vh]">
             <p
               className="font-bold text-gray-600"
               style={{
-                fontSize: 'clamp(1.125rem, 2vw, 2.5rem)',
+                fontSize: 'clamp(1rem, 1.6vw, 2.5rem)',
               }}
             >
               Prophet Muhammad ﷺ said:
@@ -46,15 +46,15 @@ export default function JummahSunnah() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(1rem, 1.5vh, 1.75rem)',
+              gap: 'clamp(0.75rem, 1.2vh, 1.75rem)',
             }}
           >
             {sunnahPoints.map((point) => (
               <div
                 key={point.number}
-                className="flex gap-[1.2vw] items-start"
+                className="flex gap-[1vw] items-start"
                 style={{
-                  padding: 'clamp(0.5rem, 1vw, 1.25rem)',
+                  padding: 'clamp(0.5rem, 0.8vw, 1.25rem)',
                 }}
               >
                 {/* Number Circle */}
@@ -62,9 +62,9 @@ export default function JummahSunnah() {
                   <div
                     className="bg-theme text-white rounded-full flex items-center justify-center font-bold"
                     style={{
-                      width: 'clamp(2rem, 3vw, 3.5rem)',
-                      height: 'clamp(2rem, 3vw, 3.5rem)',
-                      fontSize: 'clamp(1rem, 1.5vw, 1.875rem)',
+                      width: 'clamp(1.75rem, 2.5vw, 3.5rem)',
+                      height: 'clamp(1.75rem, 2.5vw, 3.5rem)',
+                      fontSize: 'clamp(0.875rem, 1.3vw, 1.875rem)',
                     }}
                   >
                     {point.number}
@@ -76,7 +76,7 @@ export default function JummahSunnah() {
                   <p
                     className="text-gray-700 font-medium break-words"
                     style={{
-                      fontSize: 'clamp(1rem, 1.6vw, 2rem)',
+                      fontSize: 'clamp(0.875rem, 1.4vw, 2rem)',
                       lineHeight: '1.2',
                     }}
                   >
@@ -84,7 +84,7 @@ export default function JummahSunnah() {
                     <span
                       className="text-gray-500 italic block mt-[0.25vh]"
                       style={{
-                        fontSize: 'clamp(0.875rem, 1.3vw, 1.625rem)',
+                        fontSize: 'clamp(0.75rem, 1.1vw, 1.625rem)',
                       }}
                     >
                       - {point.source}

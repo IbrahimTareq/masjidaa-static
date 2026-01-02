@@ -6,7 +6,7 @@ export default function PostAdhanDua() {
       {/* Main Content */}
       <div className="w-full overflow-x-hidden bg-white h-full flex items-center justify-center">
         <div
-          className="w-full mx-auto px-[2vw] py-[3vh] text-center"
+          className="w-full mx-auto px-[2vw] py-[2vh] text-center"
           style={{
             maxWidth: 'clamp(800px, 88vw, 1200px)',
           }}
@@ -15,7 +15,7 @@ export default function PostAdhanDua() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(2rem, 3vh, 4rem)',
+              gap: 'clamp(1.5rem, 2.5vh, 4rem)',
               alignItems: 'center',
             }}
           >
@@ -24,7 +24,7 @@ export default function PostAdhanDua() {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 'clamp(1.25rem, 2.5vh, 2.5rem)',
+                gap: 'clamp(1rem, 2vh, 2.5rem)',
                 maxWidth: '100%',
               }}
             >
@@ -32,7 +32,7 @@ export default function PostAdhanDua() {
               <p
                 className="font-serif leading-relaxed text-gray-800 break-words"
                 style={{
-                  fontSize: 'clamp(1.5rem, 3.2vw, 4.5rem)',
+                  fontSize: 'clamp(1.25rem, 2.6vw, 4.5rem)',
                   lineHeight: '1.4',
                   fontFamily: '"Amiri", "Times New Roman", serif',
                   textAlign: 'center',
@@ -47,7 +47,7 @@ export default function PostAdhanDua() {
               <p
                 className="text-gray-600 leading-relaxed break-words"
                 style={{
-                  fontSize: 'clamp(1.125rem, 1.8vw, 2.5rem)',
+                  fontSize: 'clamp(1rem, 1.5vw, 2.5rem)',
                   lineHeight: '1.4',
                   textAlign: 'center',
                 }}
@@ -79,7 +79,7 @@ export default function PostAdhanDua() {
               <p
                 className="text-gray-800 leading-relaxed break-words"
                 style={{
-                  fontSize: 'clamp(1.125rem, 1.7vw, 2.125rem)',
+                  fontSize: 'clamp(1rem, 1.5vw, 2.125rem)',
                   lineHeight: '1.4',
                   textAlign: 'center',
                 }}
@@ -93,7 +93,7 @@ export default function PostAdhanDua() {
               <p
                 className="text-gray-500 italic break-words"
                 style={{
-                  fontSize: 'clamp(1rem, 1.4vw, 1.75rem)',
+                  fontSize: 'clamp(0.875rem, 1.2vw, 1.75rem)',
                   textAlign: 'center',
                 }}
               >
