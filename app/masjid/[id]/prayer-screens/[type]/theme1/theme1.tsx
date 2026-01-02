@@ -155,7 +155,7 @@ export default function PrayerClient({
               {/* Jumaah Card */}
               {jummahPrayerTimes && jummahPrayerTimes.length > 0 && (
                 <div
-                  className="bg-gray-50 border border-gray-200 order-2 md:order-1 md:col-span-1 flex flex-col"
+                  className="bg-gray-200 text-gray-800 order-2 md:order-1 md:col-span-1 flex flex-col"
                   style={{
                     borderRadius: 'clamp(0.5rem, 0.8vw, 1rem)',
                     padding: 'clamp(0.75rem, 1.2vw, 1.5rem)',
@@ -248,7 +248,7 @@ export default function PrayerClient({
               <div className="flex flex-col items-center justify-center text-center order-1 md:order-2 md:col-span-1 md:col-start-5">
                 <div className="w-full h-full">
                   <div
-                    className="text-center transition-all bg-gray-50 border border-gray-200 text-gray-900 h-full"
+                    className="text-center transition-all bg-gray-200 text-gray-800 h-full"
                     style={{
                       borderRadius: 'clamp(0.5rem, 0.8vw, 0.75rem)',
                       padding: 'clamp(0.75rem, 1.2vw, 1rem)',
