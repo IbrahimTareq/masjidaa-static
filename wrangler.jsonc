@@ -10,7 +10,7 @@
     "staging": {
       "name": "masjidaa-static-staging",
       "workers_dev": true,
-      "route": "dev.masjidaaa.com/*"
+      "route": "dev.masjidaa.com/*"
     },
     "production": {
       "name": "masjidaa-static-production",
