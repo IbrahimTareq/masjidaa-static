@@ -9,7 +9,8 @@
   "env": {
     "staging": {
       "name": "masjidaa-static-staging",
-      "workers_dev": true
+      "workers_dev": true,
+      "route": "dev.masjidaaa.com/*"
     },
     "production": {
       "name": "masjidaa-static-production",
