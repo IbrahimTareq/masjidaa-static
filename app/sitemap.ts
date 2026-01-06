@@ -30,6 +30,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${DOMAIN_NAME}/blog`,
       lastModified: new Date(),
     },
+    {
+      url: `${DOMAIN_NAME}/faq`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${DOMAIN_NAME}/local-business-ads`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${DOMAIN_NAME}/privacy-policy`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${DOMAIN_NAME}/terms-of-service`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${DOMAIN_NAME}/community-resources/janazah-locations/australia/`,
+      lastModified: new Date(),
+    },
   ];
 
   // Generate masjid URLs

@@ -1,7 +1,7 @@
 import { Autoplay } from "swiper/modules";
 
 export const BRAND_NAME = "Masjidaa";
-export const DOMAIN_NAME = "https://masjidaa.com";
+export const DOMAIN_NAME = process.env.NEXT_PUBLIC_ENV === "production" ? "https://masjidaa.com" : "https://dev.masjidaa.com";
 
 // Standrd Stripe fee 1.7% + 1% platform fee
 export const STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC = 0.027;
