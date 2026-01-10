@@ -3,7 +3,7 @@
 import NotFound from "@/components/client/ui/NotFound";
 import LayoutWithHeader from "@/components/LayoutWithHeader";
 import { useMasjidContext } from "@/context/masjidContext";
-import { Calendar, Layout, Megaphone, Monitor, Settings } from "lucide-react";
+import { Calendar, Home, Layout, Megaphone, Monitor, User } from "lucide-react";
 import Link from "next/link";
 
 export default function LandingDisplay() {
@@ -11,40 +11,40 @@ export default function LandingDisplay() {
 
   const navigationItems = [
     {
-      title: "Calendar",
-      description: "View events and programs",
-      icon: Calendar,
-      path: `/masjid/${masjid?.slug}/calendar`,
+      title: "Masjid Site",
+      description: "Main website",
+      icon: Home,
+      path: `/${masjid?.slug}`,
     },
     {
-      title: "Prayer Display",
-      description: "Classic prayer screen",
+      title: "Prayer Screen",
+      description: "Prayer times display",
       icon: Monitor,
-      path: `/masjid/${masjid?.slug}/prayer-screen/classic`,
+      path: `/masjid/${masjid?.id}/prayer-screens/theme1`,
     },
     {
       title: "Advanced Layout",
       description: "Full featured display",
       icon: Layout,
-      path: `/masjid/${masjid?.slug}/layout/advanced`,
+      path: `/masjid/${masjid?.id}/layout/advanced`,
     },
     {
       title: "Simple Layout",
       description: "Clean minimal display",
       icon: Layout,
-      path: `/masjid/${masjid?.slug}/layout/simple`,
+      path: `/masjid/${masjid?.id}/layout/simple`,
     },
     {
-      title: "Widget Embed",
-      description: "Prayer times widget",
-      icon: Settings,
-      path: `/masjid/${masjid?.slug}/embed/prayer-times-widget-1`,
+      title: "Events",
+      description: "View events and programs",
+      icon: Calendar,
+      path: `/${masjid?.slug}/events`,
     },
     {
       title: "Announcements",
       description: "Community updates",
       icon: Megaphone,
-      path: `/masjid/${masjid?.slug}/dynamic/announcement/1`,
+      path: `/${masjid?.slug}/announcements`,
     },
   ];
 
