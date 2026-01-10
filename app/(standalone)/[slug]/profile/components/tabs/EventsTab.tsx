@@ -54,10 +54,10 @@ export function EventsTab({
           <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
             <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No upcoming events
+              No events yet
             </h3>
             <p className="text-gray-600">
-              Stay tuned for community events and gatherings!
+              Check back later for community events and gatherings.
             </p>
           </div>
           {/* Show business ads even when no events */}

@@ -55,10 +55,10 @@ export function DonationsTab({
           <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
             <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No active donations
+              No donations yet
             </h3>
             <p className="text-gray-600">
-              No donation campaigns are currently running.
+              Check back later for donation campaigns.
             </p>
           </div>
           {/* Show business ads even when no campaigns */}

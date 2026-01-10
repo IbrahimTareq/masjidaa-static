@@ -50,6 +50,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${DOMAIN_NAME}/community-resources/janazah-locations/australia/`,
       lastModified: new Date(),
     },
+    {
+      url: `${DOMAIN_NAME}/masjid-management-system`,
+      lastModified: new Date(),
+    },
   ];
 
   // Generate masjid URLs

@@ -17,8 +17,14 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { SummaryClientProps } from "./types";
+
+const APP_STORE_URL =
+  "https://apps.apple.com/us/app/pillars-prayer-times-qibla/id1559086853";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.pillars.pillars";
+const APP_DEEP_LINK = "pillars://masjid/";
 
 // Tab Components
 import { AnnouncementsTab } from "./components/tabs/AnnouncementsTab";
@@ -43,9 +49,62 @@ export default function SummaryClient({
   youtubeNextPageToken,
   youtubeUploadsPlaylistId,
 }: SummaryClientProps) {
-  const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState("prayer");
   const [isCopied, setIsCopied] = useState(false);
+
+  const handleFollowClick = useCallback(
+    (e: React.MouseEvent) => {
+      const userAgent = navigator.userAgent || navigator.vendor;
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+      const isAndroid = /android/i.test(userAgent);
+
+      // Only attempt deep link on mobile devices
+      if (!isIOS && !isAndroid) {
+        // Desktop - just open App Store in new tab
+        window.open(APP_STORE_URL, "_blank");
+        e.preventDefault();
+        return;
+      }
+
+      e.preventDefault();
+
+      const storeUrl = isIOS ? APP_STORE_URL : PLAY_STORE_URL;
+      const deepLink = `${APP_DEEP_LINK}${masjid.id}`;
+      const startTime = Date.now();
+
+      // Try to open the app
+      window.location.href = deepLink;
+
+      // Check if page is still visible after a delay
+      // If app opened, page will be hidden/blurred
+      const checkVisibility = () => {
+        const elapsed = Date.now() - startTime;
+        // If we're still here after 1.5s and page wasn't hidden, app isn't installed
+        if (elapsed > 1500 && !document.hidden) {
+          window.location.href = storeUrl;
+        }
+      };
+
+      // Use both timeout and visibility change for reliability
+      const timeoutId = setTimeout(checkVisibility, 1500);
+
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          // App opened successfully, clean up
+          clearTimeout(timeoutId);
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
+        }
+      };
+
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      // Clean up listener after timeout
+      setTimeout(() => {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }, 2000);
+    },
+    [masjid.id]
+  );
 
   const handleShareClick = async () => {
     await navigator.clipboard.writeText(
@@ -191,14 +250,10 @@ export default function SummaryClient({
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3 lg:flex-nowrap lg:ml-6">
                   <button
-                    onClick={() => setIsFollowed(!isFollowed)}
-                    className={`flex-1 lg:flex-none px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer ${
-                      isFollowed
-                        ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        : "bg-theme text-white"
-                    }`}
+                    onClick={handleFollowClick}
+                    className="flex-1 lg:flex-none px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer bg-theme text-white hover:bg-theme/90 text-center"
                   >
-                    {isFollowed ? "Following" : "+ Follow"}
+                    + Follow
                   </button>
 
                   {location?.address_label && (

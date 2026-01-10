@@ -89,11 +89,13 @@ export default function AppDownloadClient() {
                   />
                 </div>
 
-                <div className="text-[10px] sm:text-xs text-gray-600 space-y-0.5 sm:space-y-1">
-                  <p>🌐 {masjid.website}</p>
-                  <p>📞 {masjid.contact_number}</p>
-                  <p>📍 {location?.address_label}</p>
-                </div>
+                {(masjid.website || masjid.contact_number || location?.address_label) && (
+                  <div className="text-[10px] sm:text-xs text-gray-600 space-y-0.5 sm:space-y-1">
+                    {masjid.website && <p>🌐 {masjid.website}</p>}
+                    {masjid.contact_number && <p>📞 {masjid.contact_number}</p>}
+                    {location?.address_label && <p>📍 {location.address_label}</p>}
+                  </div>
+                )}
 
                 {/* Action buttons */}
                 <div className="flex flex-row justify-between mt-6">

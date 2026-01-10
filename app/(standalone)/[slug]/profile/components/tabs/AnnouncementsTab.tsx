@@ -58,7 +58,7 @@ export function AnnouncementsTab({
               No announcements yet
             </h3>
             <p className="text-gray-600">
-              Check back soon for community updates and announcements!
+              Check back later for community updates and announcements.
             </p>
           </div>
         </div>

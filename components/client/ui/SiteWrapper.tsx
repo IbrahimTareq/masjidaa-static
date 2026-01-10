@@ -212,14 +212,16 @@ export default function SiteWrapper({
             </div>
 
             {/* Contact Info */}
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Contact Us</h2>
-              <address className="not-italic space-y-2 md:space-y-3 text-sm md:text-base text-gray-600">
-                {location?.address_label && <p>{location.address_label}</p>}
-                <p>Phone: {masjid.contact_number || "N/A"}</p>
-                <p className="break-all">Email: {masjid.email || "N/A"}</p>
-              </address>
-            </div>
+            {(masjid.contact_number || masjid.email || location?.address_label) && (
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Contact Us</h2>
+                <address className="not-italic space-y-2 md:space-y-3 text-sm md:text-base text-gray-600">
+                  {location?.address_label && <p>{location.address_label}</p>}
+                  {masjid.contact_number && <p>Phone: {masjid.contact_number}</p>}
+                  {masjid.email && <p className="break-all">Email: {masjid.email}</p>}
+                </address>
+              </div>
+            )}
 
             {/* Social Links */}
             {(socials?.facebook_url ||
