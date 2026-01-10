@@ -1,15 +1,11 @@
 "use client";
 
 import { useLocationContext } from "@/context/locationContext";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 
 const ContactClient = () => {
-  const masjid = useMasjidContext();
+  const masjid = useMasjid();
   const location = useLocationContext();
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
-  }
 
   const encodedAddress = location?.address_label
     ? encodeURI(location.address_label)

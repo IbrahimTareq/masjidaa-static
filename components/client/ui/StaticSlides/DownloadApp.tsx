@@ -1,6 +1,6 @@
 import PrayerLayout from "@/components/LayoutWithHeader";
 import { useLocationContext } from "@/context/locationContext";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 import { useQRCode } from "@/hooks/useQRCode";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
@@ -8,13 +8,8 @@ import Image from "next/image";
 import { useRef } from "react";
 
 export default function DownloadApp() {
-  const masjid = useMasjidContext();
+  const masjid = useMasjid();
   const location = useLocationContext();
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
-  }
-
   const qrRef = useRef<HTMLDivElement>(null);
 
   useQRCode(

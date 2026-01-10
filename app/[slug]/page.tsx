@@ -8,6 +8,7 @@ import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSit
 import { expandEventsWithRecurrence } from "@/utils/recurrence";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Script from "next/script";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -42,7 +43,7 @@ export default async function Page({
   const masjid = await getMasjidBySlug(slug);
 
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    notFound();
   }
 
   // Parallelize all data fetching - first fetch independent data

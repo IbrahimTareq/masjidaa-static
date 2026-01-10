@@ -1,3 +1,4 @@
+import NotFound from "@/components/client/ui/NotFound";
 import ThemeWrapper from "@/components/server/ThemeWrapper";
 import { DateTimeProvider } from "@/context/dateTimeContext";
 import { MasjidProvider } from "@/context/masjidContext";
@@ -18,19 +19,21 @@ export default async function OverviewLayout({
 
   const masjid = await getMasjidBySlug(slug);
 
+  if (!masjid) {
+    return <NotFound />;
+  }
+
   // Parallelize related data fetching
-  const [prayerSettings, siteSettings] = masjid
-    ? await Promise.all([
-        getPrayerSettingsByMasjidId(masjid.id),
-        getMasjidSiteSettingsByMasjidId(masjid.id),
-      ])
-    : [null, null];
+  const [prayerSettings, siteSettings] = await Promise.all([
+    getPrayerSettingsByMasjidId(masjid.id),
+    getMasjidSiteSettingsByMasjidId(masjid.id),
+  ]);
 
   return (
     <MasjidProvider masjid={masjid}>
       <MasjidSiteSettingsProvider siteSettings={siteSettings}>
         <DateTimeProvider settings={prayerSettings}>
-          <ThemeWrapper id={masjid?.id || ""}>
+          <ThemeWrapper id={masjid.id}>
             {children}
           </ThemeWrapper>
         </DateTimeProvider>

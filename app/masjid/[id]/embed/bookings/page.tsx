@@ -10,8 +10,9 @@ export default async function Page({
   const { id } = await params;
   const masjid = await getMasjidById(id);
 
+  // Layout already handles null case with NotFound
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    return null;
   }
 
   const bookingTypes = await getActiveBookingTypesByMasjidId(masjid.id);

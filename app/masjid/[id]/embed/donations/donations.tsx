@@ -2,7 +2,7 @@
 
 import { Tables } from "@/database.types";
 import { Donations as DonationsComponent } from "@/components/client/interactive/Donations";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 
 export default function Donations({
   campaigns,
@@ -11,11 +11,7 @@ export default function Donations({
   campaigns: Tables<"donation_campaigns">[];
   slug: string;
 }) {
-  const masjid = useMasjidContext();
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
-  }
+  const masjid = useMasjid();
 
   return (
     <div className="bg-white text-black font-montserrat min-h-[400px]">

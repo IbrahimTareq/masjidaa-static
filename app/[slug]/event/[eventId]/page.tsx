@@ -4,6 +4,7 @@ import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
 import { getMasjidEventEnrollmentStatus } from "@/lib/server/services/masjidEvent";
 import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { notFound } from "next/navigation";
 import Script from "next/script";
 import EventClient from "./event";
 
@@ -27,12 +28,8 @@ export default async function Page({
 
   const eventLink = `${DOMAIN_NAME}/event/${eventId}?eventDate=${eventDate}`;
 
-  if (!event) {
-    return <div>Event not found</div>;
-  }
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
+  if (!event || !masjid) {
+    notFound();
   }
 
   // Parallelize conditional data fetching

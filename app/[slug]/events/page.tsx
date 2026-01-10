@@ -2,6 +2,7 @@ import { Tables } from "@/database.types";
 import { convertEventsToCalendarEvents } from "@/lib/server/formatters/calendar";
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
+import { notFound } from "next/navigation";
 import EventsClient from "./events";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -15,7 +16,7 @@ export default async function Page({
   const masjid = await getMasjidBySlug(slug);
 
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    notFound();
   }
 
   const events = await getMasjidEventsByMasjidId(masjid.id);

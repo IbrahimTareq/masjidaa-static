@@ -8,6 +8,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { SocialIcon } from "react-social-icons";
 import FloatingWhatsAppButton from "./FloatingWhatsAppButton";
+import NotFound from "./NotFound";
 
 export default function SiteWrapper({
   children,
@@ -22,7 +23,7 @@ export default function SiteWrapper({
   const [isOpen, setIsOpen] = useState(false);
 
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    return <NotFound />;
   }
 
   return (

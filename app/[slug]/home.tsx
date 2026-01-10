@@ -1,7 +1,7 @@
 "use client";
 
 import Theme5Widget from "@/app/masjid/[id]/embed/prayer-times/[type]/theme5/theme5";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 import { useMasjidSiteSettings } from "@/context/masjidSiteSettingsContext";
 import { Tables } from "@/database.types";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
@@ -53,12 +53,7 @@ export default function HomeClient({
   events,
   campaign,
 }: HomeClientProps) {
-  const masjid = useMasjidContext();
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
-  }
-
+  const masjid = useMasjid();
   const { siteSettings } = useMasjidSiteSettings();
 
   return (

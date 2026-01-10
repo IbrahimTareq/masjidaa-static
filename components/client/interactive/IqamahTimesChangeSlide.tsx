@@ -1,5 +1,5 @@
 import PrayerLayout from "@/components/LayoutWithHeader";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 import type { Tables } from "@/database.types";
 import { formatDateToReadable, formatTimeTo12Hour } from "@/utils/time";
 
@@ -10,10 +10,10 @@ type IqamahTimesChangeProps = {
 export default function IqamahTimesChange({
   iqamahTimeChange,
 }: IqamahTimesChangeProps) {
-  const masjid = useMasjidContext();
+  const masjid = useMasjid();
 
-  if (!masjid || !iqamahTimeChange) {
-    return <div>Masjid not found or no iqamah time changes</div>;
+  if (!iqamahTimeChange) {
+    return <div>No iqamah time changes</div>;
   }
 
   // Format the effective date

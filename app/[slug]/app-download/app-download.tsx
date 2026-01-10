@@ -1,18 +1,14 @@
 "use client";
 
 import { useLocationContext } from "@/context/locationContext";
-import { useMasjidContext } from "@/context/masjidContext";
+import { useMasjid } from "@/context/masjidContext";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function AppDownloadClient() {
-  const masjid = useMasjidContext();
+  const masjid = useMasjid();
   const location = useLocationContext();
-
-  if (!masjid) {
-    return <div>Masjid not found</div>;
-  }
 
   return (
     <section className="py-20 bg-theme-accent text-black relative">

@@ -1,5 +1,6 @@
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidAnnouncementsByMasjidId } from "@/lib/server/services/masjidAnnouncements";
+import { notFound } from "next/navigation";
 import AnnouncementsClient from "./announcements";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -13,7 +14,7 @@ export default async function Page({
   const masjid = await getMasjidBySlug(slug);
 
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    notFound();
   }
 
   const announcements = await getMasjidAnnouncementsByMasjidId(masjid.id);

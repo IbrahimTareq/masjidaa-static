@@ -166,8 +166,9 @@ export default async function Page({
 
   const masjid = await getMasjidBySlug(slug);
 
+  // Layout already handles null case with NotFound
   if (!masjid) {
-    return <div>Masjid not found</div>;
+    return null;
   }
 
   // Parallelize all data fetching

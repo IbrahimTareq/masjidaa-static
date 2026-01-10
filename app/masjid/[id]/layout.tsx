@@ -1,3 +1,4 @@
+import NotFound from "@/components/client/ui/NotFound";
 import ThemeWrapper from "@/components/server/ThemeWrapper";
 import { DateTimeProvider } from "@/context/dateTimeContext";
 import { LocationProvider } from "@/context/locationContext";
@@ -17,12 +18,15 @@ export default async function MasjidLayout({
   const { id } = await params;
 
   const masjid = await getMasjidById(id);
-  const [settings, location] = masjid
-    ? await Promise.all([
-        getPrayerSettingsByMasjidId(masjid.id),
-        getMasjidLocationByMasjidId(masjid.id),
-      ])
-    : [null, null];
+
+  if (!masjid) {
+    return <NotFound />;
+  }
+
+  const [settings, location] = await Promise.all([
+    getPrayerSettingsByMasjidId(masjid.id),
+    getMasjidLocationByMasjidId(masjid.id),
+  ]);
 
   return (
     <MasjidProvider masjid={masjid}>

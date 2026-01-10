@@ -1,8 +1,8 @@
 import { getDonationCampaign } from "@/lib/server/actions/donationCampaignActions";
 import { getMasjidById } from "@/lib/server/services/masjid";
 import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
-import { getShortLinkById } from "@/lib/server/services/shortLink";
 import { getMasjidThemeById } from "@/lib/server/services/masjidTheme";
+import { notFound } from "next/navigation";
 
 import DonationClient from "@/app/[slug]/donation/[donationId]/donation";
 import { getDonationCount } from "@/lib/server/services/donationCount";
@@ -21,12 +21,12 @@ export default async function DonationCampaignPage({
   // Fetch campaign data
   const campaign = await getDonationCampaign(donationId);
   if (!campaign) {
-    return <div className="p-8 text-center">Campaign not found</div>;
+    notFound();
   }
 
-  const masjid = await getMasjidById(campaign?.masjid_id || "");
+  const masjid = await getMasjidById(campaign.masjid_id || "");
   if (!masjid) {
-    return <div className="p-8 text-center">Masjid not found</div>;
+    notFound();
   }
 
   const [bankAccount, theme, donationCount, donationCountMonthly, donations] = await Promise.all([
