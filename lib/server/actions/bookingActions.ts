@@ -23,6 +23,7 @@ export async function submitBookingAction(
     booking_type_id: string;
     masjid_id: string;
     status?: "pending" | "confirmed";
+    [key: string]: any; // Allow additional form fields
   }
 ): Promise<BookingActionResult> {
   try {
@@ -76,6 +77,18 @@ export async function submitBookingAction(
       ? new Date(Date.now() + 30 * 60 * 1000).toISOString()
       : null;
 
+    // Extract additional form fields (excluding base booking fields)
+    const baseFields = [
+      'booking_type_id', 'masjid_id', 'status', 'booking_date', 
+      'start_time', 'end_time', 'name', 'email', 'phone', 'notes'
+    ];
+    const additionalFields: Record<string, any> = {};
+    Object.keys(formData).forEach(key => {
+      if (!baseFields.includes(key)) {
+        additionalFields[key] = formData[key];
+      }
+    });
+
     // Prepare booking data
     const bookingData: TablesInsert<"bookings"> = {
       masjid_id: formData.masjid_id,
@@ -96,6 +109,7 @@ export async function submitBookingAction(
         email: sanitizedData.email,
         phone: sanitizedData.phone,
         notes: sanitizedData.notes || null,
+        ...additionalFields, // Include all additional form fields
       },
     };
 

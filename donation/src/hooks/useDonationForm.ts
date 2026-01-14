@@ -130,13 +130,17 @@ export function useDonationForm({
     }
   }, [showGiftAid, taxInfoLoading]);
   
-  // Calculate progress percentage
-  const progressPercentage = Math.min(
-    Math.round(
-      (Number(campaign.amount_raised) / Number(campaign.target_amount)) * 100
-    ),
-    100
-  );
+  const hasTarget = campaign.target_amount != null && campaign.target_amount > 0;
+
+  // Calculate progress percentage (0 if no target is set)
+  const progressPercentage = hasTarget
+    ? Math.min(
+        Math.round(
+          (Number(campaign.amount_raised) / Number(campaign.target_amount)) * 100
+        ),
+        100
+      )
+    : 0;
   
   // Enhanced reset that includes form-specific state
   const resetDonationState = () => {

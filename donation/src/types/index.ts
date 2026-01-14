@@ -63,7 +63,7 @@ export interface Campaign {
   description: string | null;
   image: string | null;
   amount_raised: number;
-  target_amount: number;
+  target_amount: number | null;
   masjid_id: string;
   bank_account_id: string | null;
   active: boolean;

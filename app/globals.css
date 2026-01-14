@@ -69,10 +69,23 @@ body {
   @apply block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50;
 }
 
+.rjsf-form--booking .form-control {
+  @apply border border-gray-300 bg-white;
+}
+
 .rjsf-form select.form-control {
   @apply block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50;
 }
 
+.rjsf-form--booking select.form-control {
+  @apply border border-gray-300 bg-white;
+}
+
+.rjsf-form--booking input,
+.rjsf-form--booking textarea,
+.rjsf-form--booking select {
+  @apply border border-gray-300 bg-white;
+}
 .rjsf-form .checkbox {
   display: flex;
   align-items: center;

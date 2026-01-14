@@ -46,29 +46,36 @@ export const Donations: React.FC<DonationsProps> = ({
                 </h3>
 
                 <div className="mt-auto">
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                    <div
-                      className="bg-theme h-2 rounded-full"
-                      style={{
-                        width: `${Math.min(
-                          100,
-                          (campaign.amount_raised / campaign.target_amount) *
-                            100
-                        )}%`,
-                      }}
-                    ></div>
-                  </div>
+                  {campaign.target_amount != null && campaign.target_amount > 0 && (
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                      <div
+                        className="bg-theme h-2 rounded-full"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            (campaign.amount_raised / campaign.target_amount) *
+                              100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+                  )}
 
                   <p className="font-medium text-lg truncate">
                     {formatCurrencyWithSymbol({
                       amount: campaign.amount_raised,
                       currency: masjid?.local_currency || "AUD",
                     })}
-                    &nbsp;donated of&nbsp;
-                    {formatCurrencyWithSymbol({
-                      amount: campaign.target_amount,
-                      currency: masjid?.local_currency || "AUD",
-                    })}
+                    &nbsp;donated
+                    {campaign.target_amount != null && campaign.target_amount > 0 && (
+                      <>
+                        &nbsp;of&nbsp;
+                        {formatCurrencyWithSymbol({
+                          amount: campaign.target_amount,
+                          currency: masjid?.local_currency || "AUD",
+                        })}
+                      </>
+                    )}
                   </p>
                 </div>
               </div>

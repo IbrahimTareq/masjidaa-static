@@ -38,24 +38,31 @@ const BookingsClient: React.FC<BookingsClientProps> = ({
       </section>
 
       {/* Content Section */}
-      <section className="bg-gray-50 text-black p-4 md:p-8 lg:p-10">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-0">
-          {bookingTypes.length === 0 ? (
+      {bookingTypes.length === 0 && (
+        <section className="bg-gray-50 text-black p-4 md:p-8 lg:p-10">
+          <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-0">
             <div className="text-center py-8 md:py-12">
               <p className="text-sm md:text-base text-gray-500">
                 There are currently no booking services available. Please check
                 back later for updates.
               </p>
             </div>
-          ) : (
+          </div>
+        </section>
+      )}
+
+      {bookingTypes.length > 0 && (
+        <section className="py-12 md:py-16 lg:py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0">
             <BookingTypesList
               bookingTypes={bookingTypes}
               currency={masjid.local_currency || "AUD"}
               slug={slug}
+              emptyMessage={`No booking services are currently available at ${masjid.name}.`}
             />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

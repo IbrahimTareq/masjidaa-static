@@ -589,7 +589,7 @@ export type Database = {
           image: string | null
           masjid_id: string
           name: string
-          target_amount: number
+          target_amount: number | null
           video: string | null
         }
         Insert: {
@@ -602,7 +602,7 @@ export type Database = {
           image?: string | null
           masjid_id: string
           name: string
-          target_amount: number
+          target_amount?: number | null
           video?: string | null
         }
         Update: {
@@ -615,7 +615,7 @@ export type Database = {
           image?: string | null
           masjid_id?: string
           name?: string
-          target_amount?: number
+          target_amount?: number | null
           video?: string | null
         }
         Relationships: [

@@ -11,6 +11,9 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { Tables } from "@/database.types";
+import Form from "@rjsf/core";
+import validator from "@rjsf/validator-ajv8";
 
 interface BookingTypeForForm {
   price?: number | null;
@@ -27,6 +30,11 @@ interface BookingFormProps {
   clientSecret?: string | null;
   onPaymentSuccess?: () => void;
   showPaymentForm?: boolean;
+  hideSubmitButton?: boolean;
+  bookingForm?: Tables<"booking_forms"> | null;
+  additionalFormData?: Record<string, any>;
+  onAdditionalFormDataChange?: (data: Record<string, any>) => void;
+  dateWidget?: React.ComponentType<any>;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -40,6 +48,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
   clientSecret,
   onPaymentSuccess,
   showPaymentForm = false,
+  hideSubmitButton = false,
+  bookingForm,
+  additionalFormData = {},
+  onAdditionalFormDataChange = () => {},
+  dateWidget,
 }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -158,7 +171,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
         </div>
       </div>
 
-      {/* Additional Information */}
+      {/* Additional Notes */}
       <div>
         <label htmlFor="notes" className="block text-sm font-medium text-black mb-1">
           Additional Notes
@@ -186,6 +199,68 @@ const BookingForm: React.FC<BookingFormProps> = ({
           Optional - let us know if you have any special requirements
         </p>
       </div>
+
+      {/* Additional Information Section */}
+      {bookingForm?.schema && onAdditionalFormDataChange && (
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Additional Information
+          </h3>
+          <Form
+            schema={(() => {
+              const schema =
+                typeof bookingForm.schema === "string"
+                  ? JSON.parse(bookingForm.schema as string)
+                  : bookingForm.schema;
+              return schema;
+            })()}
+            uiSchema={(() => {
+              let uiSchema = bookingForm.ui_schema
+                ? typeof bookingForm.ui_schema === "string"
+                  ? JSON.parse(bookingForm.ui_schema as string)
+                  : bookingForm.ui_schema
+                : {};
+
+              // Hide the form title
+              uiSchema["ui:title"] = "";
+
+              // Enhance uiSchema for date fields
+              const schema =
+                typeof bookingForm.schema === "string"
+                  ? JSON.parse(bookingForm.schema as string)
+                  : bookingForm.schema;
+
+              if (schema.properties) {
+                Object.entries(schema.properties).forEach(
+                  ([key, value]: [string, any]) => {
+                    if (value.format === "date") {
+                      uiSchema[key] = {
+                        ...(uiSchema[key] || {}),
+                        "ui:widget": "DateWidget",
+                      };
+                    }
+                  }
+                );
+              }
+
+              return uiSchema;
+            })()}
+            validator={validator as any}
+            formData={additionalFormData}
+            onChange={(e) => onAdditionalFormDataChange(e.formData || {})}
+            disabled={isLoading}
+            className="rjsf-form rjsf-form--booking"
+            widgets={dateWidget ? {
+              DateWidget: dateWidget,
+            } : undefined}
+          >
+            {/* Hide RJSF's default submit button */}
+            <div style={{ display: 'none' }}>
+              <button type="submit" />
+            </div>
+          </Form>
+        </div>
+      )}
 
       {/* Payment Information (if applicable and not showing payment form yet) */}
       {hasPrice && !showPaymentForm && (
@@ -249,32 +324,36 @@ const BookingForm: React.FC<BookingFormProps> = ({
       )}
 
       {/* Submit Button */}
-      <div className="pt-4">
-        <button
-          type="submit"
-          disabled={!acceptedTerms || isLoading}
-          className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer ${
-            !acceptedTerms || isLoading
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-theme text-white'
-          }`}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Processing...</span>
-            </div>
-          ) : hasPrice ? (
-            'Continue to Payment'
-          ) : (
-            'Confirm Booking'
-          )}
-        </button>
-      </div>
+      {!hideSubmitButton && (
+        <>
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={!acceptedTerms || isLoading}
+              className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer ${
+                !acceptedTerms || isLoading
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-theme text-white'
+              }`}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Processing...</span>
+                </div>
+              ) : hasPrice ? (
+                'Continue to Payment'
+              ) : (
+                'Confirm Booking'
+              )}
+            </button>
+          </div>
 
-      <div className="text-xs text-gray-500 text-center">
-        By submitting this form, you confirm that all information is accurate and complete.
-      </div>
+          <div className="text-xs text-gray-500 text-center">
+            By submitting this form, you confirm that all information is accurate and complete.
+          </div>
+        </>
+      )}
     </form>
   );
 };

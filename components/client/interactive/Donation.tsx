@@ -14,10 +14,13 @@ interface DonationProps {
 }
 
 const DonationComponent: React.FC<DonationProps> = ({ campaign, masjid }) => {
+  const hasTarget = campaign.target_amount != null && campaign.target_amount > 0;
+
   // Memoize expensive calculations
   const progressPercentage = useMemo(() => {
-    return Math.min(100, (campaign.amount_raised / campaign.target_amount) * 100);
-  }, [campaign.amount_raised, campaign.target_amount]);
+    if (!hasTarget) return 0;
+    return Math.min(100, (campaign.amount_raised / campaign.target_amount!) * 100);
+  }, [campaign.amount_raised, campaign.target_amount, hasTarget]);
 
   const currency = masjid?.local_currency || "AUD";
 
@@ -27,12 +30,14 @@ const DonationComponent: React.FC<DonationProps> = ({ campaign, masjid }) => {
         amount: campaign.amount_raised,
         currency,
       }),
-      target: formatCurrencyWithSymbol({
-        amount: campaign.target_amount,
-        currency,
-      }),
+      target: hasTarget
+        ? formatCurrencyWithSymbol({
+            amount: campaign.target_amount!,
+            currency,
+          })
+        : null,
     };
-  }, [campaign.amount_raised, campaign.target_amount, currency]);
+  }, [campaign.amount_raised, campaign.target_amount, currency, hasTarget]);
   return (
     <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 block">
       <div className="relative h-48 overflow-hidden">
@@ -53,17 +58,20 @@ const DonationComponent: React.FC<DonationProps> = ({ campaign, masjid }) => {
         <h3 className="text-xl font-bold mb-3 line-clamp-2">{campaign.name}</h3>
 
         <div className="mt-auto">
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-            <div
-              className="bg-theme h-2 rounded-full"
-              style={{
-                width: `${progressPercentage}%`,
-              }}
-            ></div>
-          </div>
+          {hasTarget && (
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+              <div
+                className="bg-theme h-2 rounded-full"
+                style={{
+                  width: `${progressPercentage}%`,
+                }}
+              ></div>
+            </div>
+          )}
 
           <p className="font-medium text-lg truncate">
-            {formattedAmounts.raised} donated of {formattedAmounts.target}
+            {formattedAmounts.raised} donated
+            {formattedAmounts.target && <> of {formattedAmounts.target}</>}
           </p>
         </div>
       </div>

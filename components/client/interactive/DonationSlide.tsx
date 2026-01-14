@@ -164,46 +164,52 @@ export default function DonationSlide({
                   }}
                 >
                   {currencySymbol}
-                  {donationCampaign.amount_raised.toLocaleString()} raised of{" "}
-                  {currencySymbol}
-                  {donationCampaign.target_amount.toLocaleString()}
+                  {donationCampaign.amount_raised.toLocaleString()} raised
+                  {donationCampaign.target_amount != null && donationCampaign.target_amount > 0 && (
+                    <>
+                      {" "}of {currencySymbol}
+                      {donationCampaign.target_amount.toLocaleString()}
+                    </>
+                  )}
                 </p>
 
-                {/* Progress Bar */}
-                <div className="flex items-center gap-[1vw] mb-[1.5vh]">
-                  <div
-                    className="flex-1 bg-gray-200 rounded-full"
-                    style={{
-                      height: "clamp(0.625rem, 0.9vw, 1.25rem)",
-                    }}
-                  >
+                {/* Progress Bar - only show if target is set */}
+                {donationCampaign.target_amount != null && donationCampaign.target_amount > 0 && (
+                  <div className="flex items-center gap-[1vw] mb-[1.5vh]">
                     <div
-                      className="bg-theme rounded-full transition-all duration-500"
+                      className="flex-1 bg-gray-200 rounded-full"
                       style={{
-                        width: `${Math.min(
-                          100,
-                          (donationCampaign.amount_raised /
-                            donationCampaign.target_amount) *
-                            100
-                        )}%`,
-                        height: "100%",
+                        height: "clamp(0.625rem, 0.9vw, 1.25rem)",
                       }}
-                    ></div>
+                    >
+                      <div
+                        className="bg-theme rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            (donationCampaign.amount_raised /
+                              donationCampaign.target_amount) *
+                              100
+                          )}%`,
+                          height: "100%",
+                        }}
+                      ></div>
+                    </div>
+                    <p
+                      className="text-theme font-bold flex-shrink-0"
+                      style={{
+                        fontSize: "clamp(1rem, 1.4vw, 1.875rem)",
+                      }}
+                    >
+                      {Math.round(
+                        (donationCampaign.amount_raised /
+                          donationCampaign.target_amount) *
+                          100
+                      )}
+                      %
+                    </p>
                   </div>
-                  <p
-                    className="text-theme font-bold flex-shrink-0"
-                    style={{
-                      fontSize: "clamp(1rem, 1.4vw, 1.875rem)",
-                    }}
-                  >
-                    {Math.round(
-                      (donationCampaign.amount_raised /
-                        donationCampaign.target_amount) *
-                        100
-                    )}
-                    %
-                  </p>
-                </div>
+                )}
 
                 {/* Divider */}
                 <div className="w-full h-px bg-gray-200 mb-[1.5vh]"></div>

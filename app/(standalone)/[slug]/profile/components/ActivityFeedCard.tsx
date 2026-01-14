@@ -200,8 +200,10 @@ export function ActivityFeedCard({
 
       case "campaign":
         const campaign = feedItem.data as Tables<"donation_campaigns">;
-        const progress =
-          (campaign.amount_raised / campaign.target_amount) * 100;
+        const hasTarget = campaign.target_amount != null && campaign.target_amount > 0;
+        const progress = hasTarget
+          ? (campaign.amount_raised / campaign.target_amount!) * 100
+          : 0;
         return (
           <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -231,22 +233,28 @@ export function ActivityFeedCard({
                   </div>
                   <div className="text-sm text-gray-600">raised</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-semibold text-gray-700">
-                    ${campaign.target_amount.toLocaleString()}
+                {hasTarget && (
+                  <div className="text-right">
+                    <div className="text-lg font-semibold text-gray-700">
+                      ${campaign.target_amount!.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-gray-600">goal</div>
                   </div>
-                  <div className="text-sm text-gray-600">goal</div>
-                </div>
+                )}
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-                <div
-                  className="bg-theme h-3 rounded-full transition-all"
-                  style={{ width: `${Math.min(progress, 100)}%` }}
-                />
-              </div>
-              <div className="text-theme text-sm font-medium">
-                {Math.round(progress)}% complete
-              </div>
+              {hasTarget && (
+                <>
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                    <div
+                      className="bg-theme h-3 rounded-full transition-all"
+                      style={{ width: `${Math.min(progress, 100)}%` }}
+                    />
+                  </div>
+                  <div className="text-theme text-sm font-medium">
+                    {Math.round(progress)}% complete
+                  </div>
+                </>
+              )}
             </div>
             <Link
               href={`/${masjidSlug}/donation/${campaign.id}`}

@@ -43,8 +43,8 @@ const getDonorDisplayName = (donation: DonationPublic): string => {
   return fullName || "Supporter";
 };
 
-const calculatePercentage = (raised: number, target: number): number => {
-  return target ? Math.min((raised / target) * 100, 100) : 0;
+const calculatePercentage = (raised: number, target: number | null): number => {
+  return target && target > 0 ? Math.min((raised / target) * 100, 100) : 0;
 };
 
 const easeOutQuart = (progress: number): number => {
@@ -223,7 +223,7 @@ interface ClosedFundraiserProps {
   campaign: Tables<"donation_campaigns">;
   masjid: Tables<"masjids">;
   formattedAmountRaised: string;
-  formattedTargetAmount: string;
+  formattedTargetAmount: string | null;
   percentage: number;
 }
 
@@ -302,35 +302,43 @@ function ClosedFundraiserDisplay({
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="hidden md:block w-px h-10 md:h-12 lg:h-16 bg-slate-700/50" />
+              {/* Target - only show if target is set */}
+              {campaign.target_amount != null && campaign.target_amount > 0 && (
+                <>
+                  {/* Divider */}
+                  <div className="hidden md:block w-px h-10 md:h-12 lg:h-16 bg-slate-700/50" />
 
-              {/* Target */}
-              <div className="text-center flex-1">
-                <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                  <Target className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-theme" />
-                  <span className="text-slate-400 text-xs md:text-sm lg:text-base font-medium uppercase tracking-wide">
-                    Target
+                  <div className="text-center flex-1">
+                    <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                      <Target className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-theme" />
+                      <span className="text-slate-400 text-xs md:text-sm lg:text-base font-medium uppercase tracking-wide">
+                        Target
+                      </span>
+                    </div>
+                    <div className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white">
+                      {formattedTargetAmount}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Progress bar - only show if target is set */}
+            {campaign.target_amount != null && campaign.target_amount > 0 && (
+              <>
+                <div className="relative h-2 md:h-3 lg:h-4 bg-slate-800/80 rounded-full overflow-hidden border border-white/5 mb-1.5 md:mb-2">
+                  <div
+                    className="h-full bg-gradient-to-r from-theme via-theme to-theme-accent rounded-full transition-all duration-500"
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <span className="text-theme text-lg md:text-xl lg:text-2xl font-bold">
+                    {Math.round(percentage)}%
                   </span>
                 </div>
-                <div className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white">
-                  {formattedTargetAmount}
-                </div>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="relative h-2 md:h-3 lg:h-4 bg-slate-800/80 rounded-full overflow-hidden border border-white/5 mb-1.5 md:mb-2">
-              <div
-                className="h-full bg-gradient-to-r from-theme via-theme to-theme-accent rounded-full transition-all duration-500"
-                style={{ width: `${percentage}%` }}
-              />
-            </div>
-            <div className="flex justify-end">
-              <span className="text-theme text-lg md:text-xl lg:text-2xl font-bold">
-                {Math.round(percentage)}%
-              </span>
-            </div>
+              </>
+            )}
           </div>
 
           {/* Thank you message */}
@@ -405,6 +413,8 @@ export default function FundraiserDisplay({
     [animatedAmountRaised, campaign.target_amount]
   );
 
+  const hasTarget = campaign.target_amount != null && campaign.target_amount > 0;
+
   const formattedAmounts = useMemo(
     () => ({
       raised: formatCurrency({
@@ -412,13 +422,15 @@ export default function FundraiserDisplay({
         currency,
         roundDownToWhole: true,
       }),
-      target: formatCurrency({
-        amount: campaign.target_amount,
-        currency,
-        roundDownToWhole: true,
-      }),
+      target: hasTarget
+        ? formatCurrency({
+            amount: campaign.target_amount!,
+            currency,
+            roundDownToWhole: true,
+          })
+        : null,
     }),
-    [animatedAmountRaised, campaign.target_amount, currency]
+    [animatedAmountRaised, campaign.target_amount, currency, hasTarget]
   );
 
   const visibleDonations = useMemo(
@@ -604,21 +616,23 @@ export default function FundraiserDisplay({
             </header>
 
             {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 xl:gap-6 2xl:gap-8 mb-2 md:mb-3 xl:mb-8 2xl:mb-10">
+            <div className={`grid grid-cols-1 ${hasTarget ? 'md:grid-cols-2' : ''} gap-2 md:gap-3 xl:gap-6 2xl:gap-8 mb-2 md:mb-3 xl:mb-8 2xl:mb-10`}>
               <StatCard
                 icon={TrendingUp}
                 label="Raised"
                 value={formattedAmounts.raised}
                 isAnimated
               />
-              <StatCard
-                icon={Target}
-                label="Target"
-                value={formattedAmounts.target}
-              />
+              {hasTarget && formattedAmounts.target && (
+                <StatCard
+                  icon={Target}
+                  label="Target"
+                  value={formattedAmounts.target}
+                />
+              )}
             </div>
 
-            <ProgressBar percentage={animatedPercentage} />
+            {hasTarget && <ProgressBar percentage={animatedPercentage} />}
           </div>
 
           {/* Footer */}

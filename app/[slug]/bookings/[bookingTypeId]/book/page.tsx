@@ -5,6 +5,7 @@ import { getBookingTypeById } from "@/lib/server/services/bookingTypes";
 import { getMasjidBySlug } from "@/lib/server/services/masjid";
 import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
 import { getMasjidBankAccountById } from "@/lib/server/services/masjidBankAccount";
+import { getBookingFormById } from "@/lib/server/services/bookingForm";
 import { Metadata } from "next";
 import BookingClient from "./booking";
 
@@ -166,12 +167,13 @@ export default async function BookingFlowPage({ params }: PageProps) {
   }
 
   // Parallel fetch related data
-  const [availabilities, location, blackouts, existingBookings, bankAccount] = await Promise.all([
+  const [availabilities, location, blackouts, existingBookings, bankAccount, bookingForm] = await Promise.all([
     getBookingAvailabilitiesByTypeId(bookingTypeId),
     getMasjidLocationByMasjidId(masjid.id),
     getActiveBlackoutsByTypeId(bookingTypeId),
     getBookingsByTypeId(bookingTypeId),
     bookingType.bank_account_id ? getMasjidBankAccountById(bookingType.bank_account_id) : Promise.resolve(null),
+    bookingType.booking_form_id ? getBookingFormById(bookingType.booking_form_id) : Promise.resolve(null),
   ]);
 
   // Create optimized DTOs for client transfer
@@ -204,6 +206,7 @@ export default async function BookingFlowPage({ params }: PageProps) {
       location={location}
       slug={slug}
       bankAccount={bankAccount}
+      bookingForm={bookingForm}
     />
   );
 }

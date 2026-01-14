@@ -23,6 +23,8 @@ import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Form from "@rjsf/core";
+import validator from "@rjsf/validator-ajv8";
 
 interface MasjidDTO {
   id: string;
@@ -57,6 +59,7 @@ interface BookingClientProps {
   location?: Tables<"masjid_locations"> | null;
   slug: string;
   bankAccount?: Tables<"masjid_bank_accounts"> | null;
+  bookingForm?: Tables<"booking_forms"> | null;
 }
 
 type BookingStep = "date" | "time" | "details" | "payment" | "loading";
@@ -67,6 +70,140 @@ interface TimeSlot {
   available: boolean;
 }
 
+// Custom date widget with day, month, year dropdowns
+const DateWidget = (props: any) => {
+  const { id, value, onChange, required } = props;
+
+  // Parse the date value (if any)
+  const [day, setDay] = useState<string>("");
+  const [month, setMonth] = useState<string>("");
+  const [year, setYear] = useState<string>("");
+
+  // Initialize the date values when the component mounts or value changes
+  useEffect(() => {
+    if (value) {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        setDay(date.getDate().toString());
+        setMonth((date.getMonth() + 1).toString());
+        setYear(date.getFullYear().toString());
+      }
+    }
+  }, [value]);
+
+  // Generate options for days (1-31)
+  const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
+
+  // Generate options for months (1-12) with names
+  const monthOptions = [
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
+  // Generate options for years (current year and 10 years into the future)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear + i);
+
+  // Update the date when any dropdown changes
+  const updateDate = (newDay: string, newMonth: string, newYear: string) => {
+    if (newDay && newMonth && newYear) {
+      // Create a date string in ISO format (YYYY-MM-DD)
+      const monthStr = newMonth.padStart(2, "0");
+      const dayStr = newDay.padStart(2, "0");
+      const dateStr = `${newYear}-${monthStr}-${dayStr}`;
+      onChange(dateStr);
+    } else {
+      onChange(undefined);
+    }
+  };
+
+  const handleDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newDay = e.target.value;
+    setDay(newDay);
+    updateDate(newDay, month, year);
+  };
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = e.target.value;
+    setMonth(newMonth);
+    updateDate(day, newMonth, year);
+  };
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = e.target.value;
+    setYear(newYear);
+    updateDate(day, month, newYear);
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {/* Month dropdown */}
+      <div className="flex-1 min-w-[120px]">
+        <select
+          id={`${id}_month`}
+          className="block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50"
+          value={month}
+          onChange={handleMonthChange}
+          required={required}
+        >
+          <option value="">Month</option>
+          {monthOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Day dropdown */}
+      <div className="w-24">
+        <select
+          id={`${id}_day`}
+          className="block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50"
+          value={day}
+          onChange={handleDayChange}
+          required={required}
+        >
+          <option value="">Day</option>
+          {dayOptions.map((day) => (
+            <option key={day} value={day.toString()}>
+              {day}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Year dropdown */}
+      <div className="w-28">
+        <select
+          id={`${id}_year`}
+          className="block w-full py-3 px-4 border-gray-200 rounded-lg focus:ring-[var(--theme-color)] focus:border-[var(--theme-color)] bg-gray-50"
+          value={year}
+          onChange={handleYearChange}
+          required={required}
+        >
+          <option value="">Year</option>
+          {yearOptions.map((year) => (
+            <option key={year} value={year.toString()}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
 const BookingClient: React.FC<BookingClientProps> = ({
   masjid,
   bookingType,
@@ -76,6 +213,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
   location,
   slug,
   bankAccount,
+  bookingForm,
 }) => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<BookingStep>("date");
@@ -85,7 +223,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
   );
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [formData, setFormData] = useState<BookingFormData>({
+  const [formData, setFormData] = useState<BookingFormData & Record<string, any>>({
     name: "",
     email: "",
     phone: "",
@@ -94,6 +232,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
     start_time: "",
     end_time: "",
   });
+  const [additionalFormData, setAdditionalFormData] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -543,11 +682,22 @@ const BookingClient: React.FC<BookingClientProps> = ({
               <BookingForm
                 formData={formData}
                 onFormDataChange={setFormData}
-                onSubmit={handleFormSubmit}
+                onSubmit={(data) => {
+                  // Merge base form data with additional form data
+                  const mergedData = {
+                    ...data,
+                    ...additionalFormData,
+                  };
+                  handleFormSubmit(mergedData);
+                }}
                 errors={errors}
                 bookingType={bookingType}
                 isLoading={isLoading}
                 currency={masjid.local_currency}
+                bookingForm={bookingForm}
+                additionalFormData={additionalFormData}
+                onAdditionalFormDataChange={setAdditionalFormData}
+                dateWidget={DateWidget}
               />
             </div>
           )}
