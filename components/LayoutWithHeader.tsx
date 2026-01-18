@@ -1,5 +1,12 @@
 import { useMasjidContext } from "@/context/masjidContext";
 
+// Default pattern settings
+const DEFAULT_PATTERN = {
+  url: '/pattern8.jpg',
+  size: '400px',
+  opacity: 0.9,
+};
+
 interface LayoutWithHeaderProps {
   children: React.ReactNode;
   headerTitle: string;
@@ -7,6 +14,12 @@ interface LayoutWithHeaderProps {
   dates?: {
     hijri: string;
     gregorian: string;
+  };
+  /** Pass `true` for default pattern, a URL string, or an object for custom settings */
+  backgroundPattern?: boolean | string | {
+    url: string;
+    size?: string;
+    opacity?: number;
   };
 }
 
@@ -66,12 +79,38 @@ const LayoutWithHeader = ({
   headerTitle,
   showHeader = true,
   dates,
+  backgroundPattern,
 }: LayoutWithHeaderProps) => {
+  // Normalize backgroundPattern to a consistent object or null
+  const pattern = backgroundPattern
+    ? backgroundPattern === true
+      ? DEFAULT_PATTERN
+      : typeof backgroundPattern === 'string'
+        ? { ...DEFAULT_PATTERN, url: backgroundPattern }
+        : { ...DEFAULT_PATTERN, ...backgroundPattern }
+    : null;
+
   return (
     <div className="font-montserrat h-full overflow-hidden">
       <div className="w-full mx-auto h-full relative overflow-hidden">
-        <div className="bg-white h-full flex flex-col overflow-hidden">
-          <div className={showHeader ? "mb-6 sm:mb-8 flex-shrink-0" : "pt-8 flex-shrink-0"}>
+        <div
+          className="bg-white h-full flex flex-col overflow-hidden relative"
+          style={pattern ? {
+            backgroundImage: `url(${pattern.url})`,
+            backgroundSize: pattern.size,
+            backgroundRepeat: 'repeat',
+          } : undefined}
+        >
+          {/* Subtle overlay when background pattern is used */}
+          {pattern && (
+            <div
+              className="absolute inset-0 bg-white pointer-events-none"
+              style={{ opacity: pattern.opacity }}
+              aria-hidden="true"
+            />
+          )}
+
+          <div className={`${showHeader ? "mb-6 sm:mb-8 flex-shrink-0" : "pt-8 flex-shrink-0"} relative z-10`}>
             {showHeader && <Header title={headerTitle} dates={dates} />}
           </div>
 

@@ -35,8 +35,9 @@ export default function Theme6({
   return (
     <LayoutWithHeader
       headerTitle={masjid?.name || "Masjid"}
+      backgroundPattern
     >
-      <div className="h-full flex flex-col bg-white overflow-hidden" style={{ padding: "clamp(0.75rem, 2vw, 2rem)" }}>
+      <div className="h-full flex flex-col overflow-hidden" style={{ padding: "clamp(0.75rem, 2vw, 2rem)" }}>
         {/* Primary Info Row - Clock & Date */}
         <div
           className="grid grid-cols-2 items-center border-b-2 border-[#3A8B8B]/30 flex-shrink-0"

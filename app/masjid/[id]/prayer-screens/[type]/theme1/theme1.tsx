@@ -31,11 +31,12 @@ export default function PrayerClient({
         hijri: hijriDate,
         gregorian: gregorianDate,
       }}
+      backgroundPattern
     >
       <div className="h-full flex flex-col">
         {/* Container with rounded background */}
         <div
-          className="bg-white flex-1 flex flex-col overflow-hidden"
+          className="flex-1 flex flex-col overflow-hidden"
           style={{
             borderRadius: 'clamp(1rem, 2vw, 2rem)',
           }}
@@ -51,9 +52,9 @@ export default function PrayerClient({
           >
             {/* Time Header - Clean 2-column layout */}
             <header className="mb-4 md:mb-6">
-              <div className="bg-white rounded-2xl overflow-hidden">
+              <div className="rounded-2xl overflow-hidden">
                 <div
-                  className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200"
+                  className="grid grid-cols-1 md:grid-cols-2"
                   style={{
                     minHeight: 'clamp(140px, 18vh, 250px)',
                   }}
