@@ -10,7 +10,6 @@ const Theme1 = dynamic(() => import("@/app/masjid/[id]/prayer-screens/[type]/the
 const Theme2 = dynamic(() => import("@/app/masjid/[id]/prayer-screens/[type]/theme2/theme2"));
 const Theme3 = dynamic(() => import("@/app/masjid/[id]/prayer-screens/[type]/theme3/theme3"));
 const Theme4 = dynamic(() => import("@/app/masjid/[id]/prayer-screens/[type]/theme4/theme4"));
-const Theme5 = dynamic(() => import("@/app/masjid/[id]/prayer-screens/[type]/theme5/theme5"));
 
 interface PrayerScreenSlideProps {
   theme: number;
@@ -79,8 +78,6 @@ export default function PrayerScreenSlide({ theme, type = "default" }: PrayerScr
       return <Theme3 formattedData={prayerData} />;
     case 4:
       return <Theme4 formattedData={prayerData} />;
-    case 5:
-      return <Theme5 formattedData={prayerData} />;
     default:
       return <Theme1 formattedData={prayerData} />; // Default to Theme1 if invalid theme
   }
