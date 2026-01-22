@@ -5,9 +5,7 @@ import { Convert } from "easy-currencies";
 import { PaymentFrequency } from "../types";
 import { 
   PRESET_AMOUNTS, 
-  STRIPE_DONATION_FEE_FIXED, 
-  STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC, 
-  STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL 
+  getStripeFees 
 } from "@/utils/shared/constants";
 
 interface UseDonationAmountProps {
@@ -42,28 +40,33 @@ export function useDonationAmount({
   );
   const [conversionLoading, setConversionLoading] = useState(false);
 
+  // Get fee configuration based on masjid's base currency
+  const stripeFees = getStripeFees(masjidCurrency);
+
   // --- Utility: Get correct fee percentage ---------------------------------
   const getFeePercentage = () =>
     selectedCurrency === masjidCurrency
-      ? STRIPE_DONATION_FEE_PERCENTAGE_DOMESTIC
-      : STRIPE_DONATION_FEE_PERCENTAGE_INTERNATIONAL;
+      ? stripeFees.domestic
+      : stripeFees.international;
 
   // --- Utility: Displayed processing fee (for tooltip text) ----------------
+  // Must use the same formula as calculateTotalWithFee to ensure consistency
   const calculateProcessingFee = (amount: number) => {
     const feePercentage = getFeePercentage();
-    return Math.round((amount * feePercentage + STRIPE_DONATION_FEE_FIXED) * 100) / 100;
+    const totalWithFee = (amount + stripeFees.fixed) / (1 - feePercentage);
+    return Math.round((totalWithFee - amount) * 100) / 100;
   };
 
   // --- Utility: Calculate total with fee ----------------------------------
   const calculateTotalWithFee = (baseAmount: number, feePercentage: number, includeFee: boolean) => {
     if (!includeFee) return baseAmount;
-    return (baseAmount + STRIPE_DONATION_FEE_FIXED) / (1 - feePercentage);
+    return (baseAmount + stripeFees.fixed) / (1 - feePercentage);
   };
 
   // --- Utility: Calculate base amount -------------------------------------
   const calculateBaseAmount = (totalAmount: number, feePercentage: number, includeFee: boolean) => {
     if (!includeFee) return totalAmount;
-    const base = (totalAmount - STRIPE_DONATION_FEE_FIXED) / (1 + feePercentage);
+    const base = (totalAmount - stripeFees.fixed) / (1 + feePercentage);
     return Math.max(0, base);
   };
 

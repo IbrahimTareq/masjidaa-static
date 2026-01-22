@@ -7,6 +7,12 @@ const excludedMasjids = ["quba-mosque", "test-mosque"];
 
 // This is the main sitemap that combines both static pages and dynamic masjid pages
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const isProduction = process.env.NEXT_PUBLIC_ENV === "production";
+
+  if (!isProduction) {
+    return [];
+  }
+
   const masjids = await getMasjids();
 
   const staticUrls = [
