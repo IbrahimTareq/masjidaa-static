@@ -336,6 +336,7 @@ const BookingClient: React.FC<BookingClientProps> = ({
             startTime: data.start_time,
             endTime: data.end_time,
             notes: data.notes,
+            bookingId: result.booking!.id,
           });
 
           setClientSecret(paymentData.client_secret);

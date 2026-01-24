@@ -145,6 +145,7 @@ export async function createBookingPaymentIntent({
   startTime,
   endTime,
   notes,
+  bookingId,
 }: {
   amount: number;
   currency: string;
@@ -159,6 +160,7 @@ export async function createBookingPaymentIntent({
   startTime: string;
   endTime: string;
   notes?: string;
+  bookingId: string;
 }): Promise<{ client_secret: string }> {
   const supabase = await createClient();
   
@@ -177,6 +179,7 @@ export async function createBookingPaymentIntent({
     start_time: startTime,
     end_time: endTime,
     notes: notes || undefined,
+    booking_id: bookingId,
   };
 
   const { data, error } = await supabase.functions.invoke(

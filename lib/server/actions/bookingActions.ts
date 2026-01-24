@@ -307,6 +307,7 @@ export async function createBookingPaymentIntentAction({
   startTime,
   endTime,
   notes,
+  bookingId,
 }: {
   amount: number;
   currency: string;
@@ -321,6 +322,7 @@ export async function createBookingPaymentIntentAction({
   startTime: string;
   endTime: string;
   notes?: string;
+  bookingId: string;
 }): Promise<{ client_secret: string }> {
   return createBookingPaymentIntent({
     amount,
@@ -336,6 +338,7 @@ export async function createBookingPaymentIntentAction({
     startTime,
     endTime,
     notes,
+    bookingId,
   });
 }
 
