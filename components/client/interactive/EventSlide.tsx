@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
 import type { Tables } from "@/database.types";
 import { getEvent } from "@/lib/server/actions/eventActions";
+import { useMasjidContext } from "@/context/masjidContext";
 
 interface EventSlideProps {
   eventId: string;
@@ -17,6 +18,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
   const [error, setError] = useState<string | null>(null);
   const { formatTime, formatDate } = useDateTimeFormat();
   const qrRef = useRef<HTMLDivElement>(null);
+  const masjid = useMasjidContext();
 
   // Fetch event data
   useEffect(() => {
@@ -41,15 +43,13 @@ export default function EventSlide({ eventId }: EventSlideProps) {
 
   // Generate QR code when event is loaded
   useEffect(() => {
-    if (event && eventId && qrRef.current) {
+    if (event && eventId && qrRef.current && masjid?.slug) {
       // Clear previous QR code
       qrRef.current.innerHTML = "";
 
       // Get current URL and construct event page URL
       const currentUrl = window.location.origin;
-      const pathParts = window.location.pathname.split("/");
-      const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
-      const eventUrl = `${currentUrl}/${masjidSlug}/event/${eventId}`;
+      const eventUrl = `${currentUrl}/${masjid.slug}/event/${eventId}?eventDate=${event.date}`;
 
       // Calculate responsive QR code size based on viewport
       const viewportWidth = window.innerWidth;
@@ -80,7 +80,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
 
       qrCode.append(qrRef.current);
     }
-  }, [event, eventId]);
+  }, [event, eventId, masjid?.slug]);
 
   // Loading state
   if (loading) {

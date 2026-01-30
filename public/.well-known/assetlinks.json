@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.masjidaa.app",
+      "sha256_cert_fingerprints": [
+        "23:21:50:1F:F1:8C:BF:19:BB:5F:DC:22:DA:7D:DE:C7:45:C6:7A:DF:D4:7B:18:0E:13:37:1C:E7:D4:7A:20:3A"
+      ]
+    }
+  }
+]

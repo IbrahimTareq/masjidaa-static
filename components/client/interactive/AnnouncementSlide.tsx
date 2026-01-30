@@ -5,6 +5,7 @@ import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
 import { getAnnouncement } from "@/lib/server/actions/announcementActions";
 import type { Tables } from "@/database.types";
+import { useMasjidContext } from "@/context/masjidContext";
 
 interface AnnouncementSlideProps {
   announcementId: string;
@@ -18,6 +19,7 @@ export default function AnnouncementSlide({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const qrRef = useRef<HTMLDivElement>(null);
+  const masjid = useMasjidContext();
 
   // Fetch announcement data
   useEffect(() => {
@@ -42,15 +44,13 @@ export default function AnnouncementSlide({
 
   // Generate QR code when announcement is loaded
   useEffect(() => {
-    if (announcement && announcementId && qrRef.current) {
+    if (announcement && announcementId && qrRef.current && masjid?.slug) {
       // Clear previous QR code
       qrRef.current.innerHTML = "";
 
       // Get current URL and construct announcement page URL
       const currentUrl = window.location.origin;
-      const pathParts = window.location.pathname.split("/");
-      const masjidSlug = pathParts[1]; // Assuming URL format: /:slug/...
-      const announcementUrl = `${currentUrl}/${masjidSlug}/announcement/${announcementId}`;
+      const announcementUrl = `${currentUrl}/${masjid.slug}/announcement/${announcementId}`;
 
       // Calculate responsive QR code size based on viewport
       const viewportWidth = window.innerWidth;
@@ -81,7 +81,7 @@ export default function AnnouncementSlide({
 
       qrCode.append(qrRef.current);
     }
-  }, [announcement, announcementId]);
+  }, [announcement, announcementId, masjid?.slug]);
 
   // Loading state
   if (loading) {
