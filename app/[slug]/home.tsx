@@ -85,6 +85,7 @@ export default function HomeClient({
       <AppDownloadBanner
         masjidSlug={masjid.slug}
         masjidName={masjid.name}
+        masjidLogo={masjid.logo}
         isOpen={showBanner}
         onDismiss={handleBannerDismiss}
       />

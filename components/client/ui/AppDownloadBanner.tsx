@@ -7,11 +7,25 @@ import { useCallback, useEffect, useState } from "react";
 
 const APP_STORE_URL = `https://apps.apple.com/us/app/pillars-prayer-times-qibla/id${APPLE_APP_ID}`;
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.pillars.pillars";
-const APP_DEEP_LINK = "masjidaa://";
+
+// Deep link configuration
+const APP_DEEP_LINK_SCHEME = "masjidaa";
+const APP_DEEP_LINK_BASE_PATH = "masjid";
+
+/**
+ * Builds a deep link URL for the Masjidaa app
+ * Matches Expo Router structure: app/(tabs)/masjid/[slug]/index.tsx
+ * @param masjidSlug - The masjid slug to navigate to
+ * @returns The complete deep link URL (e.g., "masjidaa://masjid/masjid-name")
+ */
+function buildAppDeepLink(masjidSlug: string): string {
+  return `${APP_DEEP_LINK_SCHEME}://${APP_DEEP_LINK_BASE_PATH}/${masjidSlug}`;
+}
 
 interface AppDownloadBannerProps {
   masjidSlug: string;
   masjidName: string;
+  masjidLogo?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
 }
@@ -19,6 +33,7 @@ interface AppDownloadBannerProps {
 export default function AppDownloadBanner({
   masjidSlug,
   masjidName,
+  masjidLogo,
   isOpen,
   onDismiss,
 }: AppDownloadBannerProps) {
@@ -54,7 +69,7 @@ export default function AppDownloadBanner({
       }
 
       const storeUrl = isIOS ? APP_STORE_URL : PLAY_STORE_URL;
-      const deepLink = `${APP_DEEP_LINK}${masjidSlug}`;
+      const deepLink = buildAppDeepLink(masjidSlug);
       const startTime = Date.now();
 
       // Try to open the app
@@ -122,6 +137,23 @@ export default function AppDownloadBanner({
             : 'opacity-0 translate-y-4'
         }`}
       >
+        {/* Logo */}
+        {masjidLogo && (
+          <div className="mb-6 sm:mb-8">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full shadow-xl flex items-center justify-center p-4 border-2 border-white/20">
+              <div className="relative w-full h-full rounded-full overflow-hidden">
+                <Image
+                  src={masjidLogo}
+                  alt={`${masjidName} logo`}
+                  fill
+                  className="object-contain p-1"
+                  sizes="(max-width: 640px) 96px, 112px"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main heading */}
         <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
           Follow {masjidName} on the app
