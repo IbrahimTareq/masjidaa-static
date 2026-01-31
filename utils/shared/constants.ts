@@ -2,6 +2,7 @@ import { Autoplay } from "swiper/modules";
 
 export const BRAND_NAME = "Masjidaa";
 export const DOMAIN_NAME = process.env.NEXT_PUBLIC_ENV === "production" ? "https://masjidaa.com" : "https://dev.masjidaa.com";
+export const APPLE_APP_ID = "1559086853";
 
 // Stripe fee configuration by base currency
 // Each entry contains: domestic fee %, international fee %, and fixed fee

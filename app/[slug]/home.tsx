@@ -6,9 +6,12 @@ import { useMasjidSiteSettings } from "@/context/masjidSiteSettingsContext";
 import { Tables } from "@/database.types";
 import { FormattedData } from "@/lib/server/domain/prayer/getServerPrayerData";
 import { ExpandedEvent } from "@/app/(standalone)/[slug]/profile/types";
+import AppDownloadBanner from "@/components/client/ui/AppDownloadBanner";
+import { isBannerDismissed } from "@/utils/shared/appBannerStorage";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // Lazy load below-the-fold components
 const EventsCarousel = dynamic(
@@ -55,9 +58,37 @@ export default function HomeClient({
 }: HomeClientProps) {
   const masjid = useMasjid();
   const { siteSettings } = useMasjidSiteSettings();
+  const [showBanner, setShowBanner] = useState(false);
+
+  // Detect mobile devices and check if banner should be shown
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isAndroid = /android/i.test(userAgent);
+
+    // Only show banner on mobile devices
+    if (isIOS || isAndroid) {
+      // Check if banner was dismissed and is still within expiry
+      if (!isBannerDismissed()) {
+        setShowBanner(true);
+      }
+    }
+  }, []);
+
+  const handleBannerDismiss = () => {
+    setShowBanner(false);
+  };
 
   return (
     <>
+      {/* App Download Banner */}
+      <AppDownloadBanner
+        masjidSlug={masjid.slug}
+        masjidName={masjid.name}
+        isOpen={showBanner}
+        onDismiss={handleBannerDismiss}
+      />
+
       {/* Hero Section */}
       <div className="relative min-h-[500px] md:min-h-[600px] lg:min-h-[calc(100vh-6rem)] flex items-center bg-white text-[#003B3B] border-b border-[#003B3B]/20 font-montserrat">
         {/* Background Pattern */}

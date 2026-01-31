@@ -17,21 +17,22 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { SummaryClientProps } from "./types";
 
-const APP_STORE_URL =
-  "https://apps.apple.com/us/app/pillars-prayer-times-qibla/id1559086853";
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.pillars.pillars";
-const APP_DEEP_LINK = "pillars://masjid/";
-
 // Tab Components
+import { APPLE_APP_ID } from "@/utils/shared/constants";
 import { AnnouncementsTab } from "./components/tabs/AnnouncementsTab";
 import { DonationsTab } from "./components/tabs/DonationsTab";
 import { EventsTab } from "./components/tabs/EventsTab";
 import { PrayerTimesTab } from "./components/tabs/PrayerTimesTab";
 import { VideosTab } from "./components/tabs/VideosTab";
+
+const APP_STORE_URL =
+  `https://apps.apple.com/us/app/pillars-prayer-times-qibla/id${APPLE_APP_ID}`;
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.pillars.pillars";
+const APP_DEEP_LINK = "pillars://masjid/";
 
 export default function SummaryClient({
   masjid,
@@ -278,11 +279,10 @@ export default function SummaryClient({
 
                   <button
                     onClick={handleShareClick}
-                    className={`px-4 py-3 rounded-lg transition-colors cursor-pointer ${
-                      isCopied
+                    className={`px-4 py-3 rounded-lg transition-colors cursor-pointer ${isCopied
                         ? "bg-green-100 text-green-700"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                      }`}
                     title={isCopied ? "Link copied!" : "Copy profile link"}
                   >
                     {isCopied ? (
@@ -321,15 +321,15 @@ export default function SummaryClient({
                   },
                   // Conditionally add Videos tab if YouTube channel exists
                   ...(youtubeChannelId &&
-                  youtubeVideos &&
-                  youtubeVideos.length > 0
+                    youtubeVideos &&
+                    youtubeVideos.length > 0
                     ? [
-                        {
-                          id: "videos",
-                          label: "Videos",
-                          count: undefined,
-                        },
-                      ]
+                      {
+                        id: "videos",
+                        label: "Videos",
+                        count: undefined,
+                      },
+                    ]
                     : []),
                 ].map((tab) => (
                   <button
@@ -346,20 +346,18 @@ export default function SummaryClient({
                         });
                       }
                     }}
-                    className={`flex items-center gap-2 pb-3 border-b-2 font-semibold whitespace-nowrap transition-all duration-200 ${
-                      activeTab === tab.id
+                    className={`flex items-center gap-2 pb-3 border-b-2 font-semibold whitespace-nowrap transition-all duration-200 ${activeTab === tab.id
                         ? "border-theme text-theme transform scale-105"
                         : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-200"
-                    }`}
+                      }`}
                   >
                     {tab.label}
                     {tab.count !== undefined && (
                       <span
-                        className={`text-sm px-2 py-1 rounded-full transition-colors ${
-                          activeTab === tab.id
+                        className={`text-sm px-2 py-1 rounded-full transition-colors ${activeTab === tab.id
                             ? "bg-theme/10 text-theme"
                             : "bg-gray-100 text-gray-600"
-                        }`}
+                          }`}
                       >
                         {tab.count}
                       </span>

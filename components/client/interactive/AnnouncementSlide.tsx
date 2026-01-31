@@ -1,11 +1,12 @@
 "use client";
 
+import { useMasjidContext } from "@/context/masjidContext";
+import type { Tables } from "@/database.types";
+import { getAnnouncement } from "@/lib/server/actions/announcementActions";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
 import { Bell } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
-import { getAnnouncement } from "@/lib/server/actions/announcementActions";
-import type { Tables } from "@/database.types";
-import { useMasjidContext } from "@/context/masjidContext";
 
 interface AnnouncementSlideProps {
   announcementId: string;
@@ -49,8 +50,7 @@ export default function AnnouncementSlide({
       qrRef.current.innerHTML = "";
 
       // Get current URL and construct announcement page URL
-      const currentUrl = window.location.origin;
-      const announcementUrl = `${currentUrl}/${masjid.slug}/announcement/${announcementId}`;
+      const announcementUrl = `${DOMAIN_NAME}/${masjid.slug}/announcement/${announcementId}`;
 
       // Calculate responsive QR code size based on viewport
       const viewportWidth = window.innerWidth;
@@ -148,7 +148,7 @@ export default function AnnouncementSlide({
             {/* Main Content - Description */}
             <div className="xl:col-span-2 w-full min-w-0">
               <div
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full"
+                className="bg-white rounded-2xl border border-gray-100 w-full"
                 style={{
                   padding: 'clamp(1.5rem, 2vw, 3rem)',
                 }}
@@ -202,7 +202,7 @@ export default function AnnouncementSlide({
             <div className="xl:col-span-1 w-full min-w-0">
               {/* QR Code */}
               <div
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
+                className="bg-white rounded-2xl border border-gray-100 text-center w-full"
                 style={{
                   padding: 'clamp(1rem, 1.5vw, 2rem)',
                 }}

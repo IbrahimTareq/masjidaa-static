@@ -1,12 +1,13 @@
 "use client";
 
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { useMasjidContext } from "@/context/masjidContext";
+import type { Tables } from "@/database.types";
+import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
+import { getEvent } from "@/lib/server/actions/eventActions";
+import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
-import { useDateTimeFormat } from "@/hooks/useDateTimeFormat";
-import type { Tables } from "@/database.types";
-import { getEvent } from "@/lib/server/actions/eventActions";
-import { useMasjidContext } from "@/context/masjidContext";
 
 interface EventSlideProps {
   eventId: string;
@@ -48,8 +49,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
       qrRef.current.innerHTML = "";
 
       // Get current URL and construct event page URL
-      const currentUrl = window.location.origin;
-      const eventUrl = `${currentUrl}/${masjid.slug}/event/${eventId}?eventDate=${event.date}`;
+      const eventUrl = `${DOMAIN_NAME}/${masjid.slug}/event/${eventId}?eventDate=${event.date}`;
 
       // Calculate responsive QR code size based on viewport
       const viewportWidth = window.innerWidth;
@@ -195,7 +195,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
       </div>
 
       {/* Main Content */}
-      <div className="w-full bg-gray-50">
+      <div className="w-full">
         <div
           className="mx-auto px-[2vw] py-[2.5vh]"
           style={{
@@ -211,7 +211,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
             {/* Main Content - Description */}
             <div className="md:col-span-2 w-full min-w-0">
               <div
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full"
+                className="bg-white rounded-2xl border border-gray-100 w-full"
                 style={{
                   padding: 'clamp(1rem, 1.5vw, 3rem)',
                 }}
@@ -265,7 +265,7 @@ export default function EventSlide({ eventId }: EventSlideProps) {
             <div className="md:col-span-1 w-full min-w-0">
               {/* QR Code */}
               <div
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center w-full"
+                className="bg-white rounded-2xl border border-gray-100 text-center w-full"
                 style={{
                   padding: 'clamp(0.875rem, 1.3vw, 2rem)',
                 }}

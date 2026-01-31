@@ -2,6 +2,7 @@
 
 import { useLocationContext } from "@/context/locationContext";
 import { useMasjid } from "@/context/masjidContext";
+import { APPLE_APP_ID } from "@/utils/shared/constants";
 import { Calendar, Check, Home, MapPin, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,7 +35,7 @@ export default function AppDownloadClient() {
 
           <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
             <Link
-              href="https://apps.apple.com/us/app/pillars-prayer-times-qibla/id1559086853"
+              href={`https://apps.apple.com/us/app/pillars-prayer-times-qibla/id${APPLE_APP_ID}`}
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer min-h-[44px]"

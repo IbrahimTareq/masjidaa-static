@@ -6,7 +6,7 @@ import { getMasjidEventsByMasjidId } from "@/lib/server/services/masjidEvents";
 import { getMasjidLocationByMasjidId } from "@/lib/server/services/masjidLocation";
 import { getMasjidSiteSettingsByMasjidId } from "@/lib/server/services/masjidSiteSettings";
 import { expandEventsWithRecurrence } from "@/utils/recurrence";
-import { DOMAIN_NAME } from "@/utils/shared/constants";
+import { APPLE_APP_ID, DOMAIN_NAME } from "@/utils/shared/constants";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Script from "next/script";
@@ -29,6 +29,11 @@ export async function generateMetadata({
     description: `Stay connected with ${name}. Download the Masjidaa app for prayer times, events, announcements & donation updates.`,
     openGraph: {
       images: masjid?.logo ?? "/masjidaa.svg",
+    },
+    other: {
+      "apple-itunes-app": masjid
+        ? `app-id=${APPLE_APP_ID}, app-argument=${DOMAIN_NAME}/${masjid.slug}`
+        : `app-id=${APPLE_APP_ID}`,
     },
   };
 }
