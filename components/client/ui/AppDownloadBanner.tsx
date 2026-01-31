@@ -3,7 +3,7 @@
 import { APPLE_APP_ID } from "@/utils/shared/constants";
 import { dismissBanner } from "@/utils/shared/appBannerStorage";
 import Image from "next/image";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const APP_STORE_URL = `https://apps.apple.com/us/app/pillars-prayer-times-qibla/id${APPLE_APP_ID}`;
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.pillars.pillars";
@@ -22,6 +22,22 @@ export default function AppDownloadBanner({
   isOpen,
   onDismiss,
 }: AppDownloadBannerProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Delay banner appearance by 1.5 seconds
+  useEffect(() => {
+    if (!isOpen) {
+      setIsVisible(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
   const handleContinueInApp = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -87,7 +103,11 @@ export default function AppDownloadBanner({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-theme flex items-center justify-center z-50 p-4">
+    <div 
+      className={`fixed inset-0 bg-theme flex items-center justify-center z-50 p-4 transition-opacity duration-500 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       {/* Pattern background */}
       <div
         className="absolute inset-0 bg-[url('/pattern8.jpg')] bg-repeat opacity-10"
@@ -95,7 +115,13 @@ export default function AppDownloadBanner({
       />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center text-white max-w-md w-full px-6">
+      <div 
+        className={`relative z-10 flex flex-col items-center justify-center text-center text-white max-w-md w-full px-6 transition-all duration-500 ease-out ${
+          isVisible 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-4'
+        }`}
+      >
         {/* Main heading */}
         <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
           Follow {masjidName} on the app
