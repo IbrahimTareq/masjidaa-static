@@ -37,7 +37,7 @@ const BookingFAQ: React.FC<BookingFAQProps> = ({ faqs }) => {
           >
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full flex items-center justify-between p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors"
+              className="w-full flex items-center justify-between p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
               aria-expanded={openIndex === index}
             >
               <span className="font-medium text-gray-900 pr-4">

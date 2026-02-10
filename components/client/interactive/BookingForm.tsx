@@ -3,7 +3,7 @@
 import { BookingFormData } from "@/utils/booking/validation";
 import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { AlertCircle, CreditCard, Mail, MessageSquare, Phone, User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Elements,
   PaymentElement,
@@ -55,6 +55,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   dateWidget,
 }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const rjsfFormRef = useRef<any>(null);
 
   const handleInputChange = (field: keyof BookingFormData, value: string) => {
     onFormDataChange({
@@ -68,6 +69,16 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
     if (!acceptedTerms) {
       return;
+    }
+
+    // Validate additional form fields if a booking form schema is present
+    // Uses native HTML validation (reportValidity) to show browser-native
+    // "Please fill this field" tooltips, consistent with the event registration form
+    if (bookingForm?.schema && rjsfFormRef.current) {
+      const formElement = rjsfFormRef.current.formElement?.current ?? rjsfFormRef.current.formElement;
+      if (formElement && !formElement.reportValidity()) {
+        return; // Block submission; browser will show native validation errors
+      }
     }
 
     // If payment form is not shown yet, just submit the form data
@@ -207,6 +218,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
             Additional Information
           </h3>
           <Form
+            ref={rjsfFormRef}
+            showErrorList={false}
             schema={(() => {
               const schema =
                 typeof bookingForm.schema === "string"
