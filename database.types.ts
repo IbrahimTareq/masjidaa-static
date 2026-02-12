@@ -377,6 +377,7 @@ export type Database = {
           duration_minutes: number
           faqs: Json | null
           id: string
+          image: string | null
           is_active: boolean
           long_description: string
           masjid_id: string
@@ -395,6 +396,7 @@ export type Database = {
           duration_minutes: number
           faqs?: Json | null
           id?: string
+          image?: string | null
           is_active?: boolean
           long_description: string
           masjid_id: string
@@ -413,6 +415,7 @@ export type Database = {
           duration_minutes?: number
           faqs?: Json | null
           id?: string
+          image?: string | null
           is_active?: boolean
           long_description?: string
           masjid_id?: string
@@ -1556,7 +1559,7 @@ export type Database = {
           },
         ]
       }
-      masjid_memberships: {
+      masjid_members: {
         Row: {
           allowed_pages: string[]
           created_at: string
@@ -1583,14 +1586,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "masjid_memberships_masjid_id_masjids_id_fk"
+            foreignKeyName: "masjid_members_masjid_id_masjids_id_fk"
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "masjid_memberships_user_id_users_id_fk"
+            foreignKeyName: "masjid_members_user_id_users_id_fk"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -1660,7 +1663,7 @@ export type Database = {
           calculation_method: Database["public"]["Enums"]["calculation_method"]
           created_at?: string | null
           dhuhr_adjustment?: number
-          duha_offset: string
+          duha_offset?: string
           fajr_adjustment?: number
           fajr_angle?: number
           high_latitude_rule?:
@@ -1886,7 +1889,6 @@ export type Database = {
           masjid_id: string
           status: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id: string | null
-          tier: Database["public"]["Enums"]["subscription_type"]
           tier_id: string
           updated_at: string | null
         }
@@ -1899,7 +1901,6 @@ export type Database = {
           masjid_id: string
           status: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
-          tier: Database["public"]["Enums"]["subscription_type"]
           tier_id: string
           updated_at?: string | null
         }
@@ -1912,7 +1913,6 @@ export type Database = {
           masjid_id?: string
           status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
-          tier?: Database["public"]["Enums"]["subscription_type"]
           tier_id?: string
           updated_at?: string | null
         }
@@ -2046,7 +2046,7 @@ export type Database = {
           description?: string | null
           email?: string | null
           fts?: unknown
-          hijri_date_adjustment: number
+          hijri_date_adjustment?: number
           id?: string
           local_currency?: Database["public"]["Enums"]["supported_currency"]
           logo?: string | null

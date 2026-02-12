@@ -22,6 +22,7 @@ interface BookingTypeDTO {
   duration_minutes: number | null;
   long_description: string | null;
   faqs: FAQItem[] | null;
+  image: string | null;
 }
 
 export const revalidate = 60;
@@ -170,6 +171,7 @@ export default async function BookingInfoPage({ params }: PageProps) {
     duration_minutes: bookingType.duration_minutes,
     long_description: bookingType.long_description,
     faqs: bookingType.faqs as FAQItem[] | null,
+    image: bookingType.image,
   };
 
   return (

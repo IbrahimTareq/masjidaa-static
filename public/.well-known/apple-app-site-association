@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["<YOUR_TEAM_ID>.com.masjidaa.app"],
+        "components": [
+          { "/": "/",         "exclude": true, "comment": "Homepage" },
+          { "/": "/about",    "exclude": true, "comment": "About page" },
+          { "/": "/privacy",  "exclude": true, "comment": "Privacy page" },
+          { "/": "/terms",    "exclude": true, "comment": "Terms page" },
+          { "/": "/login",    "exclude": true, "comment": "Login page" },
+          { "/": "/*",        "comment": "All masjid slug paths open in app" }
+        ]
+      }
+    ]
+  }
+}

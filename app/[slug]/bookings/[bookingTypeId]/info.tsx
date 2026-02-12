@@ -4,6 +4,7 @@ import BookingFAQ from "@/components/client/interactive/BookingFAQ";
 import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface FAQItem {
   question: string;
@@ -23,6 +24,7 @@ interface BookingTypeDTO {
   duration_minutes: number | null;
   long_description: string | null;
   faqs: FAQItem[] | null;
+  image: string | null;
 }
 
 interface BookingInfoProps {
@@ -64,27 +66,30 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
 
         {/* Service Header */}
         <div className="bg-white rounded-lg shadow-sm border p-8 mb-6">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {bookingType.name}
-              </h1>
-            </div>
-            {hasPrice && (
-              <div className="text-right">
-                <div className="text-3xl font-bold text-theme">
-                  {formatCurrencyWithSymbol({
-                    amount: bookingType.price!,
-                    currency: masjid.local_currency,
-                    decimals: 2,
-                  })}
-                </div>
+          {/* Service Image */}
+          {bookingType.image && (
+            <div className="flex justify-center mb-6">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+                <Image
+                  src={bookingType.image}
+                  alt={bookingType.name}
+                  fill
+                  className="object-cover rounded-full"
+                  sizes="96px"
+                />
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Service Title */}
+          <div className="text-center mb-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {bookingType.name}
+            </h1>
           </div>
 
           {/* Service Metadata */}
-          <div className="flex flex-wrap items-center gap-6 pb-6 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pb-6 border-b border-gray-200">
             <div className="flex items-center space-x-2 text-gray-600">
               <Clock className="h-5 w-5" />
               <span>{formatDuration(bookingType.duration_minutes)}</span>
@@ -93,7 +98,17 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
               <MapPin className="h-5 w-5" />
               <span>{masjid.name}</span>
             </div>
-            {!hasPrice && (
+            {hasPrice ? (
+              <div className="flex items-center space-x-2 text-theme font-bold text-xl">
+                <span>
+                  {formatCurrencyWithSymbol({
+                    amount: bookingType.price!,
+                    currency: masjid.local_currency,
+                    decimals: 2,
+                  })}
+                </span>
+              </div>
+            ) : (
               <div className="flex items-center space-x-2 text-green-600 font-medium">
                 <span>Free Service</span>
               </div>
