@@ -1,13 +1,17 @@
 import type { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
 
+type MasjidSubscriptionWithTier = Tables<"masjid_subscriptions"> & {
+  tier: Tables<"subscription_tiers"> | null;
+};
+
 export async function getMasjidSubscriptionByMasjidId(
   masjidId: string
-): Promise<Tables<"masjid_subscriptions"> | null> {
+): Promise<MasjidSubscriptionWithTier | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("masjid_subscriptions")
-    .select("*")
+    .select("*, tier:subscription_tiers(*)")
     .eq("masjid_id", masjidId)
     .single();
 

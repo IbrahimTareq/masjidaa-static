@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const subscription = await getMasjidSubscriptionByMasjidId(masjidId);
-  const tier = subscription?.tier;
+  const tierName = subscription?.tier?.name;
 
   const isCommunityFeature =
     pathname.includes("/embed/") ||
@@ -23,7 +23,7 @@ export async function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/masjid/") &&
     isCommunityFeature &&
-    tier === "starter"
+    tierName === "starter"
   ) {
     const url = req.nextUrl.clone();
     url.pathname = `/masjid/${masjidId}/access-denied`;
@@ -40,11 +40,11 @@ export async function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/masjid/") &&
     isHubFeature &&
-    (tier === "community" || tier === "starter")
+    (tierName === "community" || tierName === "starter")
   ) {
     const url = req.nextUrl.clone();
     url.pathname = `/masjid/${masjidId}/access-denied`;
-    url.searchParams.set("plan", tier);
+    url.searchParams.set("plan", tierName || "");
     return NextResponse.redirect(url);
   }
 
