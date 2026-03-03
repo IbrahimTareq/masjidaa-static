@@ -198,11 +198,10 @@ export default function DonationResult() {
   // Get donation details for display
   const currency = donationMeta?.currency || masjid.local_currency;
   const name = donationMeta?.first_name || "";
-  const shortLink = donationMeta?.short_link || "";
+  const campaignId = donationMeta?.campaign_id;
 
-  const shareUrl = shortLink
-    ? `${DOMAIN_NAME}/r/${shortLink}`
-    : window.location.origin;
+  // Construct the donation page URL using the masjid slug and campaign ID
+  const shareUrl = `${DOMAIN_NAME}/${masjid.slug}/donation/${campaignId}`;
 
   // Format amount for display
   const amount = donationMeta?.amount_cents

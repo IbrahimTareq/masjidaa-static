@@ -7,11 +7,13 @@ import { Calendar, Heart, Share2 } from "lucide-react";
 interface CampaignDetailsProps {
   campaign: Tables<"donation_campaigns">;
   onImageClick?: () => void;
+  onShareClick?: () => void;
 }
 
 export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   campaign,
   onImageClick,
+  onShareClick,
 }) => {
   return (
     <div className="flex-1 mb-8 lg:mb-0">
@@ -20,7 +22,10 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
           {campaign.name}
         </h1>
-        <button className="p-2 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ml-4">
+        <button 
+          onClick={onShareClick}
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ml-4"
+        >
           <Share2 className="w-8 h-8 text-theme" />
         </button>
       </div>

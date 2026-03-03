@@ -88,11 +88,11 @@ export default function ShareSection({
           type="text"
           value={shareUrl}
           readOnly
-          className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F8F9FA] text-gray-600"
+          className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F8F9FA] text-gray-600 truncate"
         />
         <button
           onClick={() => handleCopy(shareUrl)}
-          className={`px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 cursor-pointer ${
+          className={`px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 cursor-pointer flex-shrink-0 ${
             copied
               ? "bg-theme-gradient text-white"
               : "bg-theme text-white hover:bg-theme-gradient"

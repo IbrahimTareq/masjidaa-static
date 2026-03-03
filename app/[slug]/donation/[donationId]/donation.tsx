@@ -66,6 +66,7 @@ export default function DonationClient({
               <CampaignDetails
                 campaign={campaign}
                 onImageClick={() => setIsImagePreviewOpen(true)}
+                onShareClick={() => setIsShareModalOpen(true)}
               />
             </div>
 
