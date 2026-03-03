@@ -16,10 +16,10 @@ export const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   onShareClick,
 }) => {
   return (
-    <div className="flex-1 mb-8 lg:mb-0">
+    <div className="w-full mb-8 lg:mb-0">
       {/* Title */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 break-words">
           {campaign.name}
         </h1>
         <button 

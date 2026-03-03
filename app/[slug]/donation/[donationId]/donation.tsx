@@ -68,7 +68,7 @@ export default function DonationClient({
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div className="flex flex-col md:flex-row lg:gap-12 md:gap-8">
-            <div className="flex flex-col">
+            <div className="flex-1 min-w-0">
               <CampaignDetails
                 campaign={campaign}
                 onImageClick={() => setIsImagePreviewOpen(true)}
@@ -76,7 +76,7 @@ export default function DonationClient({
               />
             </div>
 
-            <div className="flex flex-col gap-4 mt-6 md:mt-0">
+            <div className="flex flex-col gap-4 mt-6 md:mt-0 md:w-[420px] lg:w-[480px] flex-shrink-0">
               <DonationStepManager
                 campaign={campaign}
                 masjid={masjid}
