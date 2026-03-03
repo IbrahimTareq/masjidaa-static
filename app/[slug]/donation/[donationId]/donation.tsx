@@ -3,7 +3,7 @@
 import WavyBackground from "@/components/client/ui/WavyBackground";
 import { Tables } from "@/database.types";
 import { getTimeAgo } from "@/utils/time";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import { DonationStepManager } from "@/donation/src/components/DonationStepManager";
 
@@ -36,6 +36,7 @@ export default function DonationClient({
 }: DonationDisplayProps) {
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
 
   const { hadith } = useRandomHadith();
 
@@ -43,9 +44,14 @@ export default function DonationClient({
     return [theme?.base_color, theme?.accent_color, theme?.gradient_color];
   }, [theme?.base_color, theme?.accent_color, theme?.gradient_color]);
 
-  if (!bankAccount) return <div>Bank account not found</div>;
+  // Set share URL on client side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(window.location.href);
+    }
+  }, []);
 
-  const shareUrl = window.location.href;
+  if (!bankAccount) return <div>Bank account not found</div>;
 
   return (
     <div className="bg-white relative overflow-hidden my-6 md:my-10 text-black">

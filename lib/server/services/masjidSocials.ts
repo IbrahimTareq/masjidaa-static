@@ -9,7 +9,7 @@ export async function getMasjidSocialsByMasjidId(
     .from("masjid_socials")
     .select("*")
     .eq("masjid_id", masjidId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Error fetching masjid socials", error);
