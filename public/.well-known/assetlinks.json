@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.masjidaa.app",
       "sha256_cert_fingerprints": [
-        "23:21:50:1F:F1:8C:BF:19:BB:5F:DC:22:DA:7D:DE:C7:45:C6:7A:DF:D4:7B:18:0E:13:37:1C:E7:D4:7A:20:3A"
+        "23:21:50:1F:F1:8C:BF:19:BB:5F:DC:22:DA:7D:DE:C7:45:C6:7A:DF:D4:7B:18:0E:13:37:1C:E7:D4:7A:20:3A",
+        "76:19:3F:80:D5:33:DB:DE:A5:8F:5D:79:D1:69:78:B3:12:E6:EA:B4:44:B3:F0:0A:B2:81:62:58:3A:55:BD:C4"
       ]
     }
   }
