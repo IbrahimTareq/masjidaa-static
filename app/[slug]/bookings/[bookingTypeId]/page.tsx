@@ -15,6 +15,11 @@ interface FAQItem {
   answer: string;
 }
 
+interface ResourceItem {
+  url: string;
+  displayName: string;
+}
+
 interface BookingTypeDTO {
   id: string;
   name: string;
@@ -22,6 +27,7 @@ interface BookingTypeDTO {
   duration_minutes: number | null;
   long_description: string | null;
   faqs: FAQItem[] | null;
+  resources: ResourceItem[] | null;
   image: string | null;
 }
 
@@ -171,6 +177,7 @@ export default async function BookingInfoPage({ params }: PageProps) {
     duration_minutes: bookingType.duration_minutes,
     long_description: bookingType.long_description,
     faqs: bookingType.faqs as FAQItem[] | null,
+    resources: bookingType.resources as ResourceItem[] | null,
     image: bookingType.image,
   };
 

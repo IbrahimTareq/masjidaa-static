@@ -1,6 +1,7 @@
 "use client";
 
 import BookingFAQ from "@/components/client/interactive/BookingFAQ";
+import BookingResources from "@/components/client/interactive/BookingResources";
 import { formatCurrencyWithSymbol } from "@/utils/currency";
 import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +10,11 @@ import Image from "next/image";
 interface FAQItem {
   question: string;
   answer: string;
+}
+
+interface ResourceItem {
+  url: string;
+  displayName: string;
 }
 
 interface MasjidDTO {
@@ -24,6 +30,7 @@ interface BookingTypeDTO {
   duration_minutes: number | null;
   long_description: string | null;
   faqs: FAQItem[] | null;
+  resources: ResourceItem[] | null;
   image: string | null;
 }
 
@@ -69,7 +76,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
           {/* Service Image */}
           {bookingType.image && (
             <div className="flex justify-center mb-6">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-gray-200">
                 <Image
                   src={bookingType.image}
                   alt={bookingType.name}
@@ -141,6 +148,11 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
         {/* FAQ Section */}
         {bookingType.faqs && bookingType.faqs.length > 0 && (
           <BookingFAQ faqs={bookingType.faqs} />
+        )}
+
+        {/* Resources Section */}
+        {bookingType.resources && bookingType.resources.length > 0 && (
+          <BookingResources resources={bookingType.resources} />
         )}
       </div>
     </div>

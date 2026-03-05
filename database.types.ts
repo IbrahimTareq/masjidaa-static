@@ -379,11 +379,13 @@ export type Database = {
           id: string
           image: string | null
           is_active: boolean
+          location: string
           long_description: string
           masjid_id: string
           max_advance_booking_days: number | null
           min_advance_booking_days: number | null
           name: string
+          resources: Json | null
           short_description: string
           updated_at: string | null
         }
@@ -398,11 +400,13 @@ export type Database = {
           id?: string
           image?: string | null
           is_active?: boolean
+          location: string
           long_description: string
           masjid_id: string
           max_advance_booking_days?: number | null
           min_advance_booking_days?: number | null
           name: string
+          resources?: Json | null
           short_description: string
           updated_at?: string | null
         }
@@ -417,11 +421,13 @@ export type Database = {
           id?: string
           image?: string | null
           is_active?: boolean
+          location?: string
           long_description?: string
           masjid_id?: string
           max_advance_booking_days?: number | null
           min_advance_booking_days?: number | null
           name?: string
+          resources?: Json | null
           short_description?: string
           updated_at?: string | null
         }
@@ -638,6 +644,38 @@ export type Database = {
           },
         ]
       }
+      donation_receipts: {
+        Row: {
+          donation_id: string
+          id: string
+          receipt_html: string
+          resend_id: string | null
+          sent_at: string
+        }
+        Insert: {
+          donation_id: string
+          id?: string
+          receipt_html: string
+          resend_id?: string | null
+          sent_at?: string
+        }
+        Update: {
+          donation_id?: string
+          id?: string
+          receipt_html?: string
+          resend_id?: string | null
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_receipts_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donations: {
         Row: {
           amount: number
@@ -656,7 +694,6 @@ export type Database = {
           is_anonymous: boolean
           masjid_id: string
           receipt_id: string | null
-          resend_id: string | null
           stripe_payment_id: string | null
           stripe_receipt_url: string | null
           transfer_amount: number | null
@@ -678,7 +715,6 @@ export type Database = {
           is_anonymous?: boolean
           masjid_id: string
           receipt_id?: string | null
-          resend_id?: string | null
           stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
           transfer_amount?: number | null
@@ -700,7 +736,6 @@ export type Database = {
           is_anonymous?: boolean
           masjid_id?: string
           receipt_id?: string | null
-          resend_id?: string | null
           stripe_payment_id?: string | null
           stripe_receipt_url?: string | null
           transfer_amount?: number | null
@@ -788,7 +823,6 @@ export type Database = {
           last_name: string
           masjid_id: string
           quantity: number
-          resend_id: string | null
           session_expires_at: string | null
           status: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at: string | null
@@ -804,7 +838,6 @@ export type Database = {
           last_name: string
           masjid_id: string
           quantity?: number
-          resend_id?: string | null
           session_expires_at?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
@@ -820,7 +853,6 @@ export type Database = {
           last_name?: string
           masjid_id?: string
           quantity?: number
-          resend_id?: string | null
           session_expires_at?: string | null
           status?: Database["public"]["Enums"]["event_form_submission_status"]
           submitted_at?: string | null
@@ -894,6 +926,38 @@ export type Database = {
           },
         ]
       }
+      event_payment_receipts: {
+        Row: {
+          event_payment_id: string
+          id: string
+          receipt_html: string
+          resend_id: string | null
+          sent_at: string
+        }
+        Insert: {
+          event_payment_id: string
+          id?: string
+          receipt_html: string
+          resend_id?: string | null
+          sent_at?: string
+        }
+        Update: {
+          event_payment_id?: string
+          id?: string
+          receipt_html?: string
+          resend_id?: string | null
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_payment_receipts_event_payment_id_fkey"
+            columns: ["event_payment_id"]
+            isOneToOne: false
+            referencedRelation: "event_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_payments: {
         Row: {
           amount: number
@@ -906,7 +970,6 @@ export type Database = {
           last_name: string
           masjid_id: string
           receipt_id: string | null
-          resend_id: string | null
           stripe_payment_intent_id: string | null
           stripe_receipt_url: string | null
         }
@@ -921,7 +984,6 @@ export type Database = {
           last_name: string
           masjid_id: string
           receipt_id?: string | null
-          resend_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_receipt_url?: string | null
         }
@@ -936,7 +998,6 @@ export type Database = {
           last_name?: string
           masjid_id?: string
           receipt_id?: string | null
-          resend_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_receipt_url?: string | null
         }
@@ -953,6 +1014,38 @@ export type Database = {
             columns: ["masjid_id"]
             isOneToOne: false
             referencedRelation: "masjids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_registration_receipts: {
+        Row: {
+          id: string
+          receipt_html: string
+          resend_id: string | null
+          sent_at: string
+          submission_id: string
+        }
+        Insert: {
+          id?: string
+          receipt_html: string
+          resend_id?: string | null
+          sent_at?: string
+          submission_id: string
+        }
+        Update: {
+          id?: string
+          receipt_html?: string
+          resend_id?: string | null
+          sent_at?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registration_receipts_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "event_form_submissions"
             referencedColumns: ["id"]
           },
         ]
@@ -1294,6 +1387,7 @@ export type Database = {
           name: string
           role: Database["public"]["Enums"]["masjid_role"]
           status: Database["public"]["Enums"]["invite_status_type"]
+          updated_at: string
         }
         Insert: {
           accepted_at?: string | null
@@ -1306,6 +1400,7 @@ export type Database = {
           name: string
           role?: Database["public"]["Enums"]["masjid_role"]
           status?: Database["public"]["Enums"]["invite_status_type"]
+          updated_at?: string
         }
         Update: {
           accepted_at?: string | null
@@ -1318,6 +1413,7 @@ export type Database = {
           name?: string
           role?: Database["public"]["Enums"]["masjid_role"]
           status?: Database["public"]["Enums"]["invite_status_type"]
+          updated_at?: string
         }
         Relationships: [
           {
